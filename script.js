@@ -422,9 +422,16 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     });
   }
 
+  let audioFadeTimer = null;
+
   function startMedia(time = 0) {
     if (!media || sfxMuted) return;
+    if (audioFadeTimer) {
+      clearInterval(audioFadeTimer);
+      audioFadeTimer = null;
+    }
     try {
+      media.volume = 1.0;
       media.currentTime = time;
       media.muted = false;
       const p = media.play();
@@ -432,11 +439,46 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     } catch (e) {}
   }
 
+  function fadeOutMedia(durationMs = 2800) {
+    if (!media) return;
+    if (audioFadeTimer) {
+      clearInterval(audioFadeTimer);
+      audioFadeTimer = null;
+    }
+    const startVolume = media.volume || 1.0;
+    const intervalMs = 40;
+    const steps = Math.max(1, Math.floor(durationMs / intervalMs));
+    const stepDec = startVolume / steps;
+
+    audioFadeTimer = setInterval(() => {
+      if (!media) {
+        clearInterval(audioFadeTimer);
+        audioFadeTimer = null;
+        return;
+      }
+      if (media.volume > stepDec) {
+        media.volume = Math.max(0, media.volume - stepDec);
+      } else {
+        media.volume = 0;
+        clearInterval(audioFadeTimer);
+        audioFadeTimer = null;
+        media.pause();
+        media.currentTime = 0;
+        media.volume = 1.0;
+      }
+    }, intervalMs);
+  }
+
   function stopMedia() {
     if (!media) return;
+    if (audioFadeTimer) {
+      clearInterval(audioFadeTimer);
+      audioFadeTimer = null;
+    }
     try {
       media.pause();
       media.currentTime = 0;
+      media.volume = 1.0;
     } catch (e) {}
   }
 
@@ -546,13 +588,13 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     await wait(1100);
     if (!introRunning) return;
 
-    // STEP 9: STAGE G7 (VOID MONOLITHIC LOCKUP) — Hold 1.8s
+    // STEP 9: STAGE G7 (VOID MONOLITHIC LOCKUP) — Stretched hold 2.6s so outro music resonates
     if (scG6) scG6.style.display = 'none';
     if (scG7) {
       resetElementAnimations(scG7);
       scG7.style.display = 'block';
     }
-    await wait(1800);
+    await wait(2600);
     if (!introRunning) return;
 
     // AUTOMATIC SIGNATURE DOCKING TRANSITION
@@ -578,6 +620,9 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         finishIntroInstant();
         return;
       }
+
+      // Smoothly stretch and fade out audio as transition begins
+      fadeOutMedia(2600);
 
       // Temporarily hide target logo text in navbar while traveler flies
       targetLogoText.style.opacity = '0';
@@ -631,7 +676,6 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         if (flyer.parentNode) flyer.parentNode.removeChild(flyer);
         introContainer.style.display = 'none';
         introContainer.classList.add('intro-hidden');
-        stopMedia();
       }, 980);
 
     } catch (err) {
@@ -642,7 +686,7 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
   function finishIntroInstant() {
     introRunning = false;
     introCompleted = true;
-    stopMedia();
+    fadeOutMedia(600);
     if (g7Name) g7Name.style.opacity = '1';
     if (targetLogoText) targetLogoText.style.opacity = '1';
     if (navLogo) navLogo.classList.add('logo-docked-glow');
