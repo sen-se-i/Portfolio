@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+  <!-- Rounded Crimson Badge (#ff4655) -->
+  <rect x="6" y="6" width="116" height="116" rx="26" fill="#ff4655" />
+  
+  <!-- Centered Valorant F Group -->
+  <g transform="translate(14, 18) scale(0.95)">
+    <!-- Blade 1: Left Slanted Spine -->
+    <polygon points="15,5 48,5 24,95 5,95" fill="#0f1923" />
+    
+    <!-- Blade 2: Top Roof Bar -->
+    <polygon points="56,5 106,5 94,28 56,28" fill="#0f1923" />
+    
+    <!-- Signature Mint-Cyan Accent Notch -->
+    <polygon points="106,5 110,5 98,28 94,28" fill="#00f5a0" />
+    
+    <!-- Blade 3: Mid Tactical Slab -->
+    <polygon points="50,42 92,42 82,60 50,60" fill="#0f1923" />
+  </g>
+</svg>
