@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>CYPHER // FAHIM AHAMMAD TANVIR</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Rajdhani:wght@700;800&family=Share+Tech+Mono&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; user-select:none; }
+
+    :root {
+      --red:   #ff4655;
+      --dark:  #0f1923;
+      --white: #ece8e1;
+      --cyan:  #00f5d4;
+    }
+
+    html, body {
+      width:100%; height:100%;
+      overflow:hidden;
+      background:var(--dark);
+      font-family:'Bebas Neue',sans-serif;
+    }
+
+    /* ── BACKGROUND ── */
+    #bg {
+      position:fixed; inset:0; z-index:1;
+      background:var(--red);
+      /* No CSS transition here — JS does a hard color-set + forced reflow
+         so the browser commits the new color in one vsync frame (no blend lag) */
+    }
+
+    /* Subtle scanlines */
+    .scanlines {
+      position:fixed; inset:0; z-index:900; pointer-events:none;
+      background:repeating-linear-gradient(
+        to bottom,
+        transparent 0, transparent 3px,
+        rgba(0,0,0,.13) 3px, rgba(0,0,0,.13) 4px
+      );
+    }
+
+    /* HUD corner marks */
+    .hud { position:fixed; width:22px; height:22px; z-index:50; }
+    .hud::before, .hud::after { content:''; position:absolute; background:var(--dark); }
+    .hud.tl { top:28px; left:34px; }
+    .hud.tr { top:28px; right:34px; }
+    .hud.bl { bottom:28px; left:34px; }
+    .hud.br { bottom:28px; right:34px; }
+    .hud::before { width:100%; height:2px; top:0; left:0; }
+    .hud::after  { width:2px; height:100%; top:0; left:0; }
+    .hud.tr::after  { left:auto; right:0; }
+    .hud.bl::before { top:auto; bottom:0; }
+    .hud.br::before { top:auto; bottom:0; }
+    .hud.br::after  { left:auto; right:0; }
+
+    /* ── PARTICLE CANVAS ── */
+    #geo { position:fixed; inset:0; z-index:5; pointer-events:none; }
+
+    /* ── STAGE (name panels) ── */
+    #stage {
+      position:fixed; inset:0; z-index:100;
+      display:flex; align-items:center; justify-content:center;
+    }
+
+    /* All panels are stacked at the same absolute center.
+       Visibility is controlled ONLY via opacity + transform — pure GPU, no layout. */
+    /* All panels stack at the same center. Entry = instant snap (like hard video cut)
+       No translateY, no slide from below. Just a fast scale-punch settle. */
+    .np {
+      position:absolute;
+      display:flex; flex-direction:column;
+      align-items:center; justify-content:center;
+      opacity:0;
+      transform:scaleY(1.18) scale(1.055);
+      will-change:opacity,transform;
+      pointer-events:none;
+    }
+
+    /* SHOW: opacity snaps instantly, scale settles in 90ms (impact punch, not a slide) */
+    .np.show {
+      opacity:1;
+      transform:scaleY(1.18) scale(1.0);
+      transition:
+        opacity 0s,
+        transform .09s cubic-bezier(.2,0,0,1);
+    }
+
+    /* EXIT: horizontal slit collapse — no translateY on the whole stage */
+    .np.exit {
+      transition:none !important;
+      animation:sliceOut .2s steps(4,end) forwards;
+    }
+
+    @keyframes sliceOut {
+      0%   { opacity:1;  transform:scaleY(1.18) scale(1.0);              clip-path:inset(0 0 0 0); }
+      25%  { opacity:.9; transform:scaleY(1.18) scale(1.0) translate(-5px,0); clip-path:inset(25% 0 38% 0); }
+      50%  { opacity:.7; transform:scaleY(1.18) scale(1.0) translate(5px,0);  clip-path:inset(52% 0 12% 0); }
+      75%  { opacity:.4; transform:scaleY(1.18) scale(.97) translate(-3px,0); clip-path:inset(72% 0 4% 0); }
+      100% { opacity:0;  transform:scaleY(1.18) scale(.92);                   clip-path:inset(0 0 100% 0); }
+    }
+
+    /* Name letterform */
+    .nt {
+      font-size:clamp(76px,13.5vw,198px);
+      font-weight:900; letter-spacing:.13em; line-height:1;
+      text-transform:uppercase; position:relative;
+    }
+
+    /* Chromatic ghost layers — only visible when .gfx class is on the panel */
+    .nt::before, .nt::after {
+      content:attr(data-n);
+      position:absolute; inset:0;
+      opacity:0; pointer-events:none;
+    }
+
+    .np.gfx .nt::before {
+      opacity:1; color:var(--cyan);
+      transform:translate(-9px,0);
+      clip-path:polygon(0 20%,100% 20%,100% 50%,0 50%);
+    }
+    .np.gfx .nt::after {
+      opacity:1; color:var(--white);
+      transform:translate(9px,0);
+      clip-path:polygon(0 55%,100% 55%,100% 83%,0 83%);
+    }
+
+    /* Diamond accent pair */
+    .dm { display:flex; gap:7px; margin-bottom:10px; }
+    .dm span { width:8px; height:8px; transform:rotate(45deg); display:inline-block; }
+
+    /* (Valorant V logo removed per user request) */
+
+    /* ── END SCREEN ── */
+    #es {
+      position:fixed; inset:0; z-index:200;
+      background:var(--red);
+      display:flex; flex-direction:column;
+      align-items:center; justify-content:center;
+      opacity:0; pointer-events:none;
+      transition:opacity .45s ease;
+    }
+    #es.show { opacity:1; pointer-events:auto; }
+
+    .en {
+      font-family:'Rajdhani',sans-serif; font-weight:800;
+      font-size:28px; letter-spacing:.55em;
+      color:var(--dark); text-transform:uppercase;
+    }
+    .er {
+      font-family:'Share Tech Mono',monospace;
+      font-size:12px; letter-spacing:.4em;
+      color:rgba(15,25,35,.6); margin-top:10px;
+    }
+    .ec {
+      position:absolute; bottom:36px;
+      font-family:'Share Tech Mono',monospace;
+      font-size:10px; letter-spacing:.2em; color:rgba(15,25,35,.4);
+    }
+
+    /* ── CONTROLS ── */
+    #ctrl {
+      position:fixed; bottom:22px; right:28px;
+      display:flex; gap:10px; z-index:1000;
+    }
+    .cb {
+      background:rgba(15,25,35,.8);
+      border:1px solid rgba(236,232,225,.28);
+      color:var(--white); font-family:'Rajdhani',sans-serif;
+      font-weight:700; font-size:11px; letter-spacing:.3em;
+      padding:7px 14px; cursor:pointer; text-transform:uppercase;
+      transition:background .18s,border-color .18s;
+    }
+    .cb:hover { background:var(--red); border-color:var(--red); }
+    #rbtn { display:none; }
+
+    #pr {
+      position:fixed; bottom:26px; left:50%;
+      transform:translateX(-50%);
+      font-family:'Rajdhani',sans-serif; font-weight:700;
+      font-size:12px; letter-spacing:.5em;
+      color:var(--dark); text-transform:uppercase;
+      z-index:1000; opacity:0; pointer-events:none;
+      animation:bl 1.3s ease-in-out infinite;
+    }
+    @keyframes bl { 0%,100%{opacity:.2} 50%{opacity:1} }
+  </style>
+</head>
+<body>
+
+<audio id="aud" preload="auto">
+  <source src="cypher_audio.webm" type="audio/webm" />
+  <source src="cypher_audio.m4a"  type="audio/mp4" />
+</audio>
+
+<div id="bg"></div>
+<div class="scanlines"></div>
+<canvas id="geo"></canvas>
+
+<div class="hud tl"></div>
+<div class="hud tr"></div>
+<div class="hud bl"></div>
+<div class="hud br"></div>
+
+<!-- NAME PANELS -->
+<div id="stage">
+
+  <!-- FAHIM — crimson bg, dark charcoal text -->
+  <div class="np" id="pf">
+    <div class="dm">
+      <span style="background:var(--dark)"></span>
+      <span style="background:var(--dark)"></span>
+    </div>
+    <div class="nt" data-n="FAHIM" style="color:var(--dark)">FAHIM</div>
+  </div>
+
+  <!-- AHAMMAD — crimson bg, off-white text -->
+  <div class="np" id="pa">
+    <div class="dm">
+      <span style="background:var(--white)"></span>
+      <span style="background:var(--white)"></span>
+    </div>
+    <div class="nt" data-n="AHAMMAD" style="color:var(--white)">AHAMMAD</div>
+  </div>
+
+  <!-- TANVIR — dark bg, off-white text -->
+  <div class="np" id="pt">
+    <div class="dm">
+      <span style="background:var(--white)"></span>
+      <span style="background:var(--white)"></span>
+    </div>
+    <div class="nt" data-n="TANVIR" style="color:var(--white)">TANVIR</div>
+  </div>
+
+</div>
+
+<!-- Valorant V logo removed -->
+
+<!-- END SCREEN -->
+<div id="es">
+  <div class="en">FAHIM AHAMMAD TANVIR</div>
+  <div class="er">SOFTWARE ENGINEER &nbsp;//&nbsp; SUST &nbsp;//&nbsp; FULL-STACK</div>
+  <div class="ec">&copy; 2026 FAHIM AHAMMAD TANVIR &bull; ALL RIGHTS RESERVED</div>
+</div>
+
+<div id="ctrl">
+  <button class="cb" id="sbtn">SOUND: ON</button>
+  <button class="cb" id="rbtn">REPLAY</button>
+  <button class="cb" id="ebtn">ENTER PORTFOLIO &rsaquo;</button>
+</div>
+<div id="pr">CLICK OR PRESS ANY KEY TO ENTER</div>
+
+<script>
+/* ── PARTICLES ── */
+const cvs = document.getElementById('geo');
+const ctx = cvs.getContext('2d');
+let W, H;
+const resize = () => { W = cvs.width = innerWidth; H = cvs.height = innerHeight; };
+window.addEventListener('resize', resize); resize();
+
+const PARTS = Array.from({length:44}, () => ({
+  x: Math.random() * 1920,
+  y: Math.random() * 1080,
+  sz: Math.random() * 4 + 1.5,
+  t:  Math.floor(Math.random() * 4),
+  a:  Math.random() * .55 + .12,
+  vx: (Math.random() - .5) * .32,
+  vy: (Math.random() - .5) * .32,
+  d:  Math.random() > .42
+}));
+
+let onDark = false;
+
+function tick() {
+  ctx.clearRect(0,0,W,H);
+  const c1 = onDark ? '#ece8e1' : '#0f1923';
+  const c2 = onDark ? '#ff4655' : '#ece8e1';
+  PARTS.forEach(p => {
+    p.x = (p.x + p.vx + W) % W;
+    p.y = (p.y + p.vy + H) % H;
+    ctx.globalAlpha = p.a;
+    ctx.fillStyle = p.d ? c1 : c2;
+    switch(p.t) {
+      case 0: ctx.fillRect(p.x,p.y,p.sz,p.sz); break;
+      case 1: ctx.fillRect(p.x,p.y,p.sz*4,1.5); break;
+      case 2:
+        const arm = p.sz*1.6;
+        ctx.fillRect(p.x-arm,p.y-.75,arm*2,1.5);
+        ctx.fillRect(p.x-.75,p.y-arm,1.5,arm*2);
+        break;
+      case 3:
+        ctx.save();ctx.translate(p.x,p.y);ctx.rotate(Math.PI/4);
+        ctx.fillRect(-p.sz/2,-p.sz/2,p.sz,p.sz);ctx.restore();
+        break;
+    }
+  });
+  ctx.globalAlpha = 1;
+  requestAnimationFrame(tick);
+}
+requestAnimationFrame(tick);
+
+/* ── HELPERS ── */
+const raf  = () => new Promise(r => requestAnimationFrame(r));
+const wait = ms => new Promise(r => setTimeout(r, ms));
+
+const bg = document.getElementById('bg');
+function setBg(dark) {
+  onDark = dark;
+  bg.style.background = dark ? '#0f1923' : '#ff4655';
+  void bg.offsetHeight; // sync reflow — commits the color in this frame
+}
+
+// Smooth entry
+function enter(panel) {
+  panel.classList.remove('exit','gfx');
+  panel.classList.add('show');
+}
+
+// Glitch flash → slice exit
+async function exit(panel) {
+  // 1. quick chromatic ghost flash (no movement)
+  panel.classList.add('gfx');
+  await wait(60);
+  panel.classList.remove('gfx');
+  await raf();
+  // 2. slit-slice animation out
+  panel.classList.remove('show');
+  panel.classList.add('exit');
+  await wait(200); // matches animation duration
+  panel.classList.remove('exit');
+}
+
+/* ── MAIN SEQUENCE ── */
+const pf   = document.getElementById('pf');
+const pa   = document.getElementById('pa');
+const pt   = document.getElementById('pt');
+const es   = document.getElementById('es');
+const pr   = document.getElementById('pr');
+const sbtn = document.getElementById('sbtn');
+const rbtn = document.getElementById('rbtn');
+const ebtn = document.getElementById('ebtn');
+const aud  = document.getElementById('aud');
+
+let muted = false, done = false;
+
+async function runIntro() {
+  done = false;
+  pr.style.opacity = 0;
+  rbtn.style.display = 'none';
+
+  [pf,pa,pt].forEach(p => { p.classList.remove('show','exit','gfx'); });
+  es.classList.remove('show');
+
+  aud.currentTime = 25.1;
+  aud.play().catch(() => {});
+
+  /* 1. FAHIM — RED bg, dark charcoal text */
+  setBg(false);
+  await raf(); await raf();
+  enter(pf);
+  await wait(820);
+  await exit(pf);
+
+  /* 2. AHAMMAD — RED bg (stays), off-white text */
+  setBg(false);
+  await raf(); await raf();
+  enter(pa);
+  await wait(820);
+  await exit(pa);
+
+  /* 3. TANVIR — DARK bg, off-white text */
+  setBg(true);
+  await raf(); await raf();
+  enter(pt);
+  await wait(820);
+  await exit(pt);
+
+  /* END CARD */
+  setBg(false);
+  await raf();
+  es.classList.add('show');
+
+  done = true;
+  pr.style.opacity = 1;
+  rbtn.style.display = 'inline-block';
+}
+
+function enterSite() {
+  if (!done) return;
+  document.body.style.transition = 'opacity .4s ease';
+  document.body.style.opacity = 0;
+  setTimeout(() => { window.location.href = 'index.html'; }, 420);
+}
+
+ebtn.addEventListener('click', enterSite);
+document.addEventListener('keydown', () => { if (done) enterSite(); });
+document.addEventListener('click', e => { if (e.target.tagName==='BUTTON') return; if(done) enterSite(); });
+
+sbtn.addEventListener('click', e => {
+  e.stopPropagation();
+  muted = !muted;
+  aud.muted = muted;
+  sbtn.textContent = muted ? 'SOUND: OFF' : 'SOUND: ON';
+});
+
+rbtn.addEventListener('click', e => { e.stopPropagation(); runIntro(); });
+
+window.addEventListener('load', () => setTimeout(runIntro, 260));
+</script>
+</body>
+</html>

@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SCENE V18 // PERSISTENT GEOMETRIC MORPH ➔ HIGHWAY DRIFT</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@700;800&display=swap" rel="stylesheet" />
+  <style>
+    @font-face {
+      font-family: 'Valorant';
+      src: url('../valorant_font/Valorant Font.ttf') format('truetype');
+    }
+
+    *, *::before, *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      user-select: none;
+    }
+
+    :root {
+      --val-red: #ff4655;
+      --val-dark: #0f1923;
+      --val-black: #080c10;
+      --val-white: #ffffff;
+    }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      background: var(--val-black);
+      overflow: hidden;
+      font-family: 'Rajdhani', sans-serif;
+    }
+
+    /* Scanlines */
+    .scanlines {
+      position: fixed;
+      inset: 0;
+      background: repeating-linear-gradient(
+        to bottom,
+        transparent 0px, transparent 3px,
+        rgba(0,0,0,0.18) 3px, rgba(0,0,0,0.18) 4px
+      );
+      pointer-events: none;
+      z-index: 900;
+    }
+
+    /* Splash Screen */
+    #splash {
+      position: fixed;
+      inset: 0;
+      background: var(--val-black);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      cursor: pointer;
+      transition: opacity 0.3s ease;
+    }
+    #splash.hide {
+      opacity: 0;
+      pointer-events: none;
+    }
+    .splash-box {
+      border: 1px solid rgba(255,70,85,0.4);
+      padding: 28px 56px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 14px;
+      background: rgba(255,70,85,0.04);
+      position: relative;
+    }
+    .splash-box::before {
+      content: ''; position: absolute; top: -3px; left: -3px;
+      width: 12px; height: 12px;
+      border-top: 3px solid var(--val-red); border-left: 3px solid var(--val-red);
+    }
+    .splash-box::after {
+      content: ''; position: absolute; bottom: -3px; right: -3px;
+      width: 12px; height: 12px;
+      border-bottom: 3px solid var(--val-red); border-right: 3px solid var(--val-red);
+    }
+    .splash-title {
+      font-family: 'Valorant', sans-serif;
+      font-size: 26px;
+      letter-spacing: 0.22em;
+      color: var(--val-white);
+      text-align: center;
+    }
+    .splash-sub {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.4em;
+      color: var(--val-red);
+      animation: pulse 1.2s infinite;
+    }
+    @keyframes pulse { 0%,100%{opacity:0.35} 50%{opacity:1} }
+
+    /* Master Stage */
+    #stage {
+      position: fixed;
+      inset: 0;
+      background: var(--val-red);
+      overflow: hidden;
+      display: none;
+      z-index: 50;
+    }
+
+    /* 45-degree Thin Diagonal Hairline across Stage */
+    .hairline-axis {
+      position: absolute;
+      width: 180vw;
+      height: 1.5px;
+      background: rgba(15, 25, 35, 0.42);
+      top: -10%;
+      left: 10%;
+      transform: rotate(45deg);
+      transform-origin: top left;
+      pointer-events: none;
+      z-index: 60;
+    }
+
+    /* Left Edge Dark Chevron Pip (x=38px, y=245px) */
+    .left-chevron-pip {
+      position: absolute;
+      top: 48%;
+      left: 38px;
+      width: 16px;
+      height: 12px;
+      background: var(--val-dark);
+      clip-path: polygon(0% 15%, 65% 15%, 100% 50%, 65% 85%, 0% 85%);
+      z-index: 80;
+    }
+
+    /* Center Stationary Dash Stems (I-bars) */
+    .center-stem-left {
+      position: absolute;
+      top: 47%;
+      left: 28%;
+      width: 16px;
+      height: 38px;
+      background: var(--val-dark);
+      z-index: 80;
+    }
+    .center-stem-right {
+      position: absolute;
+      top: 49%;
+      left: 51%;
+      width: 16px;
+      height: 38px;
+      background: var(--val-dark);
+      z-index: 80;
+    }
+
+    /* Initial Center Anchor Bars (Frame 265) */
+    .anchor-left {
+      position: absolute;
+      top: 46%;
+      left: 18%;
+      width: 128px;
+      height: 58px;
+      background: var(--val-dark);
+      z-index: 75;
+      animation: anchorBreakLeft 0.35s cubic-bezier(0.8, 0, 0.2, 1) forwards;
+    }
+    @keyframes anchorBreakLeft {
+      0%   { opacity: 1; transform: scale(1); }
+      60%  { opacity: 1; transform: scaleX(0.7) translateX(-20px); }
+      100% { opacity: 0; transform: scaleX(0.1) translateX(-60px); }
+    }
+
+    .anchor-right {
+      position: absolute;
+      top: 52%;
+      left: 54%;
+      width: 128px;
+      height: 58px;
+      background: var(--val-dark);
+      z-index: 75;
+      animation: anchorBreakRight 0.35s cubic-bezier(0.8, 0, 0.2, 1) forwards;
+    }
+    @keyframes anchorBreakRight {
+      0%   { opacity: 1; transform: scale(1); }
+      60%  { opacity: 1; transform: scaleX(0.7) translateX(20px); }
+      100% { opacity: 0; transform: scaleX(0.1) translateX(60px); }
+    }
+
+    /* ========================================================
+       THE CONTINUOUS, PERSISTENT WORD CONTAINERS:
+       NO DISAPPEARANCE, NO FAKE SWAP!
+       The exact same word that is assembled piece-by-piece
+       smoothly slides and glides across the screen!
+       ======================================================== */
+
+    /* ----------------------------------------------------
+       LANE 3: LOWER-MIDDLE (UPRIGHT "FAHIM")
+       1. Piece assembly in place: 0.0s - 0.42s
+       2. Direct continuous drift to the right: 0.42s - 1.45s
+       ---------------------------------------------------- */
+    .track-3 {
+      position: absolute;
+      top: 51%;
+      left: 0;
+      width: 100vw;
+      height: 140px;
+      z-index: 75;
+      will-change: transform;
+      animation: track3ContinuousMotion 1.45s cubic-bezier(0.12, 0.95, 0.22, 1) forwards;
+    }
+    @keyframes track3ContinuousMotion {
+      /* Phase 1: Assembles and locks in place (0% - 30%) */
+      0%   { transform: translateX(0); }
+      30%  { transform: translateX(0); }
+      /* Phase 2: Smooth acceleration and kinetic slide to the RIGHT (30% - 100%) */
+      40%  { transform: translateX(3vw); }
+      70%  { transform: translateX(12vw); }
+      100% { transform: translateX(18vw); }
+    }
+
+    /* The letters container inside track 3 */
+    .word-upright {
+      display: flex;
+      align-items: flex-start;
+      gap: 3.5vw;
+      padding-left: 10vw;
+    }
+
+    /* ----------------------------------------------------
+       LANE 2: UPPER-MIDDLE (180° INVERTED "FAHIM")
+       1. Piece assembly in place: 0.0s - 0.42s
+       2. Direct continuous drift to the LEFT: 0.42s - 1.45s
+       ---------------------------------------------------- */
+    .track-2 {
+      position: absolute;
+      top: 18%;
+      left: 0;
+      width: 100vw;
+      height: 140px;
+      transform: rotate(180deg);
+      transform-origin: center center;
+      z-index: 75;
+      will-change: transform;
+      animation: track2ContinuousMotion 1.45s cubic-bezier(0.12, 0.95, 0.22, 1) forwards;
+    }
+    @keyframes track2ContinuousMotion {
+      /* Phase 1: Assembles and locks in place (0% - 30%) */
+      0%   { transform: rotate(180deg) translateX(0); }
+      30%  { transform: rotate(180deg) translateX(0); }
+      /* Phase 2: Smooth acceleration and kinetic slide to the LEFT (30% - 100%) */
+      40%  { transform: rotate(180deg) translateX(3vw); }
+      70%  { transform: rotate(180deg) translateX(12vw); }
+      100% { transform: rotate(180deg) translateX(18vw); }
+    }
+
+    /* ========================================================
+       THE GEOMETRIC STROKE PIECES INSIDE EACH LETTER:
+       They form the letters, lock solid, and NEVER disappear!
+       ======================================================== */
+
+    .char-box {
+      position: relative;
+      height: 126px;
+      display: inline-block;
+    }
+
+    /* Single Stroke Unit */
+    .stroke {
+      position: absolute;
+      background: var(--val-dark);
+      will-change: transform, opacity;
+    }
+
+    /* --- CHAR F (width: 80px) --- */
+    .char-f { width: 84px; }
+    .f-v {
+      top: 0; left: 0; width: 24px; height: 126px;
+      animation: strokeDropIn 0.32s cubic-bezier(0.12, 0.95, 0.2, 1) 0.06s both;
+    }
+    .f-h1 {
+      top: 0; left: 0; width: 84px; height: 24px;
+      animation: strokeSlideH 0.32s cubic-bezier(0.12, 0.95, 0.2, 1) 0.12s both;
+    }
+    .f-h2 {
+      top: 50px; left: 0; width: 56px; height: 22px;
+      animation: strokeSlideH 0.32s cubic-bezier(0.12, 0.95, 0.2, 1) 0.16s both;
+    }
+
+    /* --- CHAR A (width: 104px) --- */
+    .char-a { width: 104px; }
+    .a-left {
+      top: 0; left: 24px; width: 24px; height: 126px;
+      transform-origin: top center;
+      animation: aLeftSlam 0.35s cubic-bezier(0.12, 0.95, 0.2, 1) 0.1s both;
+    }
+    @keyframes aLeftSlam {
+      0%   { transform: rotate(-24deg) scaleY(0.2); opacity: 0; }
+      100% { transform: rotate(-24deg) scaleY(1); opacity: 1; }
+    }
+    .a-right {
+      top: 0; right: 24px; width: 24px; height: 126px;
+      transform-origin: top center;
+      animation: aRightSlam 0.35s cubic-bezier(0.12, 0.95, 0.2, 1) 0.12s both;
+    }
+    @keyframes aRightSlam {
+      0%   { transform: rotate(24deg) scaleY(0.2); opacity: 0; }
+      100% { transform: rotate(24deg) scaleY(1); opacity: 1; }
+    }
+    .a-mid {
+      top: 68px; left: 18px; width: 68px; height: 20px;
+      animation: strokeSlideH 0.3s cubic-bezier(0.12, 0.95, 0.2, 1) 0.18s both;
+    }
+
+    /* --- CHAR H (width: 96px) --- */
+    .char-h { width: 96px; }
+    .h-left {
+      top: 0; left: 0; width: 24px; height: 126px;
+      animation: strokeDropIn 0.32s cubic-bezier(0.12, 0.95, 0.2, 1) 0.14s both;
+    }
+    .h-right {
+      top: 0; right: 0; width: 24px; height: 126px;
+      animation: strokeDropIn 0.32s cubic-bezier(0.12, 0.95, 0.2, 1) 0.16s both;
+    }
+    .h-mid {
+      top: 50px; left: 0; width: 96px; height: 22px;
+      animation: strokeSlideH 0.3s cubic-bezier(0.12, 0.95, 0.2, 1) 0.2s both;
+    }
+
+    /* --- CHAR I (width: 24px) --- */
+    .char-i { width: 24px; }
+    .i-bar {
+      top: 0; left: 0; width: 24px; height: 126px;
+      animation: strokeDropIn 0.32s cubic-bezier(0.12, 0.95, 0.2, 1) 0.18s both;
+    }
+
+    /* --- CHAR M (width: 128px) --- */
+    .char-m { width: 128px; }
+    .m-left {
+      top: 0; left: 0; width: 24px; height: 126px;
+      animation: strokeDropIn 0.32s cubic-bezier(0.12, 0.95, 0.2, 1) 0.2s both;
+    }
+    .m-d1 {
+      top: 0; left: 16px; width: 22px; height: 96px;
+      transform-origin: top left;
+      animation: mDiag1Slam 0.34s cubic-bezier(0.12, 0.95, 0.2, 1) 0.22s both;
+    }
+    @keyframes mDiag1Slam {
+      0%   { transform: rotate(28deg) scaleY(0.2); opacity: 0; }
+      100% { transform: rotate(28deg) scaleY(1); opacity: 1; }
+    }
+    .m-d2 {
+      top: 0; right: 16px; width: 22px; height: 96px;
+      transform-origin: top right;
+      animation: mDiag2Slam 0.34s cubic-bezier(0.12, 0.95, 0.2, 1) 0.24s both;
+    }
+    @keyframes mDiag2Slam {
+      0%   { transform: rotate(-28deg) scaleY(0.2); opacity: 0; }
+      100% { transform: rotate(-28deg) scaleY(1); opacity: 1; }
+    }
+    .m-right {
+      top: 0; right: 0; width: 24px; height: 126px;
+      animation: strokeDropIn 0.32s cubic-bezier(0.12, 0.95, 0.2, 1) 0.24s both;
+    }
+
+    @keyframes strokeDropIn {
+      0%   { transform: scaleY(0.1) translateY(-80px); opacity: 0; }
+      40%  { opacity: 1; }
+      100% { transform: scaleY(1) translateY(0); opacity: 1; }
+    }
+    @keyframes strokeSlideH {
+      0%   { transform: scaleX(0.1); opacity: 0; }
+      40%  { opacity: 1; }
+      100% { transform: scaleX(1); opacity: 1; }
+    }
+
+    /* ========================================================
+       PHASE 3: SEQUENTIAL POP OF ROOF & FLOOR HIGHWAYS
+       (Frames 271-274): They pop into existence letter-by-letter
+       ======================================================== */
+    .roof-highway {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 12%;
+      overflow: hidden;
+      z-index: 70;
+      opacity: 0;
+      animation: outerHighwayPop 0.85s cubic-bezier(0.12, 0.96, 0.24, 1) 0.52s forwards;
+    }
+    .floor-highway {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 12%;
+      overflow: hidden;
+      z-index: 70;
+      opacity: 0;
+      animation: outerHighwayPop 0.85s cubic-bezier(0.12, 0.96, 0.24, 1) 0.52s forwards;
+    }
+    @keyframes outerHighwayPop {
+      0%   { opacity: 0; }
+      20%  { opacity: 1; }
+      100% { opacity: 1; }
+    }
+
+    .roof-content {
+      position: absolute;
+      bottom: -14vh;
+      left: 0;
+      display: flex;
+      gap: 5vw;
+      font-family: 'Valorant', sans-serif;
+      font-size: 24vh;
+      line-height: 1;
+      color: var(--val-dark);
+      white-space: nowrap;
+      animation: roofGlide 0.85s cubic-bezier(0.12, 0.96, 0.24, 1) 0.52s forwards;
+    }
+    @keyframes roofGlide {
+      0%   { transform: translateX(-15vw); }
+      100% { transform: translateX(8vw); }
+    }
+
+    .floor-content {
+      position: absolute;
+      top: -14vh;
+      left: 0;
+      display: flex;
+      gap: 5vw;
+      font-family: 'Valorant', sans-serif;
+      font-size: 24vh;
+      line-height: 1;
+      color: var(--val-dark);
+      transform: rotate(180deg);
+      transform-origin: center center;
+      white-space: nowrap;
+      animation: floorGlide 0.85s cubic-bezier(0.12, 0.96, 0.24, 1) 0.52s forwards;
+    }
+    @keyframes floorGlide {
+      0%   { transform: rotate(180deg) translateX(-25vw); }
+      100% { transform: rotate(180deg) translateX(8vw); }
+    }
+
+    /* Technical HUD Details */
+    .hud-label {
+      position: absolute;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 9px;
+      letter-spacing: 0.3em;
+      color: rgba(15, 25, 35, 0.75);
+      z-index: 85;
+    }
+    .micro-dash {
+      position: absolute;
+      height: 3px;
+      background: var(--val-dark);
+      z-index: 85;
+    }
+    .micro-dot {
+      position: absolute;
+      width: 4px;
+      height: 4px;
+      background: var(--val-dark);
+      z-index: 85;
+    }
+
+    /* Replay Button */
+    .nav-bar {
+      position: fixed;
+      bottom: 24px;
+      right: 36px;
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      z-index: 1000;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    .nav-bar.show { opacity: 1; }
+    .btn {
+      background: rgba(15,25,35,0.85);
+      border: 1px solid rgba(255,255,255,0.35);
+      color: var(--val-white);
+      font-family: 'Rajdhani', sans-serif;
+      font-weight: 700;
+      font-size: 12px;
+      letter-spacing: 0.25em;
+      padding: 9px 18px;
+      cursor: pointer;
+      text-transform: uppercase;
+      transition: all 0.2s;
+    }
+    .btn:hover {
+      background: var(--val-dark);
+      border-color: var(--val-white);
+      color: var(--val-red);
+    }
+  </style>
+</head>
+<body>
+  <div class="scanlines"></div>
+
+  <!-- Background Audio -->
+  <video id="reveal-media" style="display:none;" preload="auto">
+    <source src="../Valorant logo reveal animation _Project A_ - Trim.mp4" type="video/mp4" />
+    <source src="../reveal_audio.webm" type="audio/webm" />
+  </video>
+
+  <!-- Splash Screen -->
+  <div id="splash">
+    <div class="splash-box">
+      <div class="splash-title">SCENE V18 // PERSISTENT GEOMETRIC MORPH</div>
+      <div class="splash-sub">NO DISAPPEARANCE // DIRECT PIECE DRIFT</div>
+    </div>
+  </div>
+
+  <!-- Master Stage -->
+  <div id="stage">
+    <div class="hairline-axis"></div>
+
+    <!-- Center Static Elements from Frames 265-282 -->
+    <div class="left-chevron-pip"></div>
+    <div class="center-stem-left"></div>
+    <div class="center-stem-right"></div>
+
+    <!-- Initial Center Anchor Bars (Frame 265) -->
+    <div class="anchor-left" id="anchor-left"></div>
+    <div class="anchor-right" id="anchor-right"></div>
+
+    <!-- ========================================================
+         LANE 2: UPPER-MIDDLE (180° INVERTED "FAHIM")
+         The exact pieces build, lock, and CONTINUOUSLY SLIDE LEFT!
+         ======================================================== -->
+    <div class="track-2" id="track-2">
+      <div class="word-upright">
+        <!-- CHAR F -->
+        <div class="char-box char-f">
+          <div class="stroke f-v"></div>
+          <div class="stroke f-h1"></div>
+          <div class="stroke f-h2"></div>
+        </div>
+        <!-- CHAR A -->
+        <div class="char-box char-a">
+          <div class="stroke a-left"></div>
+          <div class="stroke a-right"></div>
+          <div class="stroke a-mid"></div>
+        </div>
+        <!-- CHAR H -->
+        <div class="char-box char-h">
+          <div class="stroke h-left"></div>
+          <div class="stroke h-right"></div>
+          <div class="stroke h-mid"></div>
+        </div>
+        <!-- CHAR I -->
+        <div class="char-box char-i">
+          <div class="stroke i-bar"></div>
+        </div>
+        <!-- CHAR M -->
+        <div class="char-box char-m">
+          <div class="stroke m-left"></div>
+          <div class="stroke m-d1"></div>
+          <div class="stroke m-d2"></div>
+          <div class="stroke m-right"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========================================================
+         LANE 3: LOWER-MIDDLE (UPRIGHT "FAHIM")
+         The exact pieces build, lock, and CONTINUOUSLY SLIDE RIGHT!
+         ======================================================== -->
+    <div class="track-3" id="track-3">
+      <div class="word-upright">
+        <!-- CHAR F -->
+        <div class="char-box char-f">
+          <div class="stroke f-v"></div>
+          <div class="stroke f-h1"></div>
+          <div class="stroke f-h2"></div>
+        </div>
+        <!-- CHAR A -->
+        <div class="char-box char-a">
+          <div class="stroke a-left"></div>
+          <div class="stroke a-right"></div>
+          <div class="stroke a-mid"></div>
+        </div>
+        <!-- CHAR H -->
+        <div class="char-box char-h">
+          <div class="stroke h-left"></div>
+          <div class="stroke h-right"></div>
+          <div class="stroke h-mid"></div>
+        </div>
+        <!-- CHAR I -->
+        <div class="char-box char-i">
+          <div class="stroke i-bar"></div>
+        </div>
+        <!-- CHAR M -->
+        <div class="char-box char-m">
+          <div class="stroke m-left"></div>
+          <div class="stroke m-d1"></div>
+          <div class="stroke m-d2"></div>
+          <div class="stroke m-right"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========================================================
+         ROOF & FLOOR HIGHWAYS (Frames 271-274)
+         Sequential emergence after the center pieces lock
+         ======================================================== -->
+    <div class="roof-highway" id="roof-highway">
+      <div class="roof-content">
+        <span>FAHIM</span>
+        <span>FAHIM</span>
+      </div>
+    </div>
+
+    <div class="floor-highway" id="floor-highway">
+      <div class="floor-content">
+        <span>FAHIM</span>
+        <span>FAHIM</span>
+      </div>
+    </div>
+
+    <!-- Technical HUD Details -->
+    <div class="micro-dash" style="top: 24%; left: 5%; width: 56px;"></div>
+    <div class="micro-dash" style="top: 24%; right: 9%; width: 56px;"></div>
+    <div class="micro-dash" style="top: 70%; right: 9%; width: 64px;"></div>
+    
+    <div class="micro-dot" style="top: 36%; left: 16%;"></div>
+    <div class="micro-dot" style="top: 36%; left: 32%;"></div>
+    <div class="micro-dot" style="top: 66%; right: 16%;"></div>
+    <div class="micro-dot" style="top: 74%; right: 16%;"></div>
+
+    <div class="hud-label" style="top: 36%; left: 27%;">VLRNT // SWE_23</div>
+    <div class="hud-label" style="top: 90%; left: 28%;">PRTCL // FAHIM</div>
+    <div class="hud-label" style="top: 10%; right: 10%;">BIND // HAVEN</div>
+    <div class="hud-label" style="top: 90%; right: 10%;">SUST // SWE</div>
+  </div>
+
+  <!-- Replay Button -->
+  <div class="nav-bar" id="nav-bar">
+    <button class="btn" id="replay-btn">↺ REPLAY PERSISTENT BUILD</button>
+  </div>
+
+  <script>
+    const splash = document.getElementById('splash');
+    const media = document.getElementById('reveal-media');
+    const stage = document.getElementById('stage');
+    const navBar = document.getElementById('nav-bar');
+    const replayBtn = document.getElementById('replay-btn');
+
+    const wait = ms => new Promise(res => setTimeout(res, ms));
+
+    function startAudio() {
+      try {
+        media.currentTime = 10.0;
+        const p = media.play();
+        if (p && p.catch) p.catch(() => {});
+      } catch (e) {}
+    }
+
+    splash.addEventListener('click', () => {
+      splash.classList.add('hide');
+      playPersistentBuild();
+    });
+
+    async function playPersistentBuild() {
+      navBar.classList.remove('show');
+      stage.style.display = 'none';
+
+      // Reset all animations inside stage
+      stage.querySelectorAll('*').forEach(el => {
+        el.style.animation = 'none';
+        el.offsetHeight;
+        el.style.animation = '';
+      });
+
+      startAudio();
+      stage.style.display = 'block';
+
+      // 1.45s full duration
+      await wait(1450);
+
+      navBar.classList.add('show');
+    }
+
+    replayBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      playPersistentBuild();
+    });
+  </script>
+</body>
+</html>

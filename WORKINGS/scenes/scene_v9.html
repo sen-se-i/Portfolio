@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SCENE V9 // TRUE MM ARCHITECTURE</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@700;800&display=swap" rel="stylesheet" />
+  <style>
+    @font-face {
+      font-family: 'Valorant';
+      src: url('../valorant_font/Valorant Font.ttf') format('truetype');
+    }
+
+    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; user-select:none; }
+
+    :root {
+      --red: #ff4655;
+      --dark: #0f1923;
+      --black: #080c10;
+      --white: #ffffff;
+    }
+
+    html, body {
+      width: 100%; height: 100%;
+      background: var(--black);
+      overflow: hidden;
+    }
+
+    /* Scanlines */
+    .scanlines {
+      position: fixed; inset: 0;
+      background: repeating-linear-gradient(
+        to bottom,
+        transparent 0px, transparent 3px,
+        rgba(0,0,0,0.18) 3px, rgba(0,0,0,0.18) 4px
+      );
+      pointer-events: none; z-index: 900;
+    }
+
+    /* Splash */
+    #splash {
+      position: fixed; inset: 0;
+      background: var(--black);
+      display: flex; align-items: center; justify-content: center;
+      z-index: 1000; cursor: pointer;
+      transition: opacity 0.3s;
+    }
+    #splash.hide { opacity: 0; pointer-events: none; }
+    .splash-box {
+      border: 1px solid rgba(255,70,85,0.4);
+      padding: 28px 56px;
+      display: flex; flex-direction: column; align-items: center; gap: 14px;
+      background: rgba(255,70,85,0.04);
+      position: relative;
+    }
+    .splash-box::before {
+      content: ''; position: absolute; top: -3px; left: -3px;
+      width: 12px; height: 12px;
+      border-top: 3px solid var(--red); border-left: 3px solid var(--red);
+    }
+    .splash-box::after {
+      content: ''; position: absolute; bottom: -3px; right: -3px;
+      width: 12px; height: 12px;
+      border-bottom: 3px solid var(--red); border-right: 3px solid var(--red);
+    }
+    .splash-title { font-family: 'Valorant', sans-serif; font-size: 28px; letter-spacing: 0.2em; color: var(--white); }
+    .splash-sub { font-family: 'Share Tech Mono', monospace; font-size: 11px; letter-spacing: 0.4em; color: var(--red); animation: pulse 1.2s infinite; }
+    @keyframes pulse { 0%,100%{opacity:0.3} 50%{opacity:1} }
+
+    /* Stage */
+    #stage {
+      position: fixed; inset: 0;
+      background: var(--dark);
+      overflow: hidden; z-index: 50;
+    }
+
+    /* ========================================================
+       MM ARCHITECTURE:
+       - LEFT LEG: The left outer diagonal slash of M (enters from LEFT)
+         Shape: thick parallelogram leaning right (~45deg)
+         Starts offscreen left, slides RIGHT into position
+       - RIGHT LEG: Mirror of left leg (enters from RIGHT)
+         Starts offscreen right, slides LEFT into position
+       - CENTER: tiny arrow pip that moves LEFT → RIGHT
+       - BACKGROUND: dark tiny floating pips and hairline grid
+       ======================================================== */
+
+    #scene {
+      position: absolute; inset: 0;
+      display: none;
+      background: var(--dark);
+      overflow: hidden;
+    }
+
+    /*
+     LEFT "M" — Valorant M shape:
+     Left vertical spine + diagonal right arm going to lower-right
+     The M's bottom-left is flat, top has two peaks with V-notch
+     Enters from LEFT
+    */
+    .m-left-leg {
+      position: absolute;
+      left: -2%; top: -8%; bottom: -8%;
+      width: 58%;
+      background: var(--red);
+      /*
+        Valorant M:
+        - bottom-left corner (0%, 100%)
+        - left spine goes up to (0%, 0%)
+        - top goes right to (22%, 0%)  
+        - diagonal goes down-right to (50%, 60%)
+        - diagonal goes back up-right to (78%, 0%)
+        - top right goes to (100%, 0%)
+        - right edge comes down diagonally to (100%, 45%)
+        - outer right diagonal to (100%, 100%)
+        Result: clear M silhouette
+      */
+      clip-path: polygon(
+        0%   100%,  /* bottom-left */
+        0%   0%,    /* top-left (left spine top) */
+        22%  0%,    /* top beam, left peak top */
+        50%  58%,   /* center V notch bottom */
+        78%  0%,    /* top beam, right peak top */
+        100% 0%,    /* top-right corner */
+        100% 100%,  /* bottom-right */
+        78%  100%,  /* step in before right outer diagonal */
+        78%  18%,   /* right inner spine going up */
+        50%  75%,   /* slightly below V notch */
+        22%  18%,   /* left inner spine going up */
+        22%  100%   /* back to bottom near left */
+      );
+      will-change: transform;
+      animation: leftLegIn 1.2s cubic-bezier(0.08, 0.92, 0.18, 1) forwards;
+    }
+    @keyframes leftLegIn {
+      0%   { transform: translateX(-110%); }
+      60%  { transform: translateX(-6%); }
+      80%  { transform: translateX(2%); }
+      100% { transform: translateX(0); }
+    }
+
+    /*
+     RIGHT "M" — exact horizontal mirror of left M
+     Enters from RIGHT
+    */
+    .m-right-leg {
+      position: absolute;
+      right: -2%; top: -8%; bottom: -8%;
+      width: 58%;
+      background: var(--red);
+      /* Exact mirror of left M */
+      clip-path: polygon(
+        100% 100%,  /* bottom-right */
+        100% 0%,    /* top-right */
+        78%  0%,    /* top beam right peak */
+        50%  58%,   /* center V notch */
+        22%  0%,    /* top beam left peak */
+        0%   0%,    /* top-left corner */
+        0%   100%,  /* bottom-left */
+        22%  100%,  /* step in */
+        22%  18%,   /* left inner spine */
+        50%  75%,   /* slightly below V */
+        78%  18%,   /* right inner spine */
+        78%  100%   /* back to bottom */
+      );
+      will-change: transform;
+      animation: rightLegIn 1.2s cubic-bezier(0.08, 0.92, 0.18, 1) forwards;
+    }
+    @keyframes rightLegIn {
+      0%   { transform: translateX(110%); }
+      60%  { transform: translateX(6%); }
+      80%  { transform: translateX(-2%); }
+      100% { transform: translateX(0); }
+    }
+
+    /* CENTER TINY ARROW PIP — moves LEFT → RIGHT across the center gap */
+    .center-arrow-pip {
+      position: absolute;
+      top: 50%;
+      left: 38%; /* starts ~38% from left (near left leg edge) */
+      transform: translateY(-50%);
+      width: 18px;
+      height: 13px;
+      background: var(--red);
+      clip-path: polygon(0% 15%, 60% 15%, 100% 50%, 60% 85%, 0% 85%);
+      z-index: 80;
+      will-change: transform;
+      animation: arrowPipLTR 1.4s cubic-bezier(0.2, 0.9, 0.2, 1) forwards;
+      animation-delay: 0.3s;
+      opacity: 0;
+    }
+    @keyframes arrowPipLTR {
+      0%   { left: 28%; opacity: 0; }
+      15%  { opacity: 1; }
+      100% { left: 66%; opacity: 1; }
+    }
+
+    /* ========================================================
+       BACKGROUND FLOATING MICRO-SHAPES (measured from frames)
+       ======================================================== */
+
+    /* Top-right double chevrons — drift left */
+    .bg-chevrons {
+      position: absolute;
+      top: 56px; right: 28%;
+      display: flex; gap: 6px;
+      z-index: 75;
+      animation: bgChevDrift 1.3s cubic-bezier(0.15, 0.8, 0.2, 1) forwards;
+    }
+    @keyframes bgChevDrift {
+      0%   { transform: translateX(55px); }
+      100% { transform: translateX(0); }
+    }
+    .bg-chev {
+      width: 11px; height: 17px;
+      background: var(--red);
+      clip-path: polygon(0 0, 50% 0, 100% 100%, 50% 100%);
+    }
+
+    /* Left floating red square pip */
+    .bg-pip-left {
+      position: absolute;
+      left: 42px; top: 370px;
+      width: 12px; height: 12px;
+      background: var(--red);
+      z-index: 75;
+      animation: bgPipDrift 1.3s linear forwards;
+    }
+    @keyframes bgPipDrift {
+      0%   { transform: translateX(30px); }
+      100% { transform: translateX(-10px); }
+    }
+
+    /* Bottom-left floating tiny pip */
+    .bg-pip-left-2 {
+      position: absolute;
+      left: 42px; bottom: 55px;
+      width: 9px; height: 9px;
+      background: var(--red);
+      z-index: 75;
+    }
+
+    /* Bottom-right small square */
+    .bg-pip-right {
+      position: absolute;
+      right: 22px; bottom: 42px;
+      width: 12px; height: 12px;
+      background: var(--red);
+      z-index: 75;
+      animation: bgRightPip 1.3s linear forwards;
+    }
+    @keyframes bgRightPip {
+      0%   { transform: translateX(-20px); }
+      100% { transform: translateX(0); }
+    }
+
+    /* Bottom-right small square 2 */
+    .bg-pip-right-2 {
+      position: absolute;
+      right: 22px; bottom: 80px;
+      width: 7px; height: 7px;
+      background: var(--red);
+      z-index: 75;
+    }
+
+    /* Diagonal hairline construction axis */
+    .hairline {
+      position: absolute;
+      width: 160vw; height: 1px;
+      background: rgba(255,70,85,0.22);
+      top: 8%; left: -20%;
+      transform: rotate(45deg);
+      transform-origin: top left;
+      pointer-events: none;
+      z-index: 40;
+    }
+
+    /* Technical HUD coordinates */
+    .hud-text {
+      position: absolute;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 8px;
+      letter-spacing: 0.32em;
+      color: rgba(255,70,85,0.55);
+      z-index: 80;
+    }
+
+    /* Replay */
+    .nav-bar {
+      position: fixed; bottom: 24px; right: 36px;
+      display: flex; gap: 14px; align-items: center;
+      z-index: 1000; opacity: 0; transition: opacity 0.3s;
+    }
+    .nav-bar.show { opacity: 1; }
+    .btn {
+      background: rgba(15,25,35,0.85);
+      border: 1px solid rgba(255,255,255,0.35);
+      color: var(--white);
+      font-family: 'Rajdhani', sans-serif; font-weight: 700;
+      font-size: 12px; letter-spacing: 0.3em;
+      padding: 9px 18px; cursor: pointer; text-transform: uppercase;
+      transition: all 0.2s;
+    }
+    .btn:hover { background: var(--red); border-color: var(--red); }
+  </style>
+</head>
+<body>
+  <div class="scanlines"></div>
+
+  <audio id="audio" preload="auto">
+    <source src="../reveal_audio.webm" type="audio/webm" />
+  </audio>
+
+  <div id="splash">
+    <div class="splash-box">
+      <div class="splash-title">SCENE V9 // MM ARCHITECTURE</div>
+      <div class="splash-sub">CLICK TO PLAY — LEFT FROM LEFT / RIGHT FROM RIGHT</div>
+    </div>
+  </div>
+
+  <div id="stage">
+    <div id="scene">
+      <div class="hairline"></div>
+
+      <!-- THE TWO OUTER LEGS OF M -->
+      <div class="m-left-leg" id="left-leg"></div>
+      <div class="m-right-leg" id="right-leg"></div>
+
+      <!-- CENTER ARROW PIP: moves LEFT → RIGHT -->
+      <div class="center-arrow-pip" id="center-pip"></div>
+
+      <!-- BACKGROUND MICRO-SHAPES -->
+      <div class="bg-chevrons">
+        <div class="bg-chev"></div>
+        <div class="bg-chev"></div>
+      </div>
+      <div class="bg-pip-left"></div>
+      <div class="bg-pip-left-2"></div>
+      <div class="bg-pip-right"></div>
+      <div class="bg-pip-right-2"></div>
+
+      <!-- HUD tags -->
+      <div class="hud-text" style="top:28px; left:60px;">// VLRNT // MM_OUTER_LEGS</div>
+      <div class="hud-text" style="bottom:28px; right:60px;">AHAMMAD // AXIS_SYMMETRY</div>
+    </div>
+  </div>
+
+  <div class="nav-bar" id="nav">
+    <button class="btn" id="replay">↺  REPLAY MM BUILD</button>
+  </div>
+
+  <script>
+    const splash = document.getElementById('splash');
+    const audio  = document.getElementById('audio');
+    const scene  = document.getElementById('scene');
+    const nav    = document.getElementById('nav');
+    const replayBtn = document.getElementById('replay');
+    const leftLeg  = document.getElementById('left-leg');
+    const rightLeg = document.getElementById('right-leg');
+    const centerPip = document.getElementById('center-pip');
+
+    const wait = ms => new Promise(r => setTimeout(r, ms));
+
+    splash.addEventListener('click', () => {
+      splash.classList.add('hide');
+      audio.currentTime = 1.6;
+      audio.play().catch(() => {});
+      play();
+    });
+
+    async function play() {
+      scene.style.display = 'none';
+      nav.classList.remove('show');
+
+      /* reset all animations */
+      [leftLeg, rightLeg, centerPip].forEach(el => {
+        el.style.animation = 'none';
+        el.offsetHeight; // reflow
+        el.style.animation = '';
+      });
+
+      scene.style.display = 'block';
+      await wait(1900);
+      nav.classList.add('show');
+    }
+
+    replayBtn.addEventListener('click', e => { e.stopPropagation(); play(); });
+  </script>
+</body>
+</html>

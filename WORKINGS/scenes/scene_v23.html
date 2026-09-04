@@ -1,0 +1,2871 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SCENE V22 // ULTIMATE COMPLETE MASTER SEQUENCE (GROUPS 1 - 7)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@700;800&display=swap"
+    rel="stylesheet" />
+  <style>
+    @font-face {
+      font-family: 'Valorant';
+      src: url('../valorant_font/Valorant Font.ttf') format('truetype');
+    }
+
+    *,
+    *::before,
+    *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      user-select: none;
+    }
+
+    :root {
+      --val-red: #ff4655;
+      --val-dark: #0f1923;
+      --val-black: #080c10;
+      --val-white: #ffffff;
+    }
+
+    html,
+    body {
+      width: 100%;
+      height: 100%;
+      background: var(--val-black);
+      overflow: hidden;
+      font-family: 'Rajdhani', sans-serif;
+    }
+
+    .scanlines {
+      position: fixed;
+      inset: 0;
+      background: repeating-linear-gradient(to bottom,
+          transparent 0px, transparent 3px,
+          rgba(0, 0, 0, 0.18) 3px, rgba(0, 0, 0, 0.18) 4px);
+      pointer-events: none;
+      z-index: 900;
+    }
+
+    /* Splash Screen */
+    #splash {
+      position: fixed;
+      inset: 0;
+      background: var(--val-black);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      cursor: pointer;
+      transition: opacity 0.3s ease;
+    }
+
+    #splash.hide {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .splash-box {
+      border: 1px solid rgba(255, 70, 85, 0.4);
+      padding: 28px 56px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 14px;
+      background: rgba(255, 70, 85, 0.04);
+      position: relative;
+    }
+
+    .splash-box::before {
+      content: '';
+      position: absolute;
+      top: -3px;
+      left: -3px;
+      width: 12px;
+      height: 12px;
+      border-top: 3px solid var(--val-red);
+      border-left: 3px solid var(--val-red);
+    }
+
+    .splash-box::after {
+      content: '';
+      position: absolute;
+      bottom: -3px;
+      right: -3px;
+      width: 12px;
+      height: 12px;
+      border-bottom: 3px solid var(--val-red);
+      border-right: 3px solid var(--val-red);
+    }
+
+    .splash-title {
+      font-family: 'Valorant', sans-serif;
+      font-size: 26px;
+      letter-spacing: 0.22em;
+      color: var(--val-white);
+      text-align: center;
+    }
+
+    .splash-sub {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.4em;
+      color: var(--val-red);
+      animation: pulse 1.2s infinite;
+    }
+
+    @keyframes pulse {
+
+      0%,
+      100% {
+        opacity: 0.35
+      }
+
+      50% {
+        opacity: 1
+      }
+    }
+
+    /* Scene Progression HUD Top Left */
+    .scene-hud {
+      position: fixed;
+      top: 24px;
+      left: 32px;
+      display: flex;
+      gap: 8px;
+      z-index: 1000;
+      opacity: 0;
+      transition: opacity 0.4s;
+    }
+
+    .scene-hud.show {
+      opacity: 1;
+    }
+
+    .hud-badge {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.2em;
+      padding: 5px 12px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      background: rgba(15, 25, 35, 0.7);
+      color: rgba(255, 255, 255, 0.5);
+      transition: all 0.25s;
+    }
+
+    .hud-badge.active {
+      background: var(--val-red);
+      color: var(--val-white);
+      border-color: var(--val-red);
+      box-shadow: 0 0 14px rgba(255, 70, 85, 0.5);
+    }
+
+    #master-stage {
+      position: fixed;
+      inset: 0;
+      overflow: hidden;
+    }
+
+    .scene-layer,
+    .scene-container {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      display: none;
+    }
+
+    #scene-v20 {
+      background: var(--val-red);
+    }
+
+    /* Common HUD Label */
+    .hud-label {
+      position: absolute;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 9px;
+      letter-spacing: 0.3em;
+      z-index: 85;
+    }
+
+    /* Bottom Nav Bar */
+    .nav-bar {
+      position: fixed;
+      bottom: 24px;
+      right: 36px;
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      z-index: 1000;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .nav-bar.show {
+      opacity: 1;
+    }
+
+    .btn {
+      background: rgba(15, 25, 35, 0.85);
+      border: 1px solid rgba(255, 255, 255, 0.35);
+      color: var(--val-white);
+      font-family: 'Rajdhani', sans-serif;
+      font-weight: 700;
+      font-size: 11px;
+      letter-spacing: 0.2em;
+      padding: 8px 14px;
+      cursor: pointer;
+      text-transform: uppercase;
+      transition: all 0.2s;
+    }
+
+    .btn:hover {
+      background: var(--val-dark);
+      border-color: var(--val-white);
+      color: var(--val-red);
+    }
+
+    /* ========================================================
+       STYLES FROM V11 (V4 + V9 + V10)
+       ======================================================== */
+    #scene-v4 {
+      background: var(--val-dark);
+    }
+
+    /* V4 Phase 1: Frames 1 - 31 (Dark Setup + Floating Elements) */
+    #v4-phase-1 {
+      position: absolute;
+      inset: 0;
+      background: var(--val-dark);
+    }
+
+    .p1-left-wall {
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 20%;
+      background: var(--val-red);
+    }
+
+    .p1-right-wedge {
+      position: absolute;
+      right: 0;
+      bottom: 0;
+      width: 65%;
+      height: 90%;
+      background: var(--val-red);
+      clip-path: polygon(42% 0, 100% 0, 100% 100%, 0 100%);
+      will-change: transform;
+      animation: wedgeSlideLeft 0.52s linear forwards;
+    }
+
+    @keyframes wedgeSlideLeft {
+      0% {
+        transform: translateX(45px);
+      }
+
+      100% {
+        transform: translateX(0);
+      }
+    }
+
+    .p1-top-triangle {
+      position: absolute;
+      top: 0;
+      left: 56%;
+      width: 70px;
+      height: 120px;
+      background: var(--val-red);
+      clip-path: polygon(0 0, 100% 0, 0 100%);
+    }
+
+    .p1-double-chevrons {
+      position: absolute;
+      top: 38px;
+      left: 130px;
+      display: flex;
+      gap: 5px;
+      z-index: 90;
+    }
+
+    .chev-blade {
+      width: 11px;
+      height: 16px;
+      background: var(--val-red);
+      clip-path: polygon(0 0, 50% 0, 100% 100%, 50% 100%);
+    }
+
+    .p1-dynamic-pip {
+      position: absolute;
+      top: 118px;
+      left: 378px;
+      width: 12px;
+      height: 12px;
+      background: var(--val-red);
+      z-index: 90;
+      will-change: transform;
+      animation: pipDriftLeft 0.52s cubic-bezier(0.1, 0.8, 0.25, 1) forwards;
+    }
+
+    @keyframes pipDriftLeft {
+      0% {
+        transform: translateX(0);
+      }
+
+      100% {
+        transform: translateX(-65px);
+      }
+    }
+
+    .p1-dynamic-arrow {
+      position: absolute;
+      top: 136px;
+      left: 546px;
+      width: 16px;
+      height: 11px;
+      background: var(--val-red);
+      clip-path: polygon(0% 0%, 65% 0%, 100% 50%, 65% 100%, 0% 100%);
+      z-index: 90;
+      will-change: transform;
+      animation: arrowDriftLeft 0.52s cubic-bezier(0.1, 0.8, 0.25, 1) forwards;
+    }
+
+    @keyframes arrowDriftLeft {
+      0% {
+        transform: translateX(0);
+      }
+
+      100% {
+        transform: translateX(-21px);
+      }
+    }
+
+    /* V4 Phase 2: Frames 35 - 64 ("F" Kinetic Assembly on Red) */
+    #v4-phase-2 {
+      position: absolute;
+      inset: 0;
+      display: none;
+      background: var(--val-red);
+      overflow: hidden;
+    }
+
+    .f-push-wrapper {
+      position: absolute;
+      inset: 0;
+      will-change: transform;
+      animation: cameraLeftToRightPush 0.8s cubic-bezier(0.12, 0.85, 0.25, 1) forwards;
+    }
+
+    @keyframes cameraLeftToRightPush {
+      0% {
+        transform: translateX(-40px);
+      }
+
+      100% {
+        transform: translateX(35px);
+      }
+    }
+
+    .f-main-spine {
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 27%;
+      background: var(--val-dark);
+      clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+    }
+
+    .f-top-bar {
+      position: absolute;
+      top: 0;
+      left: 27%;
+      width: 45%;
+      height: 26%;
+      background: var(--val-dark);
+    }
+
+    .f-elevating-slab {
+      position: absolute;
+      left: 27%;
+      bottom: 32%;
+      width: 33%;
+      height: 24%;
+      background: var(--val-dark);
+      will-change: transform;
+      animation: slabElevateUp 0.65s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    @keyframes slabElevateUp {
+      0% {
+        transform: translateY(110px);
+      }
+
+      100% {
+        transform: translateY(0);
+      }
+    }
+
+    .f-right-void-shutter {
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      width: 28%;
+      background: var(--val-red);
+      will-change: transform;
+      animation: rightSideOpen 0.7s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+    }
+
+    @keyframes rightSideOpen {
+      0% {
+        transform: translateX(0);
+      }
+
+      100% {
+        transform: translateX(110%);
+      }
+    }
+
+    .f-micro-chevrons {
+      position: absolute;
+      top: 48px;
+      right: 190px;
+      display: flex;
+      gap: 6px;
+      z-index: 80;
+      animation: fChevDrift 0.75s cubic-bezier(0.15, 0.8, 0.2, 1) forwards;
+    }
+
+    @keyframes fChevDrift {
+      0% {
+        transform: translateX(0);
+      }
+
+      100% {
+        transform: translateX(-24px);
+      }
+    }
+
+    .f-chev-blade {
+      width: 12px;
+      height: 18px;
+      background: var(--val-dark);
+      clip-path: polygon(0 0, 50% 0, 100% 100%, 50% 100%);
+    }
+
+    .f-micro-drifting-bar {
+      position: absolute;
+      top: 73px;
+      left: 623px;
+      width: 80px;
+      height: 4px;
+      background: var(--val-dark);
+      z-index: 80;
+      animation: barDriftUpLeft 0.75s cubic-bezier(0.15, 0.8, 0.2, 1) forwards;
+    }
+
+    @keyframes barDriftUpLeft {
+      0% {
+        transform: translate(0, 0);
+      }
+
+      100% {
+        transform: translate(-23px, -14px);
+      }
+    }
+
+    .f-micro-center-arrow {
+      position: absolute;
+      top: 236px;
+      left: 597px;
+      width: 17px;
+      height: 12px;
+      background: var(--val-dark);
+      clip-path: polygon(0% 15%, 60% 15%, 100% 50%, 60% 85%, 0% 85%);
+      z-index: 80;
+      animation: centerArrowSweep 0.75s cubic-bezier(0.1, 0.85, 0.25, 1) forwards;
+    }
+
+    @keyframes centerArrowSweep {
+      0% {
+        transform: translateX(0);
+      }
+
+      100% {
+        transform: translateX(-102px);
+      }
+    }
+
+    .f-micro-lower-sq {
+      position: absolute;
+      top: 366px;
+      left: 501px;
+      width: 10px;
+      height: 10px;
+      background: var(--val-dark);
+      z-index: 80;
+      animation: lowerSqSlide 0.75s cubic-bezier(0.15, 0.8, 0.2, 1) forwards;
+    }
+
+    @keyframes lowerSqSlide {
+      0% {
+        transform: translateX(0);
+      }
+
+      100% {
+        transform: translateX(-23px);
+      }
+    }
+
+    .f-diagonal-axis {
+      position: absolute;
+      width: 140vw;
+      height: 1px;
+      background: rgba(15, 25, 35, 0.35);
+      top: 15%;
+      left: -20%;
+      transform: rotate(45deg);
+      pointer-events: none;
+      z-index: 60;
+    }
+
+    /* ========================================================
+       2. SCENE V9: TRUE MM CONVERGING ARCHITECTURE
+       ======================================================== */
+    #scene-v9 {
+      background: var(--val-dark);
+    }
+
+    .v9-hairline {
+      position: absolute;
+      width: 160vw;
+      height: 1px;
+      background: rgba(255, 70, 85, 0.22);
+      top: 8%;
+      left: -20%;
+      transform: rotate(45deg);
+      transform-origin: top left;
+      pointer-events: none;
+      z-index: 40;
+    }
+
+    .v9-left-leg {
+      position: absolute;
+      left: -2%;
+      top: -8%;
+      bottom: -8%;
+      width: 58%;
+      background: var(--val-red);
+      clip-path: polygon(0% 100%, 0% 0%, 22% 0%, 50% 58%, 78% 0%, 100% 0%,
+          100% 100%, 78% 100%, 78% 18%, 50% 75%, 22% 18%, 22% 100%);
+      will-change: transform;
+      animation: v9LeftLeg 1.2s cubic-bezier(0.08, 0.92, 0.18, 1) forwards;
+    }
+
+    @keyframes v9LeftLeg {
+      0% {
+        transform: translateX(-110%);
+      }
+
+      60% {
+        transform: translateX(-6%);
+      }
+
+      80% {
+        transform: translateX(2%);
+      }
+
+      100% {
+        transform: translateX(0);
+      }
+    }
+
+    .v9-right-leg {
+      position: absolute;
+      right: -2%;
+      top: -8%;
+      bottom: -8%;
+      width: 58%;
+      background: var(--val-red);
+      clip-path: polygon(100% 100%, 100% 0%, 78% 0%, 50% 58%, 22% 0%, 0% 0%,
+          0% 100%, 22% 100%, 22% 18%, 50% 75%, 78% 18%, 78% 100%);
+      will-change: transform;
+      animation: v9RightLeg 1.2s cubic-bezier(0.08, 0.92, 0.18, 1) forwards;
+    }
+
+    @keyframes v9RightLeg {
+      0% {
+        transform: translateX(110%);
+      }
+
+      60% {
+        transform: translateX(6%);
+      }
+
+      80% {
+        transform: translateX(-2%);
+      }
+
+      100% {
+        transform: translateX(0);
+      }
+    }
+
+    .v9-arrow-pip {
+      position: absolute;
+      top: 50%;
+      left: 38%;
+      transform: translateY(-50%);
+      width: 18px;
+      height: 13px;
+      background: var(--val-red);
+      clip-path: polygon(0% 15%, 60% 15%, 100% 50%, 60% 85%, 0% 85%);
+      z-index: 80;
+      animation: v9ArrowPip 1.4s cubic-bezier(0.2, 0.9, 0.2, 1) forwards;
+      animation-delay: 0.3s;
+      opacity: 0;
+    }
+
+    @keyframes v9ArrowPip {
+      0% {
+        left: 28%;
+        opacity: 0;
+      }
+
+      15% {
+        opacity: 1;
+      }
+
+      100% {
+        left: 66%;
+        opacity: 1;
+      }
+    }
+
+    .v9-chevrons {
+      position: absolute;
+      top: 56px;
+      right: 28%;
+      display: flex;
+      gap: 6px;
+      z-index: 75;
+      animation: v9ChevDrift 1.3s cubic-bezier(0.15, 0.8, 0.2, 1) forwards;
+    }
+
+    @keyframes v9ChevDrift {
+      0% {
+        transform: translateX(55px);
+      }
+
+      100% {
+        transform: translateX(0);
+      }
+    }
+
+    .v9-chev {
+      width: 11px;
+      height: 17px;
+      background: var(--val-red);
+      clip-path: polygon(0 0, 50% 0, 100% 100%, 50% 100%);
+    }
+
+    .v9-pip-left {
+      position: absolute;
+      left: 42px;
+      top: 370px;
+      width: 12px;
+      height: 12px;
+      background: var(--val-red);
+      animation: v9PipDrift 1.3s linear forwards;
+    }
+
+    @keyframes v9PipDrift {
+      0% {
+        transform: translateX(30px);
+      }
+
+      100% {
+        transform: translateX(-10px);
+      }
+    }
+
+    .v9-pip-right {
+      position: absolute;
+      right: 22px;
+      bottom: 42px;
+      width: 12px;
+      height: 12px;
+      background: var(--val-red);
+      animation: v9RightPip 1.3s linear forwards;
+    }
+
+    @keyframes v9RightPip {
+      0% {
+        transform: translateX(-20px);
+      }
+
+      100% {
+        transform: translateX(0);
+      }
+    }
+
+    /* ========================================================
+       3. SCENE V10: NVIR RED BUILD
+       ======================================================== */
+    #scene-v10 {
+      background: var(--val-red);
+    }
+
+    .v10-hairline {
+      position: absolute;
+      width: 140vw;
+      height: 1px;
+      background: rgba(15, 25, 35, 0.35);
+      top: 10%;
+      right: -10%;
+      transform: rotate(45deg);
+      transform-origin: top right;
+      pointer-events: none;
+      z-index: 40;
+    }
+
+    .v10-v-shape {
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 44%;
+      background: var(--val-dark);
+      clip-path: polygon(0% 0%, 18% 0%, 55% 100%, 42% 100%, 82% 0%, 100% 0%, 100% 100%, 0% 100%);
+      will-change: transform;
+      animation: v10VSlide 1.0s cubic-bezier(0.12, 0.98, 0.24, 1) forwards;
+    }
+
+    @keyframes v10VSlide {
+      0% {
+        transform: translateX(-100%);
+      }
+
+      100% {
+        transform: translateX(0);
+      }
+    }
+
+    .v10-i-top {
+      position: absolute;
+      left: 44.5%;
+      top: 31.8%;
+      width: 10.2%;
+      height: 21.3%;
+      background: var(--val-dark);
+      opacity: 0;
+      animation: v10TopAppear 0.2s ease-out 0.05s forwards;
+    }
+
+    @keyframes v10TopAppear {
+      0% {
+        opacity: 0;
+        transform: translateY(-6px);
+      }
+
+      100% {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .v10-i-bot {
+      position: absolute;
+      left: 44.5%;
+      top: 81.5%;
+      width: 10.2%;
+      height: 18.5%;
+      background: var(--val-dark);
+      opacity: 0;
+      animation: v10BotAppear 0.2s ease-out 0.1s forwards;
+    }
+
+    @keyframes v10BotAppear {
+      0% {
+        opacity: 0;
+        transform: translateY(6px);
+      }
+
+      100% {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .v10-i-stem {
+      position: absolute;
+      left: 44.5%;
+      top: 53.2%;
+      width: 10.2%;
+      height: 0%;
+      background: var(--val-dark);
+      transform-origin: top center;
+      animation: v10StemDrop 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.3s forwards;
+    }
+
+    @keyframes v10StemDrop {
+      0% {
+        height: 0%;
+      }
+
+      100% {
+        height: 28.3%;
+      }
+    }
+
+    .v10-r-body {
+      position: absolute;
+      right: 0;
+      top: 29.6%;
+      bottom: 0;
+      width: 24%;
+      background: var(--val-dark);
+      clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%, 0% 60%, 30% 45%, 0% 30%);
+      will-change: transform;
+      animation: v10RSlide 1.0s cubic-bezier(0.12, 0.98, 0.24, 1) forwards;
+    }
+
+    .v10-r-slash {
+      position: absolute;
+      left: 76.6%;
+      top: 0;
+      width: 8.2%;
+      height: 23.2%;
+      background: var(--val-dark);
+      clip-path: polygon(0% 0%, 100% 0%, 100% 60%, 0% 100%);
+      will-change: transform;
+      animation: v10RSlide 1.0s cubic-bezier(0.12, 0.98, 0.24, 1) forwards;
+    }
+
+    @keyframes v10RSlide {
+      0% {
+        transform: translateX(100%);
+      }
+
+      100% {
+        transform: translateX(0);
+      }
+    }
+
+    .v10-chevrons {
+      position: absolute;
+      top: 268px;
+      left: 155px;
+      display: flex;
+      gap: 6px;
+      z-index: 75;
+      animation: v10ChevDrift 1.25s cubic-bezier(0.15, 0.8, 0.2, 1) forwards;
+    }
+
+    @keyframes v10ChevDrift {
+      0% {
+        transform: translateX(-20px);
+        opacity: 0.5;
+      }
+
+      100% {
+        transform: translateX(0);
+        opacity: 1;
+      }
+    }
+
+    .v10-chev {
+      width: 12px;
+      height: 18px;
+      background: var(--val-dark);
+      clip-path: polygon(0 0, 50% 0, 100% 100%, 50% 100%);
+    }
+
+    .v10-arrow-pip {
+      position: absolute;
+      top: 224px;
+      left: 599px;
+      width: 16px;
+      height: 11px;
+      background: var(--val-dark);
+      clip-path: polygon(0% 15%, 65% 15%, 100% 50%, 65% 85%, 0% 85%);
+      z-index: 75;
+      animation: v10ArrowDrift 1.25s linear forwards;
+    }
+
+    @keyframes v10ArrowDrift {
+      0% {
+        transform: translateX(0);
+      }
+
+      100% {
+        transform: translateX(-30px);
+      }
+    }
+
+    .v10-horiz-bar-1 {
+      position: absolute;
+      top: 158px;
+      left: 468px;
+      width: 80px;
+      height: 4px;
+      background: var(--val-dark);
+      z-index: 75;
+    }
+
+    .v10-horiz-bar-2 {
+      position: absolute;
+      top: 166px;
+      left: 468px;
+      width: 80px;
+      height: 2px;
+      background: var(--val-dark);
+      opacity: 0.5;
+      z-index: 75;
+    }
+
+    .v10-horiz-bar-bot {
+      position: absolute;
+      bottom: 80px;
+      left: 468px;
+      width: 80px;
+      height: 4px;
+      background: var(--val-dark);
+      z-index: 75;
+    }
+
+    /* Common HUD text style */
+    .hud-label {
+      position: absolute;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 8px;
+      letter-spacing: 0.3em;
+      z-index: 80;
+    }
+
+    /* Bottom Control Bar */
+    .nav-bar {
+      position: fixed;
+      bottom: 24px;
+      right: 36px;
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      z-index: 1000;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .nav-bar.show {
+      opacity: 1;
+    }
+
+    .btn {
+      background: rgba(15, 25, 35, 0.85);
+      border: 1px solid rgba(255, 255, 255, 0.35);
+      color: var(--val-white);
+      font-family: 'Rajdhani', sans-serif;
+      font-weight: 700;
+      font-size: 12px;
+      letter-spacing: 0.25em;
+      padding: 9px 16px;
+      cursor: pointer;
+      text-transform: uppercase;
+      transition: all 0.2s;
+    }
+
+    .btn:hover {
+      background: var(--val-red);
+      border-color: var(--val-red);
+      color: var(--val-white);
+    }
+
+
+    /* ========================================================
+       STYLES FROM V14 (V12 + V13)
+       ======================================================== */
+    #scene-v12 {
+      background: var(--val-red);
+    }
+
+    .v12-hairline {
+      position: absolute;
+      width: 180vw;
+      height: 1px;
+      background: rgba(15, 25, 35, 0.38);
+      top: 5%;
+      left: -20%;
+      transform: rotate(45deg);
+      transform-origin: top left;
+      pointer-events: none;
+      z-index: 60;
+    }
+
+    .v12-top-container {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 38%;
+      overflow: hidden;
+      z-index: 70;
+    }
+
+    .v12-top-content {
+      position: absolute;
+      bottom: -6vh;
+      left: 0;
+      display: flex;
+      gap: 8vw;
+      font-family: 'Valorant', sans-serif;
+      font-size: 52vh;
+      line-height: 1;
+      color: var(--val-dark);
+      will-change: transform, letter-spacing;
+      animation: v12TopSlide 0.68s cubic-bezier(0.12, 0.94, 0.22, 1) forwards;
+    }
+
+    @keyframes v12TopSlide {
+      0% {
+        transform: translateX(45vw);
+        letter-spacing: 0em;
+      }
+
+      75% {
+        transform: translateX(-4vw);
+        letter-spacing: 0.04em;
+      }
+
+      100% {
+        transform: translateX(-14vw);
+        letter-spacing: 0.12em;
+      }
+
+      /* Spread anticipation */
+    }
+
+    .v12-bot-container {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 34%;
+      overflow: hidden;
+      z-index: 70;
+    }
+
+    .v12-bot-content {
+      position: absolute;
+      top: -2vh;
+      left: 0;
+      display: flex;
+      gap: 8vw;
+      font-family: 'Valorant', sans-serif;
+      font-size: 52vh;
+      line-height: 1;
+      color: var(--val-dark);
+      will-change: transform, letter-spacing;
+      animation: v12BotSlide 0.68s cubic-bezier(0.12, 0.94, 0.22, 1) forwards;
+    }
+
+    @keyframes v12BotSlide {
+      0% {
+        transform: translateX(-8vw);
+        letter-spacing: 0em;
+      }
+
+      75% {
+        transform: translateX(36vw);
+        letter-spacing: 0.04em;
+      }
+
+      100% {
+        transform: translateX(48vw);
+        letter-spacing: 0.12em;
+      }
+
+      /* Spread anticipation */
+    }
+
+    .v12-micro-dash {
+      position: absolute;
+      top: 45%;
+      left: 49%;
+      width: 32px;
+      height: 4px;
+      background: var(--val-dark);
+      z-index: 80;
+    }
+
+    .v12-micro-dot {
+      position: absolute;
+      width: 5px;
+      height: 5px;
+      background: var(--val-dark);
+      z-index: 80;
+    }
+
+    /* ========================================================
+       2. SCENE V13: "AHAMMAD" OPPOSING TRACKS (FRAMES 255 - 264)
+       ======================================================== */
+    #scene-v13 {
+      background: var(--val-dark);
+    }
+
+    .v13-hairline {
+      position: absolute;
+      width: 180vw;
+      height: 1px;
+      background: rgba(255, 70, 85, 0.22);
+      top: 8%;
+      left: -20%;
+      transform: rotate(45deg);
+      transform-origin: top left;
+      pointer-events: none;
+      z-index: 60;
+    }
+
+    .v13-top-container {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 36%;
+      overflow: hidden;
+      z-index: 70;
+    }
+
+    .v13-top-content {
+      position: absolute;
+      bottom: -6vh;
+      left: 0;
+      display: flex;
+      gap: 6vw;
+      font-family: 'Valorant', sans-serif;
+      font-size: 50vh;
+      line-height: 1;
+      color: var(--val-red);
+      will-change: transform;
+      animation: v13TopDrift 0.48s cubic-bezier(0.12, 0.96, 0.24, 1) forwards;
+    }
+
+    @keyframes v13TopDrift {
+      0% {
+        transform: translateX(4vw);
+      }
+
+      100% {
+        transform: translateX(18vw);
+      }
+    }
+
+    .v13-bot-container {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 33%;
+      overflow: hidden;
+      z-index: 70;
+    }
+
+    .v13-bot-content {
+      position: absolute;
+      top: -2vh;
+      left: 0;
+      display: flex;
+      gap: 6vw;
+      font-family: 'Valorant', sans-serif;
+      font-size: 50vh;
+      line-height: 1;
+      color: var(--val-red);
+      will-change: transform;
+      animation: v13BotDrift 0.48s cubic-bezier(0.12, 0.96, 0.24, 1) forwards;
+    }
+
+    @keyframes v13BotDrift {
+      0% {
+        transform: translateX(8vw);
+      }
+
+      100% {
+        transform: translateX(-6vw);
+      }
+    }
+
+    .v13-arrow-pip {
+      position: absolute;
+      top: 48%;
+      left: 45%;
+      width: 17px;
+      height: 12px;
+      background: var(--val-red);
+      clip-path: polygon(0% 15%, 65% 15%, 100% 50%, 65% 85%, 0% 85%);
+      z-index: 80;
+      will-change: transform;
+      animation: v13ArrowShoot 0.45s cubic-bezier(0.15, 0.9, 0.2, 1) 0.02s forwards;
+    }
+
+    @keyframes v13ArrowShoot {
+      0% {
+        transform: translateX(0);
+        opacity: 0;
+      }
+
+      20% {
+        opacity: 1;
+      }
+
+      100% {
+        transform: translateX(30vw);
+        opacity: 1;
+      }
+    }
+
+
+
+    /* ========================================================
+       STYLES FROM V20 (TRUE GEOMETRIC FAHIM GENESIS & HIGHWAY)
+       ======================================================== */
+    .hairline-axis {
+      position: absolute;
+      width: 180vw;
+      height: 1.5px;
+      background: rgba(15, 25, 35, 0.42);
+      top: -10%;
+      left: 10%;
+      transform: rotate(45deg);
+      transform-origin: top left;
+      pointer-events: none;
+      z-index: 60;
+    }
+
+    /* Left Edge Dark Chevron Pip (x=38px, y=245px) */
+    .left-chevron-pip {
+      position: absolute;
+      top: 48%;
+      left: 38px;
+      width: 16px;
+      height: 12px;
+      background: var(--val-dark);
+      clip-path: polygon(0% 15%, 65% 15%, 100% 50%, 65% 85%, 0% 85%);
+      z-index: 80;
+    }
+
+    /* Center Stationary Dash Stems (I-bars) */
+    .center-stem-left {
+      position: absolute;
+      top: 47%;
+      left: 28%;
+      width: 16px;
+      height: 38px;
+      background: var(--val-dark);
+      z-index: 80;
+    }
+
+    .center-stem-right {
+      position: absolute;
+      top: 49%;
+      left: 51%;
+      width: 16px;
+      height: 38px;
+      background: var(--val-dark);
+      z-index: 80;
+    }
+
+    /* Initial Center Anchor Bars (Frame 265) */
+    .anchor-left {
+      position: absolute;
+      top: 46%;
+      left: 18%;
+      width: 128px;
+      height: 58px;
+      background: var(--val-dark);
+      z-index: 75;
+      animation: anchorBreakLeft 0.35s cubic-bezier(0.8, 0, 0.2, 1) forwards;
+    }
+
+    @keyframes anchorBreakLeft {
+      0% {
+        opacity: 1;
+        transform: scale(1);
+      }
+
+      60% {
+        opacity: 1;
+        transform: scaleX(0.7) translateX(-20px);
+      }
+
+      100% {
+        opacity: 0;
+        transform: scaleX(0.1) translateX(-60px);
+      }
+    }
+
+    .anchor-right {
+      position: absolute;
+      top: 52%;
+      left: 54%;
+      width: 128px;
+      height: 58px;
+      background: var(--val-dark);
+      z-index: 75;
+      animation: anchorBreakRight 0.35s cubic-bezier(0.8, 0, 0.2, 1) forwards;
+    }
+
+    @keyframes anchorBreakRight {
+      0% {
+        opacity: 1;
+        transform: scale(1);
+      }
+
+      60% {
+        opacity: 1;
+        transform: scaleX(0.7) translateX(20px);
+      }
+
+      100% {
+        opacity: 0;
+        transform: scaleX(0.1) translateX(60px);
+      }
+    }
+
+    /* ========================================================
+       TRACK 3: LOWER-MIDDLE (UPRIGHT "FAHIM")
+       1. Piece assembly in place: 0.0s - 0.38s
+       2. Butter-smooth unified continuous slide to the RIGHT: 0.38s - 1.45s
+       ======================================================== */
+    .track-3 {
+      position: absolute;
+      top: 50%;
+      left: 0;
+      width: 100vw;
+      height: 150px;
+      z-index: 75;
+      will-change: transform;
+      animation: track3ContinuousMotion 1.45s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    @keyframes track3ContinuousMotion {
+      0% {
+        transform: translateX(0);
+      }
+
+      25% {
+        transform: translateX(0);
+      }
+
+      100% {
+        transform: translateX(16vw);
+      }
+    }
+
+    /* ========================================================
+       TRACK 2: UPPER-MIDDLE (180° INVERTED "FAHIM")
+       1. Piece assembly in place: 0.0s - 0.38s
+       2. Butter-smooth unified continuous slide to the LEFT: 0.38s - 1.45s
+       ======================================================== */
+    .track-2 {
+      position: absolute;
+      top: 18%;
+      left: 0;
+      width: 100vw;
+      height: 150px;
+      transform: rotate(180deg);
+      transform-origin: center center;
+      z-index: 75;
+      will-change: transform;
+      animation: track2ContinuousMotion 1.45s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    @keyframes track2ContinuousMotion {
+      0% {
+        transform: rotate(180deg) translateX(0);
+      }
+
+      25% {
+        transform: rotate(180deg) translateX(0);
+      }
+
+      100% {
+        transform: rotate(180deg) translateX(16vw);
+      }
+    }
+
+    /* Words layout */
+    .fahim-word-container {
+      display: flex;
+      align-items: center;
+      gap: 2.8vw;
+      padding-left: 10vw;
+    }
+
+    /* ========================================================
+       THE REAL GEOMETRIC PIECES (Strokes, Blades, Pillars)
+       100% Matching Valorant Glyph Proportions:
+       Height = 120px
+       ======================================================== */
+
+    .char-box {
+      position: relative;
+      height: 120px;
+      display: inline-block;
+    }
+
+    /* Common Geometric Stroke */
+    .geo-stroke {
+      position: absolute;
+      background: var(--val-dark);
+      will-change: transform, opacity;
+    }
+
+    /* ----------------------------------------------------
+       CHAR F (Width: 84px, Height: 120px)
+       Piece 1: Vertical Stem (0 to 120px)
+       Piece 2: Top Bar with 45° Chamfer Cut
+       Piece 3: Middle Bar
+       ---------------------------------------------------- */
+    .box-f {
+      width: 84px;
+    }
+
+    .f-stem {
+      top: 0;
+      left: 0;
+      width: 22px;
+      height: 120px;
+      animation: dropPillar 0.32s cubic-bezier(0.16, 1, 0.3, 1) 0.04s both;
+    }
+
+    .f-top {
+      top: 0;
+      left: 0;
+      width: 84px;
+      height: 22px;
+      clip-path: polygon(0 0, 80% 0, 100% 100%, 0 100%);
+      animation: slideRightArm 0.32s cubic-bezier(0.16, 1, 0.3, 1) 0.1s both;
+    }
+
+    .f-mid {
+      top: 48px;
+      left: 0;
+      width: 66px;
+      height: 22px;
+      animation: slideRightArm 0.32s cubic-bezier(0.16, 1, 0.3, 1) 0.14s both;
+    }
+
+    /* ----------------------------------------------------
+       CHAR A (Width: 112px, Height: 120px)
+       Exact Valorant Chevron:
+       Piece 1: Left Angled Blade (/)
+       Piece 2: Right Vertical Stem (|)
+       Piece 3: Inner Apex Triangle Wedge
+       ---------------------------------------------------- */
+    .box-a {
+      width: 112px;
+    }
+
+    .a-left-blade {
+      top: 0;
+      left: 0;
+      width: 112px;
+      height: 120px;
+      clip-path: polygon(90px 0, 112px 0, 26px 120px, 0 120px);
+      animation: slamBladeL 0.35s cubic-bezier(0.16, 1, 0.3, 1) 0.08s both;
+    }
+
+    @keyframes slamBladeL {
+      0% {
+        transform: translateY(-40px) scale(0.6);
+        opacity: 0;
+      }
+
+      100% {
+        transform: translateY(0) scale(1);
+        opacity: 1;
+      }
+    }
+
+    .a-right-pillar {
+      top: 0;
+      right: 0;
+      width: 22px;
+      height: 120px;
+      animation: dropPillar 0.32s cubic-bezier(0.16, 1, 0.3, 1) 0.12s both;
+    }
+
+    .a-cross-wedge {
+      top: 40px;
+      left: 56px;
+      width: 34px;
+      height: 42px;
+      clip-path: polygon(0 0, 34px 22px, 0 42px);
+      animation: expandWedge 0.3s cubic-bezier(0.16, 1, 0.3, 1) 0.16s both;
+    }
+
+    @keyframes expandWedge {
+      0% {
+        transform: scale(0);
+        opacity: 0;
+      }
+
+      100% {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
+
+    /* ----------------------------------------------------
+       CHAR H (Width: 94px, Height: 120px)
+       Piece 1: Left Vertical Pillar
+       Piece 2: Right Vertical Pillar
+       Piece 3: Center Cross Connector
+       ---------------------------------------------------- */
+    .box-h {
+      width: 94px;
+    }
+
+    .h-left-pillar {
+      top: 0;
+      left: 0;
+      width: 22px;
+      height: 120px;
+      animation: dropPillar 0.32s cubic-bezier(0.16, 1, 0.3, 1) 0.12s both;
+    }
+
+    .h-right-pillar {
+      top: 0;
+      right: 0;
+      width: 22px;
+      height: 120px;
+      animation: dropPillar 0.32s cubic-bezier(0.16, 1, 0.3, 1) 0.14s both;
+    }
+
+    .h-cross {
+      top: 48px;
+      left: 0;
+      width: 94px;
+      height: 22px;
+      animation: slideRightArm 0.3s cubic-bezier(0.16, 1, 0.3, 1) 0.18s both;
+    }
+
+    /* ----------------------------------------------------
+       CHAR I (Width: 22px, Height: 120px)
+       Piece 1: Single Solid Monolithic Pillar
+       ---------------------------------------------------- */
+    .box-i {
+      width: 22px;
+    }
+
+    .i-pillar {
+      top: 0;
+      left: 0;
+      width: 22px;
+      height: 120px;
+      animation: dropPillar 0.32s cubic-bezier(0.16, 1, 0.3, 1) 0.16s both;
+    }
+
+    /* ----------------------------------------------------
+       CHAR M (Width: 198px, Height: 120px)
+       Exact Valorant M geometry:
+       Piece 1: Left Diag Blade (/)
+       Piece 2: Center Down Blade (\)
+       Piece 3: Right Center Blade (/)
+       Piece 4: Right Vertical Pillar (|)
+       ---------------------------------------------------- */
+    .box-m {
+      width: 198px;
+    }
+
+    .m-left-blade {
+      top: 0;
+      left: 0;
+      width: 90px;
+      height: 120px;
+      clip-path: polygon(68px 0, 90px 0, 22px 120px, 0 120px);
+      animation: slamBladeL 0.34s cubic-bezier(0.16, 1, 0.3, 1) 0.16s both;
+    }
+
+    .m-center-down {
+      top: 0;
+      left: 68px;
+      width: 68px;
+      height: 120px;
+      clip-path: polygon(0 0, 22px 0, 68px 84px, 46px 84px);
+      animation: slamBladeL 0.34s cubic-bezier(0.16, 1, 0.3, 1) 0.18s both;
+    }
+
+    .m-center-up {
+      top: 0;
+      left: 90px;
+      width: 86px;
+      height: 120px;
+      clip-path: polygon(64px 0, 86px 0, 22px 84px, 0 84px);
+      animation: slamBladeL 0.34s cubic-bezier(0.16, 1, 0.3, 1) 0.2s both;
+    }
+
+    .m-right-pillar {
+      top: 0;
+      right: 0;
+      width: 22px;
+      height: 120px;
+      animation: dropPillar 0.32s cubic-bezier(0.16, 1, 0.3, 1) 0.22s both;
+    }
+
+    @keyframes dropPillar {
+      0% {
+        transform: translateY(-45px) scaleY(0.3);
+        opacity: 0;
+      }
+
+      100% {
+        transform: translateY(0) scaleY(1);
+        opacity: 1;
+      }
+    }
+
+    @keyframes slideRightArm {
+      0% {
+        transform: scaleX(0.1);
+        opacity: 0;
+      }
+
+      100% {
+        transform: scaleX(1);
+        opacity: 1;
+      }
+    }
+
+    /* ========================================================
+       ROOF & FLOOR HIGHWAYS (Frames 271-274)
+       Sequential emergence after the center pieces lock
+       ======================================================== */
+    .roof-highway {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 12%;
+      overflow: hidden;
+      z-index: 70;
+      opacity: 0;
+      animation: outerHighwayPop 0.85s cubic-bezier(0.16, 1, 0.3, 1) 0.4s forwards;
+    }
+
+    .floor-highway {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 12%;
+      overflow: hidden;
+      z-index: 70;
+      opacity: 0;
+      animation: outerHighwayPop 0.85s cubic-bezier(0.16, 1, 0.3, 1) 0.4s forwards;
+    }
+
+    @keyframes outerHighwayPop {
+      0% {
+        opacity: 0;
+      }
+
+      100% {
+        opacity: 1;
+      }
+    }
+
+    .roof-content {
+      position: absolute;
+      bottom: -13vh;
+      left: 0;
+      display: flex;
+      gap: 5vw;
+      font-family: 'Valorant', sans-serif;
+      font-size: 24vh;
+      line-height: 1;
+      color: var(--val-dark);
+      white-space: nowrap;
+      animation: roofGlide 0.95s cubic-bezier(0.16, 1, 0.3, 1) 0.4s forwards;
+    }
+
+    @keyframes roofGlide {
+      0% {
+        transform: translateX(-15vw);
+      }
+
+      100% {
+        transform: translateX(12vw);
+      }
+    }
+
+    .floor-content {
+      position: absolute;
+      top: -13vh;
+      left: 0;
+      display: flex;
+      gap: 5vw;
+      font-family: 'Valorant', sans-serif;
+      font-size: 24vh;
+      line-height: 1;
+      color: var(--val-dark);
+      transform: rotate(180deg);
+      transform-origin: center center;
+      white-space: nowrap;
+      animation: floorGlide 0.95s cubic-bezier(0.16, 1, 0.3, 1) 0.4s forwards;
+    }
+
+    @keyframes floorGlide {
+      0% {
+        transform: rotate(180deg) translateX(-25vw);
+      }
+
+      100% {
+        transform: rotate(180deg) translateX(12vw);
+      }
+    }
+
+
+
+            /* ========================================================
+       STAGE G5: CENTER CONVERGENCE & CYBER-GLITCH (FRAMES 283-296)
+       ======================================================== */
+    #stage-g5 {
+      background: var(--val-dark);
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+    }
+
+    /* Cyan Shock Wings on Frame 284 */
+    .g5-cyan-wing-left {
+      position: absolute;
+      top: 14px;
+      left: 35%;
+      width: 140px;
+      height: 180px;
+      background: var(--val-cyan);
+      clip-path: polygon(0 0, 100% 0, 40% 100%, 0 80%);
+      opacity: 0;
+      animation: cyanWingFlash 0.28s cubic-bezier(0.12, 0.9, 0.2, 1) forwards;
+    }
+    .g5-cyan-wing-right {
+      position: absolute;
+      top: 78px;
+      right: 32%;
+      width: 130px;
+      height: 160px;
+      background: var(--val-cyan);
+      clip-path: polygon(40% 0, 100% 20%, 80% 100%, 0 60%);
+      opacity: 0;
+      animation: cyanWingFlash 0.28s cubic-bezier(0.12, 0.9, 0.2, 1) forwards;
+    }
+    @keyframes cyanWingFlash {
+      0%   { opacity: 0; transform: scale(1.3); }
+      20%  { opacity: 0.95; transform: scale(1.0); filter: drop-shadow(0 0 25px var(--val-cyan)); }
+      60%  { opacity: 0.45; }
+      100% { opacity: 0; transform: scale(0.9); }
+    }
+
+    /* Unified Centered Lockup Architecture for G5, G6, and G7 */
+    .g5-container,
+    .g6-container,
+    .g7-container {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 26px;
+      pointer-events: none;
+    }
+
+    /* Converging Hero F Blades in G5 */
+    .g5-hero-f-wrap {
+      position: relative;
+      width: 140px;
+      height: 110px;
+      z-index: 80;
+    }
+    .g5-hero-f-cyan-trail {
+      position: absolute;
+      inset: 0;
+      opacity: 0.85;
+      filter: drop-shadow(0 0 16px var(--val-cyan));
+      animation: g5CyanGlitchTrail 0.48s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+    .g5-hero-f-main {
+      position: absolute;
+      inset: 0;
+      color: var(--val-red);
+      filter: drop-shadow(0 0 16px rgba(255, 70, 85, 0.7));
+      animation: g5MainBladeSlam 0.48s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+    .g5-hero-f-wrap svg {
+      width: 100%;
+      height: 100%;
+    }
+    .g5-blade-left {
+      animation: g5BladeLeftSlide 0.42s cubic-bezier(0.12, 0.95, 0.2, 1) both;
+    }
+    .g5-blade-top, .g5-blade-mid {
+      animation: g5BladeRightSlide 0.42s cubic-bezier(0.12, 0.95, 0.2, 1) both;
+    }
+    @keyframes g5BladeLeftSlide {
+      0%   { transform: translate(-65px, -45px) scale(1.18); opacity: 0; }
+      40%  { opacity: 1; }
+      100% { transform: translate(0, 0) scale(1); opacity: 1; }
+    }
+    @keyframes g5BladeRightSlide {
+      0%   { transform: translate(65px, -35px) scale(1.18); opacity: 0; }
+      40%  { opacity: 1; }
+      100% { transform: translate(0, 0) scale(1); opacity: 1; }
+    }
+    @keyframes g5CyanGlitchTrail {
+      0%   { transform: translate(-12px, -16px) scale(1.2); opacity: 0.95; }
+      30%  { transform: translate(8px, -6px) scale(1.09); opacity: 0.75; }
+      70%  { transform: translate(-3px, 2px) scale(1.02); opacity: 0.4; }
+      100% { transform: translate(0, 0) scale(1); opacity: 0; }
+    }
+    @keyframes g5MainBladeSlam {
+      0%   { transform: scale(1.22); opacity: 0; }
+      35%  { opacity: 1; transform: scale(1.08); }
+      70%  { transform: scale(0.97) skewX(2deg); }
+      100% { transform: scale(1.0) skewX(0); opacity: 1; }
+    }
+
+    /* Wordmark Base Slices FAHIM AHAMMAD in G5 */
+    .g5-wordmark-wrap {
+      display: inline-flex;
+      align-items: baseline;
+      justify-content: center;
+      font-family: 'Valorant', sans-serif;
+      font-size: 42px;
+      line-height: 1;
+      letter-spacing: 0.14em;
+      color: var(--val-red);
+      z-index: 80;
+      white-space: nowrap;
+      animation: wordmarkSlicesJoin 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+    .g5-word-spacer {
+      display: inline-block;
+      width: 22px;
+      vertical-align: baseline;
+    }
+    @keyframes wordmarkSlicesJoin {
+      0%   { opacity: 0; transform: translateY(20px) scale(0.95); letter-spacing: 0.28em; }
+      50%  { opacity: 1; }
+      100% { opacity: 1; transform: translateY(0) scale(1); letter-spacing: 0.14em; }
+    }
+
+    /* Speed pill in G5 (Frame 291-292) */
+    .g5-speed-pill {
+      position: absolute;
+      top: 50%;
+      right: 12%;
+      width: 117px;
+      height: 14px;
+      background: var(--val-red);
+      border-radius: 7px;
+      z-index: 75;
+      animation: speedPillDash 0.35s cubic-bezier(0.12, 0.95, 0.2, 1) 0.15s forwards;
+      opacity: 0;
+    }
+    @keyframes speedPillDash {
+      0%   { opacity: 0; transform: translateX(80px) scaleX(0.4); }
+      40%  { opacity: 1; transform: translateX(0) scaleX(1); }
+      80%  { opacity: 1; }
+      100% { opacity: 0; transform: translateX(-30px) scaleX(0.2); }
+    }
+
+    /* The 73px Mint Solder Pip (Frame 296) */
+    .g5-solder-pip {
+      position: absolute;
+      top: 50%;
+      left: calc(50% + 230px);
+      width: 14px;
+      height: 14px;
+      background: var(--val-cyan);
+      box-shadow: 0 0 16px var(--val-cyan), 0 0 30px #ffffff;
+      z-index: 90;
+      animation: solderPipPulse 0.45s ease-in-out infinite alternate;
+    }
+    @keyframes solderPipPulse {
+      0%   { transform: scale(0.85); opacity: 0.7; }
+      100% { transform: scale(1.25); opacity: 1; }
+    }
+
+    /* ========================================================
+       STAGE G6: THE CRIMSON SHOCK & 3-PIECE "T" COLLISION (FRAMES 297-326)
+       ======================================================== */
+    #stage-g6 {
+      background: var(--val-red);
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+    }
+
+    /* Hero F in G6 with Violent Impact Recoil & Cyber Glitch */
+    .g6-hero-f-wrap {
+      position: relative;
+      width: 140px;
+      height: 110px;
+      z-index: 80;
+      animation: g6LogoRecoil 1.1s cubic-bezier(0.16, 1, 0.3, 1) both;
+    }
+    @keyframes g6LogoRecoil {
+      0%   { transform: scale(1.16); filter: drop-shadow(-8px 0 0 #00f5a0) drop-shadow(8px 0 0 rgba(15,25,35,0.9)); }
+      5%   { transform: scale(1.06) skewX(-3deg); filter: drop-shadow(6px 0 0 #00f5a0); }
+      10%  { transform: scale(1.02) skewX(3deg); filter: drop-shadow(-5px 0 0 #00f5a0); }
+      18%  { transform: scale(0.98) skewX(0); filter: drop-shadow(0 0 0 rgba(0,0,0,0)); }
+      28%  { transform: scale(1.07); filter: drop-shadow(0 0 22px #00f5a0) brightness(1.7); }
+      35%  { transform: scale(0.99); filter: drop-shadow(-4px 0 0 #00f5a0); }
+      45%  { transform: scale(1.0); filter: none; }
+      100% { transform: scale(1.0); filter: none; }
+    }
+
+    .g6-hero-f-glitch-layer {
+      position: absolute;
+      inset: 0;
+    }
+    .g6-hero-f-glitch-layer.cyan-ghost {
+      color: var(--val-cyan);
+      opacity: 0.75;
+      mix-blend-mode: screen;
+      animation: g6CyanGhostGlitch 1.1s steps(2, start) both;
+    }
+    @keyframes g6CyanGhostGlitch {
+      0%   { transform: translate(-6px, -2px); opacity: 0.9; clip-path: polygon(0 0, 100% 0, 100% 45%, 0 45%); }
+      6%   { transform: translate(5px, 2px); opacity: 0.8; clip-path: polygon(0 40%, 100% 40%, 100% 75%, 0 75%); }
+      12%  { transform: translate(-4px, 1px); opacity: 0.6; clip-path: polygon(0 60%, 100% 60%, 100% 100%, 0 100%); }
+      20%  { opacity: 0; }
+      27%  { transform: translate(4px, -1px); opacity: 0.85; clip-path: polygon(0 15%, 100% 15%, 100% 50%, 0 50%); }
+      33%  { transform: translate(-3px, 2px); opacity: 0.5; clip-path: polygon(0 70%, 100% 70%, 100% 90%, 0 90%); }
+      40%  { opacity: 0; }
+      100% { opacity: 0; }
+    }
+
+    .g6-hero-f-glitch-layer.main-f {
+      color: var(--val-dark);
+      filter: drop-shadow(0 0 14px rgba(15, 25, 35, 0.4));
+    }
+    .g6-hero-f-glitch-layer svg {
+      width: 100%;
+      height: 100%;
+    }
+
+    /* Unified Baseline-Aligned Wordmark Container for G6 */
+    .g6-wordmark-container {
+      display: inline-flex;
+      align-items: baseline;
+      justify-content: center;
+      font-family: 'Valorant', sans-serif;
+      font-size: 42px;
+      line-height: 1;
+      letter-spacing: 0.14em;
+      color: var(--val-dark);
+      z-index: 80;
+      white-space: nowrap;
+    }
+
+    .g6-word {
+      display: inline-block;
+      vertical-align: baseline;
+    }
+
+    .g6-word-spacer {
+      display: inline-block;
+      width: 22px;
+      vertical-align: baseline;
+    }
+
+    /* The Last Word TANVIR - Exact Baseline Assembly of T + ANVIR */
+    .g6-tanvir-wrap {
+      display: inline-flex;
+      align-items: baseline;
+      vertical-align: baseline;
+      position: relative;
+    }
+
+    /* The 3-Piece Mechanical T Assembly Box */
+    .g6-t-char-box {
+      position: relative;
+      display: inline-block;
+      width: 28px;
+      height: 30px;
+      vertical-align: baseline;
+      margin-right: 3px;
+      overflow: visible;
+    }
+
+    /* Phase 6A: Horizontal Cyan Solder Drift (Frames 297-303) */
+    .g6-t-solder-drift {
+      position: absolute;
+      top: 3px;
+      left: -8px;
+      width: 32px;
+      height: 3px;
+      background: var(--val-cyan);
+      box-shadow: 0 0 10px var(--val-cyan), 0 0 18px #ffffff;
+      animation: tSolderDrift 0.22s cubic-bezier(0.12, 0.95, 0.2, 1) both;
+    }
+    @keyframes tSolderDrift {
+      0%   { transform: translateX(18px) scaleX(1.4); opacity: 0.95; }
+      40%  { transform: translateX(-4px) scaleX(1.0); opacity: 1; }
+      80%  { transform: translateX(2px) scaleX(0.7); opacity: 0.7; }
+      100% { transform: translateX(0) scaleX(0.1); opacity: 0; }
+    }
+
+    /* Phase 6B: Piece A Vertical Cyan Plunge Needle (Frames 304-309) */
+    .g6-t-plunge {
+      position: absolute;
+      top: -55px;
+      left: 10px;
+      width: 4px;
+      height: 36px;
+      background: var(--val-cyan);
+      box-shadow: 0 0 14px var(--val-cyan);
+      animation: tPlungeDrop 0.24s cubic-bezier(0.12, 0.95, 0.2, 1) 0.08s forwards;
+    }
+    @keyframes tPlungeDrop {
+      0%   { transform: translateY(-40px); opacity: 0; }
+      35%  { opacity: 1; }
+      100% { transform: translateY(60px); opacity: 0; }
+    }
+
+    /* Phase 6B: Piece B Dark Vertical Stem SVG */
+    .g6-t-stem-svg {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      color: var(--val-dark);
+      animation: tStemDrop 0.28s cubic-bezier(0.16, 1, 0.3, 1) 0.12s both;
+    }
+    @keyframes tStemDrop {
+      0%   { transform: translateY(-38px); opacity: 0; }
+      100% { transform: translateY(0); opacity: 1; }
+    }
+
+    /* Phase 6B: Piece C Sliding Chamfered Roof Slab SVG */
+    .g6-t-roof-svg {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      color: var(--val-dark);
+      animation: tRoofSlide 0.28s cubic-bezier(0.16, 1, 0.3, 1) 0.16s both;
+    }
+    @keyframes tRoofSlide {
+      0%   { transform: translateX(45px); opacity: 0; }
+      100% { transform: translateX(0); opacity: 1; }
+    }
+
+    /* Phase 6C: The 439px Ground Electric Arc Explosion (Frame 311) */
+    .g6-ground-arc {
+      position: absolute;
+      bottom: -8px;
+      left: -8px;
+      width: 46px;
+      height: 24px;
+      background: radial-gradient(ellipse at center, rgba(0, 245, 160, 0.95) 0%, rgba(0, 245, 160, 0.6) 45%, transparent 75%);
+      filter: drop-shadow(0 0 16px var(--val-cyan));
+      opacity: 0;
+      pointer-events: none;
+      animation: arcExplosion 0.32s ease-out 0.27s forwards;
+    }
+    @keyframes arcExplosion {
+      0%   { opacity: 0; transform: scale(0.2); }
+      45%  { opacity: 1; transform: scale(1.7); }
+      100% { opacity: 0; transform: scale(2.3); }
+    }
+
+    /* The ANVIR letters that slam into place when T completes welding */
+    .g6-anvir-tail {
+      display: inline-block;
+      vertical-align: baseline;
+      opacity: 0;
+      animation: anvirLock 0.18s cubic-bezier(0.16, 1, 0.3, 1) 0.30s forwards;
+    }
+    @keyframes anvirLock {
+      0%   { opacity: 0; transform: translateX(16px); filter: brightness(2); }
+      100% { opacity: 1; transform: translateX(0); filter: brightness(1); }
+    }
+
+    /* ========================================================
+       STAGE G7: THE SIGNATURE VOID BLACKOUT & MONOLITHIC LOCKUP (FRAMES 327-337)
+       ======================================================== */
+    #stage-g7 {
+      background: var(--val-void);
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+    }
+
+    /* Glowing Crimson Hero F Crest with Living Cyber Glitch */
+    .g7-hero-f {
+      position: relative;
+      width: 140px;
+      height: 110px;
+      color: var(--val-red);
+      animation: g7MonolithSlam 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+    @keyframes g7MonolithSlam {
+      0%   { transform: scale(1.18); filter: brightness(2.5) drop-shadow(0 0 45px var(--val-red)); }
+      40%  { transform: scale(0.98); filter: brightness(1.4) drop-shadow(0 0 28px var(--val-red)); }
+      100% { transform: scale(1.0); filter: brightness(1.0) drop-shadow(0 0 18px rgba(255, 70, 85, 0.7)); }
+    }
+
+    .g7-hero-f-glitch {
+      position: absolute;
+      inset: 0;
+    }
+    .g7-hero-f-glitch.cyan-ghost {
+      color: var(--val-cyan);
+      opacity: 0;
+      mix-blend-mode: screen;
+      animation: g7TacticalGlitch 3.4s steps(2, start) infinite 0.6s;
+    }
+    .g7-hero-f-glitch.main-f {
+      color: var(--val-red);
+      filter: drop-shadow(0 0 18px rgba(255, 70, 85, 0.75));
+      animation: g7MainFGlitch 3.4s ease-in-out infinite 0.6s;
+    }
+    .g7-hero-f-glitch svg {
+      width: 100%;
+      height: 100%;
+    }
+    @keyframes g7TacticalGlitch {
+      0%, 84%, 100% { opacity: 0; transform: translate(0, 0); }
+      85%           { opacity: 0.85; transform: translate(-4px, -1px); clip-path: polygon(0 20%, 100% 20%, 100% 55%, 0 55%); }
+      87%           { opacity: 0.7; transform: translate(5px, 2px); clip-path: polygon(0 60%, 100% 60%, 100% 85%, 0 85%); }
+      89%           { opacity: 0.4; transform: translate(-2px, 0); clip-path: polygon(0 0, 100% 0, 100% 30%, 0 30%); }
+      91%           { opacity: 0; }
+    }
+    @keyframes g7MainFGlitch {
+      0%, 84%, 100% { transform: scale(1); filter: drop-shadow(0 0 18px rgba(255, 70, 85, 0.75)); }
+      85%           { transform: scale(1.02) skewX(-2deg); filter: drop-shadow(4px 0 0 var(--val-red)) drop-shadow(-4px 0 0 var(--val-cyan)); }
+      87%           { transform: scale(0.98) skewX(2deg); filter: drop-shadow(-3px 0 0 var(--val-red)) drop-shadow(3px 0 0 var(--val-cyan)); }
+      89%           { transform: scale(1.01); filter: drop-shadow(0 0 25px var(--val-red)); }
+      91%           { transform: scale(1); filter: drop-shadow(0 0 18px rgba(255, 70, 85, 0.75)); }
+    }
+
+    /* Final Wordmark FAHIM AHAMMAD TANVIR - Perfect Kerning & Baseline */
+    .g7-fullname {
+      display: flex;
+      align-items: baseline;
+      justify-content: center;
+      font-family: 'Valorant', sans-serif;
+      font-size: 42px;
+      line-height: 1;
+      letter-spacing: 0.14em;
+      color: var(--val-red);
+      text-align: center;
+      white-space: nowrap;
+      filter: drop-shadow(0 0 18px rgba(255, 70, 85, 0.75));
+      animation: g7TextSlam 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+    @keyframes g7TextSlam {
+      0%   { opacity: 0; transform: translateY(12px) scale(0.96); letter-spacing: 0.22em; }
+      100% { opacity: 1; transform: translateY(0) scale(1.0); letter-spacing: 0.14em; }
+    }
+
+    .g7-spacer {
+      display: inline-block;
+      width: 22px;
+      vertical-align: baseline;
+    }
+
+    .g7-dev-stamp {
+      position: absolute;
+      bottom: calc(50% - 130px);
+      left: 50%;
+      transform: translateX(-50%);
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.45em;
+      color: rgba(255, 70, 85, 0.8);
+      white-space: nowrap;
+    }
+</style>
+</head>
+
+<body>
+  <div class="scanlines"></div>
+
+  <!-- Background Audio Continuous -->
+  <video id="reveal-media" style="display:none;" preload="auto">
+    <source src="../Valorant logo reveal animation _Project A_ - Trim.mp4" type="video/mp4" />
+    <source src="../reveal_audio.webm" type="audio/webm" />
+  </video>
+
+  <!-- Splash Screen -->
+  <div id="splash">
+    <div class="splash-box">
+      <div class="splash-title">PROTOCOL // CINEMATIC REVEAL</div>
+      <div class="splash-sub">CLICK TO INITIATE // FAHIM AHAMMAD TANVIR</div>
+    </div>
+  </div>
+
+  <!-- Skip Intro Button -->
+  <button id="skip-btn" class="skip-intro-btn" style="position:fixed; top:24px; right:32px; z-index:999; background:rgba(15,25,35,0.7); border:1px solid rgba(255,70,85,0.4); color:#ffffff; font-family:'Share Tech Mono',monospace; font-size:11px; letter-spacing:0.18em; padding:8px 18px; cursor:pointer; backdrop-filter:blur(8px); transition:all 0.25s ease;">[ SKIP INTRO ↗ ]</button>
+
+  <!-- Master Stage -->
+  <div id="master-stage">
+    <!-- Scenes 1, 2, 3 from V11 -->
+    <div class="scene-container" id="scene-v4">
+      <!-- V4 Phase 1: Frames 1 - 31 -->
+      <div id="v4-phase-1">
+        <div class="p1-left-wall"></div>
+        <div class="p1-right-wedge"></div>
+        <div class="p1-top-triangle"></div>
+        <div class="p1-double-chevrons">
+          <div class="chev-blade"></div>
+          <div class="chev-blade"></div>
+        </div>
+        <div class="p1-dynamic-pip"></div>
+        <div class="p1-dynamic-arrow"></div>
+        <div class="hud-label" style="top:25px; left:48px; color:rgba(255,70,85,0.7);">01 // SYSTEM_INIT // F_PRCL</div>
+      </div>
+
+      <!-- V4 Phase 2: Frames 35 - 64 -->
+      <div id="v4-phase-2">
+        <div class="f-diagonal-axis"></div>
+        <div class="f-push-wrapper">
+          <div class="f-main-spine"></div>
+          <div class="f-top-bar"></div>
+          <div class="f-elevating-slab" id="f-slab"></div>
+          <div class="f-right-void-shutter" id="right-void"></div>
+        </div>
+        <div class="f-micro-chevrons">
+          <div class="f-chev-blade"></div>
+          <div class="f-chev-blade"></div>
+        </div>
+        <div class="f-micro-drifting-bar"></div>
+        <div class="f-micro-center-arrow"></div>
+        <div class="f-micro-lower-sq"></div>
+        <div class="hud-label" style="top:35px; right:48px; color:rgba(15,25,35,0.7);">01 // TACTICAL_F // KINETIC</div>
+      </div>
+    </div>
+
+    <!-- ===================================================
+         SCENE 2: V9 (TRUE MM ARCHITECTURE)
+         =================================================== -->
+    <div class="scene-container" id="scene-v9">
+      <div class="v9-hairline"></div>
+      <div class="v9-left-leg" id="v9-left-leg"></div>
+      <div class="v9-right-leg" id="v9-right-leg"></div>
+      <div class="v9-arrow-pip" id="v9-pip"></div>
+      <div class="v9-chevrons">
+        <div class="v9-chev"></div>
+        <div class="v9-chev"></div>
+      </div>
+      <div class="v9-pip-left"></div>
+      <div class="v9-pip-right"></div>
+      <div class="hud-label" style="top:28px; left:60px; color:rgba(255,70,85,0.6);">// VLRNT // MM_OUTER_LEGS</div>
+      <div class="hud-label" style="bottom:28px; right:60px; color:rgba(255,70,85,0.6);">AHAMMAD // AXIS_SYMMETRY</div>
+    </div>
+
+    <!-- ===================================================
+         SCENE 3: V10 (NVIR RED BUILD)
+         =================================================== -->
+    <div class="scene-container" id="scene-v10">
+      <div class="v10-hairline"></div>
+      <div class="v10-v-shape" id="v10-v"></div>
+      <div class="v10-r-body" id="v10-r-body"></div>
+      <div class="v10-r-slash" id="v10-r-slash"></div>
+      <div class="v10-i-top" id="v10-i-top"></div>
+      <div class="v10-i-bot" id="v10-i-bot"></div>
+      <div class="v10-i-stem" id="v10-i-stem"></div>
+      <div class="v10-chevrons">
+        <div class="v10-chev"></div>
+        <div class="v10-chev"></div>
+      </div>
+      <div class="v10-arrow-pip"></div>
+      <div class="v10-horiz-bar-1"></div>
+      <div class="v10-horiz-bar-2"></div>
+      <div class="v10-horiz-bar-bot"></div>
+      <div class="hud-label" style="top:44px; left:88px; color:rgba(15,25,35,0.65);">// VLRNT // NVIR_CONSTRUCT</div>
+      <div class="hud-label" style="top:225px; left:430px; color:rgba(15,25,35,0.65);">BIND MRCS</div>
+      <div class="hud-label" style="top:240px; left:430px; color:rgba(15,25,35,0.65);">SPLT JPN</div>
+    </div>
+
+  </div>
+
+
+
+  <!-- Scenes 4, 5 from V14 -->
+  <div class="scene-layer" id="scene-v12">
+    <div class="v12-hairline"></div>
+
+    <!-- Top Track: T V R sliding left -->
+    <div class="v12-top-container">
+      <div class="v12-top-content" id="v12-top">
+        <span>T</span>
+        <span>V</span>
+        <span>R</span>
+      </div>
+    </div>
+
+    <!-- Bottom Track: T V R sliding right -->
+    <div class="v12-bot-container">
+      <div class="v12-bot-content" id="v12-bot">
+        <span>T</span>
+        <span>V</span>
+        <span>R</span>
+      </div>
+    </div>
+
+    <div class="v12-micro-dash"></div>
+    <div class="v12-micro-dot" style="top: 20%; left: 84%;"></div>
+    <div class="v12-micro-dot" style="top: 36%; left: 84%;"></div>
+    <div class="v12-micro-dot" style="top: 68%; left: 84%;"></div>
+    <div class="v12-micro-dot" style="top: 84%; left: 84%;"></div>
+
+    <div class="hud-label" style="top: 24%; left: 86%; color:rgba(15,25,35,0.72);">07 // AYALC</div>
+    <div class="hud-label" style="top: 36%; left: 86%; color:rgba(15,25,35,0.72);">01</div>
+    <div class="hud-label" style="top: 48%; left: 47%; color:rgba(15,25,35,0.72);">HAVEN</div>
+    <div class="hud-label" style="top: 88%; left: 35%; color:rgba(15,25,35,0.72);">SPLT // JPN</div>
+  </div>
+
+  <!-- ===================================================
+         SCENE 2: V13 ("AHAMMAD" OPPOSING FLIP)
+         =================================================== -->
+  <div class="scene-layer" id="scene-v13">
+    <div class="v13-hairline"></div>
+
+    <!-- Top Track: ... A M M A D -->
+    <div class="v13-top-container">
+      <div class="v13-top-content" id="v13-top">
+        <span>A</span>
+        <span>M</span>
+        <span>M</span>
+        <span>A</span>
+        <span>D</span>
+      </div>
+    </div>
+
+    <!-- Bottom Track: A H A M M ... -->
+    <div class="v13-bot-container">
+      <div class="v13-bot-content" id="v13-bot">
+        <span>A</span>
+        <span>H</span>
+        <span>A</span>
+        <span>M</span>
+        <span>M</span>
+      </div>
+    </div>
+
+    <!-- Center Void Micro-details -->
+    <div class="v13-arrow-pip" id="v13-arrow"></div>
+    <div class="hud-label" style="top: 42%; left: 42%; color:rgba(255,70,85,0.55);">// AHAMMAD // PROTOCOL</div>
+    <div class="hud-label" style="top: 54%; left: 42%; color:rgba(255,70,85,0.55);">SYS_ID // SWE_23</div>
+    <div class="hud-label" style="top: 44%; right: 12%; color:rgba(255,70,85,0.55);">SUST // CSE_SUST</div>
+  </div>
+
+  </div>
+
+
+
+  <!-- Scene 6 from V20 -->
+  <div class="scene-layer" id="scene-v20">
+    <div class="hairline-axis"></div>
+
+    <!-- Center Static Elements from Frames 265-282 -->
+    <div class="left-chevron-pip"></div>
+    <div class="center-stem-left"></div>
+    <div class="center-stem-right"></div>
+
+    <!-- Initial Center Anchor Bars (Frame 265) -->
+    <div class="anchor-left" id="anchor-left"></div>
+    <div class="anchor-right" id="anchor-right"></div>
+
+    <!-- ========================================================
+         LANE 2: UPPER-MIDDLE (180° INVERTED "FAHIM")
+         The real geometric pieces slam together and slide continuously LEFT!
+         ======================================================== -->
+    <div class="track-2" id="track-2">
+      <div class="fahim-word-container">
+        <!-- CHAR F -->
+        <div class="char-box box-f">
+          <div class="geo-stroke f-stem"></div>
+          <div class="geo-stroke f-top"></div>
+          <div class="geo-stroke f-mid"></div>
+        </div>
+        <!-- CHAR A -->
+        <div class="char-box box-a">
+          <div class="geo-stroke a-left-blade"></div>
+          <div class="geo-stroke a-right-pillar"></div>
+          <div class="geo-stroke a-cross-wedge"></div>
+        </div>
+        <!-- CHAR H -->
+        <div class="char-box box-h">
+          <div class="geo-stroke h-left-pillar"></div>
+          <div class="geo-stroke h-right-pillar"></div>
+          <div class="geo-stroke h-cross"></div>
+        </div>
+        <!-- CHAR I -->
+        <div class="char-box box-i">
+          <div class="geo-stroke i-pillar"></div>
+        </div>
+        <!-- CHAR M -->
+        <div class="char-box box-m">
+          <div class="geo-stroke m-left-blade"></div>
+          <div class="geo-stroke m-center-down"></div>
+          <div class="geo-stroke m-center-up"></div>
+          <div class="geo-stroke m-right-pillar"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========================================================
+         LANE 3: LOWER-MIDDLE (UPRIGHT "FAHIM")
+         The real geometric pieces slam together and slide continuously RIGHT!
+         ======================================================== -->
+    <div class="track-3" id="track-3">
+      <div class="fahim-word-container">
+        <!-- CHAR F -->
+        <div class="char-box box-f">
+          <div class="geo-stroke f-stem"></div>
+          <div class="geo-stroke f-top"></div>
+          <div class="geo-stroke f-mid"></div>
+        </div>
+        <!-- CHAR A -->
+        <div class="char-box box-a">
+          <div class="geo-stroke a-left-blade"></div>
+          <div class="geo-stroke a-right-pillar"></div>
+          <div class="geo-stroke a-cross-wedge"></div>
+        </div>
+        <!-- CHAR H -->
+        <div class="char-box box-h">
+          <div class="geo-stroke h-left-pillar"></div>
+          <div class="geo-stroke h-right-pillar"></div>
+          <div class="geo-stroke h-cross"></div>
+        </div>
+        <!-- CHAR I -->
+        <div class="char-box box-i">
+          <div class="geo-stroke i-pillar"></div>
+        </div>
+        <!-- CHAR M -->
+        <div class="char-box box-m">
+          <div class="geo-stroke m-left-blade"></div>
+          <div class="geo-stroke m-center-down"></div>
+          <div class="geo-stroke m-center-up"></div>
+          <div class="geo-stroke m-right-pillar"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========================================================
+         ROOF & FLOOR HIGHWAYS (Frames 271-274)
+         Sequential emergence after the center pieces lock
+         ======================================================== -->
+    <div class="roof-highway" id="roof-highway">
+      <div class="roof-content">
+        <span>FAHIM</span>
+        <span>FAHIM</span>
+      </div>
+    </div>
+
+    <div class="floor-highway" id="floor-highway">
+      <div class="floor-content">
+        <span>FAHIM</span>
+        <span>FAHIM</span>
+      </div>
+    </div>
+
+    <!-- Technical HUD Details -->
+    <div class="micro-dash" style="top: 24%; left: 5%; width: 56px;"></div>
+    <div class="micro-dash" style="top: 24%; right: 9%; width: 56px;"></div>
+    <div class="micro-dash" style="top: 70%; right: 9%; width: 64px;"></div>
+
+    <div class="micro-dot" style="top: 36%; left: 16%;"></div>
+    <div class="micro-dot" style="top: 36%; left: 32%;"></div>
+    <div class="micro-dot" style="top: 66%; right: 16%;"></div>
+    <div class="micro-dot" style="top: 74%; right: 16%;"></div>
+
+    <div class="hud-label" style="top: 36%; left: 27%;">VLRNT // SWE_23</div>
+    <div class="hud-label" style="top: 90%; left: 28%;">PRTCL // FAHIM</div>
+    <div class="hud-label" style="top: 10%; right: 10%;">BIND // HAVEN</div>
+    <div class="hud-label" style="top: 90%; right: 10%;">SUST // SWE</div>
+  </div>
+  </div>
+
+
+          <!-- ========================================================
+         STAGE G5: CENTER CONVERGENCE & CYBER-GLITCH (FRAMES 283-296)
+         ======================================================== -->
+    <div class="scene-layer" id="stage-g5">
+      <div class="g5-cyan-wing-left"></div>
+      <div class="g5-cyan-wing-right"></div>
+      
+      <div class="g5-container">
+        <div class="g5-hero-f-wrap">
+          <div class="g5-hero-f-cyan-trail">
+            <svg class="hero-f-svg" viewBox="0 0 140 110" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <polygon points="15,5 48,5 24,95 5,95" fill="#00f5a0" />
+              <polygon points="56,5 110,5 98,28 56,28" fill="#00f5a0" />
+              <polygon points="50,42 92,42 82,60 50,60" fill="#00f5a0" />
+            </svg>
+          </div>
+          <div class="g5-hero-f-main">
+            <svg class="hero-f-svg" viewBox="0 0 140 110" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <!-- 1. Left Major Spine (Blade 1) - Chamfered 42° base -->
+              <polygon class="g5-blade-left" points="15,5 48,5 24,95 5,95" fill="currentColor" />
+              <!-- 2. Top Roof Bar (Blade 2) - Slanted 42° outer cut -->
+              <polygon class="g5-blade-top" points="56,5 110,5 98,28 56,28" fill="currentColor" />
+              <!-- 3. Mid Floating Fin - Parallel Tactical Slab -->
+              <polygon class="g5-blade-mid" points="50,42 92,42 82,60 50,60" fill="currentColor" />
+              <!-- Signature 4px Mint-Cyan Accent Notch (Frame 296/300) -->
+              <rect x="106" y="5" width="4" height="23" fill="#00f5a0" />
+            </svg>
+          </div>
+        </div>
+
+        <div class="g5-wordmark-wrap">
+          <span>FAHIM</span>
+          <span class="g5-word-spacer"></span>
+          <span>AHAMMAD</span>
+        </div>
+      </div>
+
+      <div class="g5-speed-pill"></div>
+      <div class="g5-solder-pip"></div>
+
+      <div class="hud-label" style="top: 28px; left: 60px; color:rgba(255,70,85,0.65);">// SYS_ID // CONVERGENCE_05</div>
+      <div class="hud-label" style="bottom: 28px; right: 60px; color:rgba(0,245,160,0.85);">MINT_SOLDER // 73PX_PIP</div>
+    </div>
+
+    <!-- ========================================================
+         STAGE G6: CRIMSON SHOCK & 3-PIECE "T" DROP (FRAMES 297-326)
+         ======================================================== -->
+    <div class="scene-layer" id="stage-g6">
+      <div class="hairline-axis" style="background: rgba(15,25,35,0.35);"></div>
+
+      <div class="g6-container">
+        <div class="g6-hero-f-wrap">
+          <div class="g6-hero-f-glitch-layer cyan-ghost">
+            <svg class="hero-f-svg" viewBox="0 0 140 110" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <polygon points="15,5 48,5 24,95 5,95" fill="#00f5a0" />
+              <polygon points="56,5 110,5 98,28 56,28" fill="#00f5a0" />
+              <polygon points="50,42 92,42 82,60 50,60" fill="#00f5a0" />
+            </svg>
+          </div>
+          <div class="g6-hero-f-glitch-layer main-f">
+            <svg class="hero-f-svg" viewBox="0 0 140 110" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <!-- 1. Left Major Spine (Blade 1) - Chamfered 42° base -->
+              <polygon points="15,5 48,5 24,95 5,95" fill="currentColor" />
+              <!-- 2. Top Roof Bar (Blade 2) - Slanted 42° outer cut -->
+              <polygon points="56,5 110,5 98,28 56,28" fill="currentColor" />
+              <!-- 3. Mid Floating Fin - Parallel Tactical Slab -->
+              <polygon points="50,42 92,42 82,60 50,60" fill="currentColor" />
+              <!-- Signature 4px Mint-Cyan Accent Notch (Frame 296/300) -->
+              <rect x="106" y="5" width="4" height="23" fill="#00f5a0" />
+            </svg>
+          </div>
+        </div>
+
+        <!-- Clean Unified Wordmark with in-place mechanical T assembly -->
+        <div class="g6-wordmark-container">
+          <span class="g6-word">FAHIM</span>
+          <span class="g6-word-spacer"></span>
+          <span class="g6-word">AHAMMAD</span>
+          <span class="g6-word-spacer"></span>
+          <span class="g6-tanvir-wrap">
+            <!-- The 3-Piece Mechanical T Box -->
+            <span class="g6-t-char-box">
+              <!-- Phase 6A: Horizontal Cyan Solder Drift (Frames 297-303) -->
+              <span class="g6-t-solder-drift"></span>
+              <!-- Phase 6B: Vertical Cyan Plunge Needle (Frames 304-309) -->
+              <span class="g6-t-plunge"></span>
+              <!-- Phase 6B: Piece B Dark Vertical Stem SVG -->
+              <svg class="g6-t-stem-svg" viewBox="0 0 28 30">
+                <rect x="8" y="7" width="7" height="23" fill="currentColor" />
+              </svg>
+              <!-- Phase 6B: Piece C Sliding Chamfered Roof Slab SVG -->
+              <svg class="g6-t-roof-svg" viewBox="0 0 28 30">
+                <polygon points="0,0 22,0 28,9 0,9" fill="currentColor" />
+              </svg>
+              <!-- Phase 6C: Ground Laser Arc Explosion (Frames 310-315) -->
+              <span class="g6-ground-arc"></span>
+            </span>
+            <!-- ANVIR Tail -->
+            <span class="g6-anvir-tail">ANVIR</span>
+          </span>
+        </div>
+      </div>
+
+      <div class="hud-label" style="top: 28px; right: 60px; color:rgba(15,25,35,0.7);">06 // CLIMAX // 3_PIECE_T</div>
+      <div class="hud-label" style="bottom: 28px; left: 60px; color:rgba(15,25,35,0.7);">ARC_DISCHARGE // 439PX</div>
+    </div>
+
+    <!-- ========================================================
+         STAGE G7: THE SIGNATURE VOID BLACKOUT & MONOLITH (FRAMES 327-337)
+         ======================================================== -->
+    <div class="scene-layer" id="stage-g7">
+      <div class="g7-container">
+        <div class="g7-hero-f">
+          <div class="g7-hero-f-glitch cyan-ghost">
+            <svg class="hero-f-svg" viewBox="0 0 140 110" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <polygon points="15,5 48,5 24,95 5,95" fill="#00f5a0" />
+              <polygon points="56,5 110,5 98,28 56,28" fill="#00f5a0" />
+              <polygon points="50,42 92,42 82,60 50,60" fill="#00f5a0" />
+            </svg>
+          </div>
+          <div class="g7-hero-f-glitch main-f">
+            <svg class="hero-f-svg" viewBox="0 0 140 110" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <!-- 1. Left Major Spine (Blade 1) - Chamfered 42° base -->
+              <polygon points="15,5 48,5 24,95 5,95" fill="currentColor" />
+              <!-- 2. Top Roof Bar (Blade 2) - Slanted 42° outer cut -->
+              <polygon points="56,5 110,5 98,28 56,28" fill="currentColor" />
+              <!-- 3. Mid Floating Fin - Parallel Tactical Slab -->
+              <polygon points="50,42 92,42 82,60 50,60" fill="currentColor" />
+              <!-- Signature 4px Mint-Cyan Accent Notch (Frame 296/300) -->
+              <rect x="106" y="5" width="4" height="23" fill="#00f5a0" />
+            </svg>
+          </div>
+        </div>
+        <div class="g7-fullname">
+          <span>FAHIM</span>
+          <span class="g7-spacer"></span>
+          <span>AHAMMAD</span>
+          <span class="g7-spacer"></span>
+          <span>TANVIR</span>
+        </div>
+      </div>
+      <div class="g7-dev-stamp">SOFTWARE ENGINEER // SUST // 2026</div>
+
+      <div class="hud-label" style="top: 24px; left: 32px; color:rgba(255,70,85,0.5);">// VOID_GENESIS // FRAME_337</div>
+      <div class="hud-label" style="bottom: 24px; right: 32px; color:rgba(255,70,85,0.5);">IMMORTAL // MONOLITH</div>
+    </div>
+
+  <!-- Navigation Controls -->
+  <div class="nav-bar" id="nav-bar">
+    <button class="btn" id="replay-btn">↺ REPLAY FULL MASTER</button>
+    <button class="btn" id="jump-v4">G1: F-BUILD</button>
+    <button class="btn" id="jump-v9">G2: ROSTER</button>
+    <button class="btn" id="jump-v10">G3: BEAMS</button>
+    <button class="btn" id="jump-v12">G4A: CONVEYOR</button>
+    <button class="btn" id="jump-v13">G4B: AHAMMAD</button>
+    <button class="btn" id="jump-v20">G4C: HIGHWAY</button>
+    <button class="btn" id="jump-g5">G5: CONVERGE</button>
+    <button class="btn" id="jump-g6">G6: T-DROP</button>
+    <button class="btn" id="jump-g7">G7: MONOLITH</button>
+  </div>
+
+  <script>
+    const splash = document.getElementById('splash');
+    const media = document.getElementById('reveal-media');
+    const sceneHud = document.getElementById('scene-hud');
+    const navBar = document.getElementById('nav-bar');
+    const replayBtn = document.getElementById('replay-btn');
+
+    // Scene elements
+    const sc4 = document.getElementById('scene-v4');
+    const v4p1 = document.getElementById('v4-phase-1');
+    const v4p2 = document.getElementById('v4-phase-2');
+    const fSlab = document.getElementById('f-slab');
+    const rightVoid = document.getElementById('right-void');
+
+    const sc9 = document.getElementById('scene-v9');
+    const sc10 = document.getElementById('scene-v10');
+    const sc12 = document.getElementById('scene-v12');
+    const sc13 = document.getElementById('scene-v13');
+    const sc20 = document.getElementById('scene-v20');
+    const scG5 = document.getElementById('stage-g5');
+    const scG6 = document.getElementById('stage-g6');
+    const scG7 = document.getElementById('stage-g7');
+
+    const badgeG5 = document.getElementById('badge-g5');
+    const badgeG6 = document.getElementById('badge-g6');
+    const badgeG7 = document.getElementById('badge-g7');
+
+    // Badges
+    const badge4 = document.getElementById('badge-v4');
+    const badge9 = document.getElementById('badge-v9');
+    const badge10 = document.getElementById('badge-v10');
+    const badge12 = document.getElementById('badge-v12');
+    const badge13 = document.getElementById('badge-v13');
+    const badge20 = document.getElementById('badge-v20');
+
+    const wait = ms => new Promise(res => setTimeout(res, ms));
+
+    function resetElementAnimations(container) {
+      const els = container.querySelectorAll('*');
+      els.forEach(el => {
+        el.style.animation = 'none';
+        el.offsetHeight;
+        el.style.animation = '';
+      });
+    }
+
+    function setBadge(name) {
+      [badge4, badge9, badge10, badge12, badge13, badge20, badgeG5, badgeG6, badgeG7].forEach(b => b && b.classList.remove('active'));
+      if (name === 'v4') badge4.classList.add('active');
+      if (name === 'v9') badge9.classList.add('active');
+      if (name === 'v10') badge10.classList.add('active');
+      if (name === 'v12') badge12.classList.add('active');
+      if (name === 'v13') badge13.classList.add('active');
+      if (name === 'v20') badge20.classList.add('active');
+      if (name === 'g5') badgeG5.classList.add('active');
+      if (name === 'g6') badgeG6.classList.add('active');
+      if (name === 'g7') badgeG7.classList.add('active');
+    }
+
+    function hideAll() {
+      sc4.style.display = 'none';
+      v4p1.style.display = 'none';
+      v4p2.style.display = 'none';
+      sc9.style.display = 'none';
+      sc10.style.display = 'none';
+      sc12.style.display = 'none';
+      sc13.style.display = 'none';
+      sc20.style.display = 'none';
+      if (scG5) scG5.style.display = 'none';
+      if (scG6) scG6.style.display = 'none';
+      if (scG7) scG7.style.display = 'none';
+    }
+
+    function startAudio(time = 0) {
+      try {
+        media.currentTime = time;
+        const p = media.play();
+        if (p && p.catch) p.catch(() => { });
+      } catch (e) { }
+    }
+
+    splash.addEventListener('click', () => {
+      splash.classList.add('hide');
+      sceneHud.classList.add('show');
+      playFullSequence();
+    });
+
+    async function playFullSequence() {
+      navBar.classList.remove('show');
+      hideAll();
+
+      // Start audio from beginning
+      startAudio(0);
+
+      /* ========================================================
+         STEP 1: SCENE V4 ("F" BUILD) — (~1.0s)
+         ======================================================== */
+      setBadge('v4');
+      sc4.style.display = 'block';
+
+      // V4 Phase 1: (~420ms)
+      resetElementAnimations(v4p1);
+      v4p1.style.display = 'block';
+      v4p2.style.display = 'none';
+      await wait(420);
+
+      // V4 Phase 2: (~580ms)
+      v4p1.style.display = 'none';
+      resetElementAnimations(v4p2);
+      v4p2.style.display = 'block';
+      fSlab.style.animation = 'slabElevateUp 0.55s cubic-bezier(0.16, 1, 0.3, 1) forwards';
+      rightVoid.style.animation = 'rightSideOpen 0.55s cubic-bezier(0.2, 0.8, 0.2, 1) forwards';
+      await wait(580);
+
+      /* ========================================================
+         STEP 2: SCENE V9 (TRUE MM ARCHITECTURE) — (~950ms)
+         ======================================================== */
+      sc4.style.display = 'none';
+      setBadge('v9');
+      resetElementAnimations(sc9);
+      sc9.style.display = 'block';
+      await wait(950);
+
+      /* ========================================================
+         STEP 3: SCENE V10 (NVIR RED BUILD) — (~900ms)
+         ======================================================== */
+      sc9.style.display = 'none';
+      setBadge('v10');
+      resetElementAnimations(sc10);
+      sc10.style.display = 'block';
+      await wait(900);
+
+      /* ========================================================
+         STEP 4: SCENE V12 ("T V R" RED SNAP & SPREAD) — (~680ms)
+         Rapid snap cut matching video frame 239 sound burst
+         ======================================================== */
+      sc10.style.display = 'none';
+      setBadge('v12');
+      resetElementAnimations(sc12);
+      sc12.style.display = 'block';
+      await wait(680);
+
+      /* ========================================================
+         STEP 5: SCENE V13 ("AHAMMAD" OPPOSING TRACKS) — (~480ms)
+         High-energy shock flash transition
+         ======================================================== */
+      sc12.style.display = 'none';
+      setBadge('v13');
+      resetElementAnimations(sc13);
+      sc13.style.display = 'block';
+      await wait(480);
+
+      /* ========================================================
+         STEP 6: SCENE V20 ("FAHIM" HIGHWAY CROSS-OVER) — (~1.1s)
+         ======================================================== */
+      sc13.style.display = 'none';
+      setBadge('v20');
+      resetElementAnimations(sc20);
+      sc20.style.display = 'block';
+      await wait(1100);
+
+      /* ========================================================
+         STEP 7: STAGE G5 (CYBER-GLITCH & FAHIM AHAMMAD ASSEMBLE) — (~750ms)
+         Matching Video Frame 182-199 (Audio Glitch Blitz)
+         ======================================================== */
+      sc20.style.display = 'none';
+      setBadge('g5');
+      resetElementAnimations(scG5);
+      scG5.style.display = 'block';
+      await wait(750);
+
+      /* ========================================================
+         STEP 8: STAGE G6 (CRIMSON SHOCK & 3-PIECE "T" COLLISION) — (~1.1s)
+         Matching Video Frame 200-225 (Massive Bass Drop & Arc Explosion)
+         ======================================================== */
+      scG5.style.display = 'none';
+      setBadge('g6');
+      resetElementAnimations(scG6);
+      scG6.style.display = 'block';
+      await wait(1100);
+
+      /* ========================================================
+         STEP 9: STAGE G7 (VOID BLACKOUT & MONOLITHIC LOCKUP) — (~2.5s)
+         Matching Video Frame 226+ (Absolute Stillness & Sub-Bass Tail)
+         ======================================================== */
+      scG6.style.display = 'none';
+      resetElementAnimations(scG7);
+      scG7.style.display = 'block';
+      await wait(2200);
+
+      // Automatic smooth transition to index.html
+      const fadeOverlay = document.createElement('div');
+      fadeOverlay.style.cssText = 'position:fixed; inset:0; background:#07070F; opacity:0; z-index:99999; transition:opacity 0.8s ease; pointer-events:none;';
+      document.body.appendChild(fadeOverlay);
+      fadeOverlay.offsetHeight;
+      fadeOverlay.style.opacity = '1';
+      setTimeout(() => {
+        window.location.href = '../index.html?intro=done';
+      }, 750);
+    }
+
+    document.getElementById('skip-btn').addEventListener('click', (e) => {
+      e.stopPropagation();
+      window.location.href = '../index.html?intro=done';
+    });
+
+  </script>
+</body>
+
+</html>

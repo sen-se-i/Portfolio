@@ -1,0 +1,765 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FAHIM AHAMMAD TANVIR // PROJECT A MICRO-TRANSITIONS</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@700;800&display=swap" rel="stylesheet" />
+  <style>
+    @font-face {
+      font-family: 'Valorant';
+      src: url('valorant_font/Valorant Font.ttf') format('truetype');
+      font-weight: normal;
+      font-style: normal;
+    }
+
+    *, *::before, *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      user-select: none;
+    }
+
+    :root {
+      --val-red: #ff4655;
+      --val-dark: #0f1923;
+      --val-black: #080c10;
+      --val-white: #ffffff;
+      --val-cyan: #00f5d4;
+    }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      background: var(--val-dark);
+      overflow: hidden;
+      font-family: 'Valorant', sans-serif;
+      position: relative;
+    }
+
+    /* Scanlines Overlay */
+    .scanlines {
+      position: fixed;
+      inset: 0;
+      background: repeating-linear-gradient(
+        to bottom,
+        transparent 0px,
+        transparent 3px,
+        rgba(0, 0, 0, 0.18) 3px,
+        rgba(0, 0, 0, 0.18) 4px
+      );
+      pointer-events: none;
+      z-index: 950;
+    }
+
+    /* 1-Click Audio Unlock Gate */
+    #start-splash {
+      position: fixed;
+      inset: 0;
+      background: var(--val-black);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      cursor: pointer;
+      transition: opacity 0.3s ease;
+    }
+    #start-splash.hide {
+      opacity: 0;
+      pointer-events: none;
+    }
+    .splash-box {
+      border: 1px solid rgba(255, 70, 85, 0.4);
+      padding: 28px 56px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 14px;
+      background: rgba(255, 70, 85, 0.04);
+      position: relative;
+    }
+    .splash-box::before {
+      content: '';
+      position: absolute;
+      top: -3px; left: -3px;
+      width: 12px; height: 12px;
+      border-top: 3px solid var(--val-red);
+      border-left: 3px solid var(--val-red);
+    }
+    .splash-box::after {
+      content: '';
+      position: absolute;
+      bottom: -3px; right: -3px;
+      width: 12px; height: 12px;
+      border-bottom: 3px solid var(--val-red);
+      border-right: 3px solid var(--val-red);
+    }
+    .splash-title {
+      font-size: 34px;
+      letter-spacing: 0.25em;
+      color: var(--val-white);
+    }
+    .splash-sub {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.45em;
+      color: var(--val-red);
+      animation: pulse 1.2s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 0.35; }
+      50% { opacity: 1; }
+    }
+
+    /* Stage Container */
+    #stage-container {
+      position: fixed;
+      inset: 0;
+      overflow: hidden;
+      background: var(--val-dark);
+      z-index: 50;
+    }
+
+    /* Static HUD Overlays */
+    .hud-label {
+      position: fixed;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.35em;
+      color: rgba(255, 255, 255, 0.35);
+      z-index: 900;
+      pointer-events: none;
+    }
+    .hud-tl { top: 26px; left: 36px; }
+    .hud-tr { top: 26px; right: 36px; }
+    .hud-bl { bottom: 26px; left: 36px; }
+    .hud-br { bottom: 26px; right: 36px; }
+
+    /* Moving Micro-Tick Glitch Lines (As seen in Frames 180-210) */
+    .micro-tick {
+      position: absolute;
+      height: 2px;
+      background: var(--val-red);
+      opacity: 0.8;
+      z-index: 80;
+      pointer-events: none;
+      transition: transform 0.1s linear;
+    }
+    .tick-1 { top: 22%; left: 18%; width: 44px; }
+    .tick-2 { top: 48%; left: 6%; width: 32px; }
+    .tick-3 { bottom: 24%; left: 16%; width: 68px; }
+
+    /* Micro floating chevrons "//" */
+    .floating-slashes {
+      position: absolute;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 14px;
+      color: var(--val-red);
+      font-weight: bold;
+      z-index: 80;
+      pointer-events: none;
+    }
+
+    /* Thin 45-degree hairline construction vectors */
+    .hairline-diagonal {
+      position: absolute;
+      width: 150vw;
+      height: 1px;
+      background: rgba(255, 70, 85, 0.25);
+      transform: rotate(-35deg);
+      transform-origin: top left;
+      pointer-events: none;
+      z-index: 60;
+    }
+
+    /* ============================================================
+       ACT 1: STROBE SLICES (Frames 1-24)
+       ============================================================ */
+    #act-1 {
+      position: absolute;
+      inset: 0;
+      display: none;
+      background: var(--val-dark);
+    }
+    .cyan-slit-bar {
+      position: absolute;
+      height: 44px;
+      background: var(--val-cyan);
+      left: 0; right: 0;
+      top: 48%;
+      transform: translateY(-50%);
+      animation: slitWobble 0.35s steps(2) infinite;
+    }
+    @keyframes slitWobble {
+      0% { transform: translateY(-50%) scaleY(1); }
+      50% { transform: translateY(-48%) scaleY(1.2); }
+      100% { transform: translateY(-52%) scaleY(0.9); }
+    }
+    .cyan-square {
+      position: absolute;
+      width: 140px; height: 140px;
+      background: var(--val-cyan);
+      top: 25%; right: 28%;
+    }
+
+    /* ============================================================
+       ACT 2: MICRO-PANNING CRIMSON RED — "FAHIM" (Frames 25-98)
+       Continuous tracking pan from right to left with micro zoom
+       ============================================================ */
+    #act-2 {
+      position: absolute;
+      inset: 0;
+      display: none;
+      background: var(--val-red);
+      overflow: hidden;
+    }
+    .act-2-pan-wrapper {
+      position: absolute;
+      inset: -10%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      will-change: transform;
+      animation: cameraPanLeft 1.2s cubic-bezier(0.1, 0.8, 0.2, 1) forwards;
+    }
+    @keyframes cameraPanLeft {
+      0% {
+        transform: translate(60px, -15px) scale(1.08) rotate(-3.5deg);
+      }
+      100% {
+        transform: translate(-90px, 15px) scale(1.0) rotate(-2deg);
+      }
+    }
+    .macro-fahim {
+      font-family: 'Valorant', sans-serif;
+      font-size: clamp(360px, 48vw, 720px);
+      line-height: 0.8;
+      color: var(--val-dark);
+      letter-spacing: -0.05em;
+      white-space: nowrap;
+    }
+
+    /* Micro-diamonds in Act 2 moving with slight parallax */
+    .parallax-diamonds {
+      position: absolute;
+      display: flex;
+      gap: 6px;
+      top: 28%; right: 32%;
+      animation: diamondDrift 1.2s ease-out forwards;
+    }
+    @keyframes diamondDrift {
+      0% { transform: translate(30px, 0); }
+      100% { transform: translate(-40px, 10px); }
+    }
+    .dm-dark {
+      width: 8px; height: 8px;
+      background: var(--val-dark);
+      transform: rotate(45deg);
+    }
+
+    /* ============================================================
+       ACT 3: HARD SLICE TRANSITION (Frames 99-132)
+       Diagonal wipe blade with micro-scale
+       ============================================================ */
+    #act-3 {
+      position: absolute;
+      inset: 0;
+      display: none;
+      background: var(--val-dark);
+      overflow: hidden;
+    }
+    .act-3-slice-top {
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 190px;
+      background: var(--val-red);
+      clip-path: polygon(0 0, 100% 0, 100% 70%, 0 100%);
+      animation: sliceTopSlide 0.5s ease-out forwards;
+    }
+    @keyframes sliceTopSlide {
+      0% { transform: translateY(-40px); }
+      100% { transform: translateY(0); }
+    }
+    .act-3-slice-leg {
+      position: absolute;
+      right: 6%; top: 0; bottom: 0;
+      width: 330px;
+      background: var(--val-red);
+      clip-path: polygon(60% 0, 100% 0, 40% 100%, 0% 100%);
+      animation: sliceLegSlide 0.5s ease-out forwards;
+    }
+    @keyframes sliceLegSlide {
+      0% { transform: translateX(50px); }
+      100% { transform: translateX(0); }
+    }
+
+    /* ============================================================
+       ACT 4: OPPOSING DUAL BANDS WITH MICRO-JITTER — "AHAMMAD" (Frames 133-238)
+       Upper band moves RIGHT, Lower band moves LEFT (Frames 180-210 verified)
+       Plus high-frequency micro-jitter glitching on the band lines!
+       ============================================================ */
+    #act-4 {
+      position: absolute;
+      inset: 0;
+      display: none;
+      flex-direction: column;
+      justify-content: center;
+      background: var(--val-dark);
+      gap: 14px;
+      overflow: hidden;
+    }
+    .band-wrapper-top {
+      width: 100%;
+      overflow: hidden;
+      white-space: nowrap;
+      display: flex;
+    }
+    .band-wrapper-bottom {
+      width: 100%;
+      overflow: hidden;
+      white-space: nowrap;
+      display: flex;
+    }
+    .track-font {
+      display: flex;
+      font-size: clamp(140px, 18vw, 250px);
+      line-height: 0.9;
+      color: var(--val-red);
+      letter-spacing: 0.14em;
+    }
+    /* Top band moves RIGHTwards (mean x increases from 636 to 831 as verified in OpenCV) */
+    .top-scroll-right {
+      animation: scrollRight 3s linear infinite;
+    }
+    /* Bottom band moves LEFTwards (mean x decreases from 809 to 757) */
+    .bot-scroll-left {
+      animation: scrollLeft 3s linear infinite;
+    }
+    @keyframes scrollRight {
+      0% { transform: translateX(-50%); }
+      100% { transform: translateX(0); }
+    }
+    @keyframes scrollLeft {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+
+    /* Micro-Jitter displacement during Act 4 */
+    .micro-jitter {
+      animation: microJitter 0.08s infinite;
+    }
+    @keyframes microJitter {
+      0% { transform: translate(0, 0); }
+      25% { transform: translate(2px, -1px); }
+      50% { transform: translate(-2px, 1px); }
+      75% { transform: translate(1px, 1px); }
+      100% { transform: translate(0, 0); }
+    }
+
+    /* ============================================================
+       ACT 5: CONVERGING SNAP & CYAN SLIT SCAN — "TANVIR" (Frames 239-290)
+       Bands collapse inward towards center horizon, then cyan slit scans
+       ============================================================ */
+    #act-5 {
+      position: absolute;
+      inset: 0;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: var(--val-dark);
+      overflow: hidden;
+    }
+    .converged-box {
+      position: relative;
+      animation: snapConverge 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+    @keyframes snapConverge {
+      0% {
+        transform: scaleY(2.2) scaleX(0.85);
+        letter-spacing: 0.45em;
+        opacity: 0.5;
+      }
+      100% {
+        transform: scaleY(1) scaleX(1);
+        letter-spacing: 0.22em;
+        opacity: 1;
+      }
+    }
+    .tanvir-text {
+      font-family: 'Valorant', sans-serif;
+      font-size: clamp(80px, 11vw, 150px);
+      color: var(--val-red);
+    }
+    .cyan-laser-slit {
+      position: absolute;
+      height: 12px;
+      background: var(--val-cyan);
+      bottom: 24%;
+      left: -10%;
+      width: 90px;
+      opacity: 0;
+      z-index: 70;
+      box-shadow: 0 0 14px var(--val-cyan);
+    }
+    .cyan-laser-slit.active {
+      opacity: 1;
+      animation: scanAcross 0.35s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+    }
+    @keyframes scanAcross {
+      0% { left: -10%; width: 40px; }
+      50% { left: 45%; width: 110px; }
+      100% { left: 95%; width: 50px; }
+    }
+
+    /* ============================================================
+       ACT 6: FINAL CLIMAX & 100% PURE WHITE LOCK (Frames 291-337)
+       ============================================================ */
+    #act-6 {
+      position: absolute;
+      inset: 0;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: var(--val-dark);
+      z-index: 100;
+      transition: background 0.12s ease;
+    }
+
+    /* Valorant V Blades with elastic micro-punch */
+    .v-logo-assembly {
+      width: 136px;
+      height: 102px;
+      position: relative;
+    }
+    .v-blade {
+      position: absolute;
+      background: var(--val-red);
+      will-change: transform, opacity;
+      opacity: 0;
+      transition: all 0.32s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .v-blade-l {
+      left: 10px; top: 10px;
+      width: 48px; height: 90px;
+      clip-path: polygon(0 0, 44% 0, 100% 100%, 56% 100%);
+      transform: translate(-45px, -45px);
+    }
+    .v-blade-r {
+      right: 10px; top: 10px;
+      width: 60px; height: 60px;
+      clip-path: polygon(55% 0, 100% 0, 45% 100%, 0% 100%);
+      transform: translate(45px, -45px);
+    }
+    .v-blade.assembled {
+      opacity: 1;
+      transform: translate(0, 0);
+    }
+
+    /* 100% PURE WHITE FULL NAME */
+    #name-stack {
+      margin-top: 32px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .name-segment {
+      font-family: 'Valorant', sans-serif;
+      font-size: clamp(34px, 4.8vw, 64px);
+      letter-spacing: 0.28em;
+      color: var(--val-white);
+      text-transform: uppercase;
+      opacity: 0;
+      transform: translateY(14px) scale(0.96);
+      transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+      text-shadow: 0 0 35px rgba(255, 255, 255, 0.35);
+    }
+    .name-segment.show {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+
+    .title-sub {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 13px;
+      letter-spacing: 0.55em;
+      color: rgba(255, 255, 255, 0.65);
+      margin-top: 10px;
+      opacity: 0;
+      transition: opacity 0.45s ease 0.3s;
+    }
+    .title-sub.show {
+      opacity: 1;
+    }
+
+    /* Nav bar */
+    .nav-bar {
+      position: fixed;
+      bottom: 24px;
+      right: 36px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      z-index: 1000;
+      opacity: 0;
+      transition: opacity 0.4s;
+    }
+    .nav-bar.show {
+      opacity: 1;
+    }
+    .btn {
+      background: rgba(15, 25, 35, 0.85);
+      border: 1px solid rgba(255, 255, 255, 0.35);
+      color: var(--val-white);
+      font-family: 'Rajdhani', sans-serif;
+      font-weight: 700;
+      font-size: 12px;
+      letter-spacing: 0.3em;
+      padding: 9px 18px;
+      cursor: pointer;
+      text-transform: uppercase;
+      transition: all 0.2s;
+    }
+    .btn:hover {
+      background: var(--val-red);
+      border-color: var(--val-red);
+      color: #fff;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Audio Element -->
+  <audio id="reveal-audio" preload="auto">
+    <source src="reveal_audio.webm" type="audio/webm" />
+    <source src="cypher_audio.webm" type="audio/webm" />
+  </audio>
+
+  <div class="scanlines"></div>
+
+  <!-- 1-Click Unlock Gate -->
+  <div id="start-splash">
+    <div class="splash-box">
+      <div class="splash-title">PROJECT A</div>
+      <div class="splash-sub">CLICK TO LAUNCH KINETIC MICRO-TRANSITIONS</div>
+    </div>
+  </div>
+
+  <!-- Micro-Tick Glitch Overlays -->
+  <div class="micro-tick tick-1" id="tick1"></div>
+  <div class="micro-tick tick-2" id="tick2"></div>
+  <div class="micro-tick tick-3" id="tick3"></div>
+  <div class="floating-slashes" style="top: 48%; left: 34%;">//</div>
+  <div class="hairline-diagonal" style="top: 10%; left: -20%;"></div>
+
+  <!-- HUD Static Labels -->
+  <div class="hud-label hud-tl">// VLRNT.SYS // MICRO_TRANSACTIONS</div>
+  <div class="hud-label hud-tr">60FPS // CAMERA_TRACKING // SYNC</div>
+  <div class="hud-label hud-bl">PROTOCOL // FAHIM_AHAMMAD_TANVIR</div>
+  <div class="hud-label hud-br">STAGE // SUST_CSE</div>
+
+  <!-- STAGE CONTAINER -->
+  <div id="stage-container">
+
+    <!-- ACT 1: Strobe Slices (Frames 1-24) -->
+    <div id="act-1">
+      <div class="cyan-slit-bar"></div>
+      <div class="cyan-square"></div>
+      <div style="position: absolute; background: var(--val-red); top: 0; left: 0; width: 22%; bottom: 0;"></div>
+      <div style="position: absolute; background: var(--val-red); bottom: 0; right: 14%; width: 240px; height: 320px;"></div>
+    </div>
+
+    <!-- ACT 2: Continuous Panning Crimson Red — "FAHIM" (Frames 25-98) -->
+    <div id="act-2">
+      <div class="act-2-pan-wrapper">
+        <div class="macro-fahim">FAHIM</div>
+      </div>
+      <div class="parallax-diamonds">
+        <div class="dm-dark"></div>
+        <div class="dm-dark"></div>
+      </div>
+    </div>
+
+    <!-- ACT 3: Dark Transition & Geometric Cut (Frames 99-132) -->
+    <div id="act-3">
+      <div class="act-3-slice-top"></div>
+      <div class="act-3-slice-leg"></div>
+      <div style="position: absolute; font-family: 'Valorant'; font-size: clamp(260px, 35vw, 520px); color: var(--val-red); left: 10%; bottom: -8%;">
+        AHAMMAD
+      </div>
+    </div>
+
+    <!-- ACT 4: Opposing Dual Bands with Micro-Jitter — "AHAMMAD" (Frames 133-238) -->
+    <div id="act-4">
+      <div class="band-wrapper-top micro-jitter">
+        <div class="track-font top-scroll-right">
+          AHAMMAD &nbsp; AHAMMAD &nbsp; AHAMMAD &nbsp; AHAMMAD &nbsp; AHAMMAD &nbsp;
+        </div>
+      </div>
+      <div class="band-wrapper-bottom micro-jitter">
+        <div class="track-font bot-scroll-left">
+          AHAMMAD &nbsp; AHAMMAD &nbsp; AHAMMAD &nbsp; AHAMMAD &nbsp; AHAMMAD &nbsp;
+        </div>
+      </div>
+    </div>
+
+    <!-- ACT 5: Convergence Snap & Cyan Laser Scan — "TANVIR" (Frames 239-290) -->
+    <div id="act-5">
+      <div class="converged-box">
+        <div class="tanvir-text">TANVIR</div>
+        <div class="cyan-laser-slit" id="laser-slit"></div>
+      </div>
+    </div>
+
+    <!-- ACT 6: Final Strobe Flash & 100% Pure White Lock (Frames 291-337) -->
+    <div id="act-6">
+      <div class="v-logo-assembly">
+        <div class="v-blade v-blade-l" id="blade-l"></div>
+        <div class="v-blade v-blade-r" id="blade-r"></div>
+      </div>
+
+      <div id="name-stack">
+        <div class="name-segment" id="name-full">FAHIM AHAMMAD TANVIR</div>
+        <div class="title-sub" id="title-sub">SOFTWARE ENGINEER // SUST // FULL-STACK</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Nav bar -->
+  <div class="nav-bar" id="nav-bar">
+    <button class="btn" id="replay-btn">REPLAY</button>
+    <button class="btn" id="enter-btn">ENTER PORTFOLIO &rsaquo;</button>
+  </div>
+
+  <script>
+    const audio = document.getElementById('reveal-audio');
+    const splash = document.getElementById('start-splash');
+    
+    const act1 = document.getElementById('act-1');
+    const act2 = document.getElementById('act-2');
+    const act3 = document.getElementById('act-3');
+    const act4 = document.getElementById('act-4');
+    const act5 = document.getElementById('act-5');
+    const act6 = document.getElementById('act-6');
+
+    const laserSlit = document.getElementById('laser-slit');
+    const bladeL = document.getElementById('blade-l');
+    const bladeR = document.getElementById('blade-r');
+    const nameFull = document.getElementById('name-full');
+    const titleSub = document.getElementById('title-sub');
+    const navBar = document.getElementById('nav-bar');
+    const enterBtn = document.getElementById('enter-btn');
+    const replayBtn = document.getElementById('replay-btn');
+
+    // Micro-tick jitter generator
+    const tick1 = document.getElementById('tick1');
+    const tick2 = document.getElementById('tick2');
+    const tick3 = document.getElementById('tick3');
+
+    function randomizeTicks() {
+      tick1.style.transform = `translateX(${(Math.random() - 0.5) * 24}px)`;
+      tick2.style.transform = `translateX(${(Math.random() - 0.5) * 18}px)`;
+      tick3.style.transform = `translateX(${(Math.random() - 0.5) * 30}px)`;
+    }
+    setInterval(randomizeTicks, 140);
+
+    const wait = ms => new Promise(res => setTimeout(res, ms));
+
+    splash.addEventListener('click', () => {
+      splash.classList.add('hide');
+      audio.currentTime = 0;
+      audio.play().catch(e => console.log('Audio error:', e));
+      runMicroTransitionSequence();
+    });
+
+    async function runMicroTransitionSequence() {
+      // Reset
+      [act1, act2, act3, act4, act5, act6].forEach(a => a.style.display = 'none');
+      bladeL.classList.remove('assembled');
+      bladeR.classList.remove('assembled');
+      laserSlit.classList.remove('active');
+      nameFull.classList.remove('show');
+      titleSub.classList.remove('show');
+      navBar.classList.remove('show');
+      act6.style.background = 'var(--val-dark)';
+
+      /* ACT 1: Initial Strobe */
+      act1.style.display = 'block';
+      await wait(360);
+      act1.style.display = 'none';
+
+      /* ACT 2: Continuous Camera Pan + Parallax Drift — "FAHIM" (Frames 25-98) */
+      act2.style.display = 'block';
+      await wait(1150);
+      act2.style.display = 'none';
+
+      /* ACT 3: Geometric Slide Cuts */
+      act3.style.display = 'block';
+      await wait(500);
+      act3.style.display = 'none';
+
+      /* ACT 4: Opposing Dual Kinetic Scroll with High Frequency Jitter — "AHAMMAD" (Frames 133-238) */
+      act4.style.display = 'flex';
+      await wait(1450);
+      act4.style.display = 'none';
+
+      /* ACT 5: Inward Snap Convergence + Laser Scan — "TANVIR" (Frames 239-290) */
+      act5.style.display = 'flex';
+      await wait(260);
+      laserSlit.classList.add('active');
+      await wait(320);
+      act5.style.display = 'none';
+
+      /* ACT 6: Final Red Strobe Flash & Pure White Climax (Frames 291-337) */
+      act6.style.display = 'flex';
+      
+      // Crimson Flash Strobe (Frames 300 & 325)
+      act6.style.background = 'var(--val-red)';
+      bladeL.style.background = 'var(--val-dark)';
+      bladeR.style.background = 'var(--val-dark)';
+      bladeL.classList.add('assembled');
+      bladeR.classList.add('assembled');
+      await wait(110);
+
+      // Snap to Deep Navy (Frame 336-337)
+      act6.style.background = 'var(--val-dark)';
+      bladeL.style.background = 'var(--val-red)';
+      bladeR.style.background = 'var(--val-red)';
+      await wait(240);
+
+      // 100% Pure White Name Climax
+      nameFull.classList.add('show');
+      titleSub.classList.add('show');
+      await wait(600);
+
+      navBar.classList.add('show');
+    }
+
+    function enterPortfolio() {
+      document.body.style.transition = 'opacity 0.4s ease';
+      document.body.style.opacity = '0';
+      setTimeout(() => {
+        window.location.href = 'index.html';
+      }, 400);
+    }
+
+    enterBtn.addEventListener('click', enterPortfolio);
+    replayBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      runMicroTransitionSequence();
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (navBar.classList.contains('show')) enterPortfolio();
+    });
+  </script>
+</body>
+</html>

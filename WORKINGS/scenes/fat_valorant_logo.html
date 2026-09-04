@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FAT LOGO SUITE // OFFICIAL VALORANT V REIMAGINED</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@700;800&display=swap" rel="stylesheet" />
+  <style>
+    @font-face {
+      font-family: 'Valorant';
+      src: url('../valorant_font/Valorant Font.ttf') format('truetype');
+    }
+
+    *, *::before, *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      user-select: none;
+    }
+
+    :root {
+      --val-red: #ff4655;
+      --val-dark: #0f1923;
+      --val-black: #080c10;
+      --val-white: #ffffff;
+      --val-cyan: #00f5a0;
+    }
+
+    body {
+      width: 100vw;
+      min-height: 100vh;
+      background: var(--val-black);
+      color: var(--val-white);
+      font-family: 'Rajdhani', sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 50px 20px 100px;
+      overflow-x: hidden;
+    }
+
+    /* Scanlines */
+    .scanlines {
+      position: fixed;
+      inset: 0;
+      background: repeating-linear-gradient(
+        to bottom,
+        transparent 0px, transparent 3px,
+        rgba(0,0,0,0.2) 3px, rgba(0,0,0,0.2) 4px
+      );
+      pointer-events: none;
+      z-index: 900;
+    }
+
+    .header-box {
+      text-align: center;
+      margin-bottom: 44px;
+    }
+    .header-box h1 {
+      font-family: 'Valorant', sans-serif;
+      font-size: 40px;
+      letter-spacing: 0.28em;
+      color: var(--val-red);
+      margin-bottom: 8px;
+    }
+    .header-box p {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 13px;
+      letter-spacing: 0.4em;
+      color: rgba(255,255,255,0.7);
+    }
+
+    /* Showcase Grid */
+    .concepts-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(460px, 1fr));
+      gap: 36px;
+      width: 100%;
+      max-width: 1540px;
+      z-index: 10;
+    }
+
+    .concept-card {
+      background: rgba(15, 25, 35, 0.75);
+      border: 1px solid rgba(255, 70, 85, 0.35);
+      padding: 32px 28px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+      transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .concept-card:hover {
+      border-color: var(--val-red);
+      box-shadow: 0 0 35px rgba(255, 70, 85, 0.3);
+      transform: translateY(-5px);
+    }
+
+    .concept-card::before {
+      content: ''; position: absolute; top: -3px; left: -3px;
+      width: 14px; height: 14px;
+      border-top: 3px solid var(--val-red); border-left: 3px solid var(--val-red);
+    }
+    .concept-card::after {
+      content: ''; position: absolute; bottom: -3px; right: -3px;
+      width: 14px; height: 14px;
+      border-bottom: 3px solid var(--val-red); border-right: 3px solid var(--val-red);
+    }
+
+    .card-title {
+      font-family: 'Valorant', sans-serif;
+      font-size: 20px;
+      letter-spacing: 0.2em;
+      color: var(--val-white);
+      margin-bottom: 6px;
+    }
+    .card-desc {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.25em;
+      color: var(--val-red);
+      margin-bottom: 24px;
+      text-align: center;
+    }
+
+    /* Stage Canvas inside Card */
+    .emblem-stage {
+      width: 100%;
+      height: 320px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+      margin-bottom: 24px;
+      border: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .bg-red { background: var(--val-red); }
+    .bg-dark { background: var(--val-dark); }
+
+    /* Hairline */
+    .hairline {
+      position: absolute;
+      width: 160%;
+      height: 1px;
+      transform: rotate(45deg);
+      pointer-events: none;
+    }
+    .hl-dark { background: rgba(15, 25, 35, 0.35); }
+    .hl-red { background: rgba(255, 70, 85, 0.25); }
+
+    /* Tactical Markings around Logo */
+    .hud-mark {
+      position: absolute;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 9px;
+      letter-spacing: 0.3em;
+    }
+
+    /* SVG Logos */
+    .fat-svg {
+      width: 240px;
+      height: 190px;
+      filter: drop-shadow(0 14px 28px rgba(0,0,0,0.38));
+      transition: transform 0.3s ease;
+    }
+    .concept-card:hover .fat-svg {
+      transform: scale(1.04);
+    }
+
+    /* Wordmark Below Logo */
+    .wordmark {
+      font-family: 'Valorant', sans-serif;
+      font-size: 26px;
+      letter-spacing: 0.25em;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .wm-dark { color: var(--val-dark); }
+    .wm-red { color: var(--val-red); }
+    .wm-white { color: var(--val-white); }
+
+    .tagline {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.4em;
+      margin-top: 14px;
+      opacity: 0.75;
+    }
+  </style>
+</head>
+<body>
+  <div class="scanlines"></div>
+
+  <div class="header-box">
+    <h1>VALORANT "FAT" EMBLEM SUITE</h1>
+    <p>FAHIM AHAMMAD TANVIR // 3 DISTINCT TACTICAL LOGO EVOLUTIONS</p>
+  </div>
+
+  <div class="concepts-grid">
+
+    <!-- ========================================================
+         CONCEPT 01: THE TACTICAL TRIPLE-BLADE (F + A + T)
+         The official V logo's left heavy blade has 2 tactical cuts
+         carving the letter 'F'.
+         The center negative space and apex spear forms 'A'.
+         The right blade is topped with a precision horizontal bar forming 'T'!
+         ======================================================== -->
+    <div class="concept-card">
+      <div class="card-title">CONCEPT 01 // TACTICAL TRIPLE BLADE</div>
+      <div class="card-desc">OFFICIAL V-SILHOUETTE WITH INTEGRATED PRECISION CUTS</div>
+
+      <!-- Crimson Stage -->
+      <div class="emblem-stage bg-red">
+        <div class="hairline hl-dark"></div>
+        <div class="hud-mark" style="top:20px; left:25px; color:rgba(15,25,35,0.6);">SYS // FAT_01</div>
+        <div class="hud-mark" style="bottom:20px; right:25px; color:rgba(15,25,35,0.6);">TACTICAL_V // SWE_23</div>
+
+        <!-- SVG EMBLEM 1 (Dark Navy on Crimson Red) -->
+        <svg class="fat-svg" viewBox="0 0 240 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <!-- LEFT BLADE: F
+               - Outer edge starts straight down, then slants at 45° to the base
+               - Has 2 horizontal fins at the top creating 'F'
+               - Chamfered base matches the official V base! -->
+          <path d="
+            M 35 25 
+            L 85 25 
+            L 85 52 
+            L 62 52 
+            L 62 76 
+            L 82 76 
+            L 82 102 
+            L 62 102 
+            L 125 180 
+            L 88 180 
+            L 35 112 
+            Z" 
+            fill="#0f1923" />
+
+          <!-- CENTER SPEAR: A
+               - Vertical/slanted chevron spear that locks into the negative space
+               - Forms the central 'A' apex with cross-slit -->
+          <polygon points="118,48 140,48 112,145 92,145" fill="#0f1923" />
+          <polygon points="102,108 126,108 121,122 98,122" fill="#0f1923" />
+
+          <!-- RIGHT BLADE: T
+               - Right outer edge is vertical (just like the official V right blade)
+               - Has high horizontal hammer bar and descending slanted spine -->
+          <polygon points="146,45 205,45 205,72 146,72" fill="#0f1923" />
+          <polygon points="168,72 192,72 142,148 118,148" fill="#0f1923" />
+
+          <!-- Valorant Signature Mint-Green Accent (as in Frame 300) -->
+          <rect x="200" y="45" width="5" height="27" fill="#00f5a0" />
+        </svg>
+
+        <!-- Subtitle inside Stage -->
+        <div class="wordmark wm-dark" style="margin-top: 14px;">
+          <span>FAT</span>
+          <span style="font-size: 16px; letter-spacing: 0.15em;">VALORANT</span>
+        </div>
+      </div>
+
+      <div class="wordmark wm-white" style="font-size: 19px;">
+        <span>FAHIM</span>
+        <span style="color:var(--val-red);">·</span>
+        <span>AHAMMAD</span>
+        <span style="color:var(--val-red);">·</span>
+        <span>TANVIR</span>
+      </div>
+      <div class="tagline">SIGNATURE // ANATOMICAL V-BLADE FUSION</div>
+    </div>
+
+    <!-- ========================================================
+         CONCEPT 02: PURE VALORANT MONOLITH (THE TWO-WING ILLUSION)
+         Looks 100% IDENTICAL to the official Valorant V at first glance,
+         preserving the exact two disconnected wings.
+         Left wing is subtly carved into F.
+         The gap between them forms A.
+         Right wing has a horizontal top cut forming T.
+         ======================================================== -->
+    <div class="concept-card">
+      <div class="card-title">CONCEPT 02 // PURE V MONOLITH</div>
+      <div class="card-desc">EXACT 2-WING VALORANT SILHOUETTE WITH HIDDEN "FAT"</div>
+
+      <!-- Dark Navy Stage -->
+      <div class="emblem-stage bg-dark">
+        <div class="hairline hl-red"></div>
+        <div class="hud-mark" style="top:20px; left:25px; color:rgba(255,70,85,0.6);">SYS // FAT_02</div>
+        <div class="hud-mark" style="bottom:20px; right:25px; color:rgba(255,70,85,0.6);">COVERT_V // SWE_23</div>
+
+        <!-- SVG EMBLEM 2 (Crimson Red on Dark Navy) -->
+        <svg class="fat-svg" viewBox="0 0 240 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <!-- LEFT WING: Official Valorant Left Blade morphed into 'F'
+               - Vertical top left edge (38 to 90)
+               - Chamfered base (128, 178)
+               - Inner 45° angle
+               - Subtle horizontal slit that delineates F without breaking the V silhouette! -->
+          <path d="
+            M 42 35 
+            L 92 35 
+            L 92 58 
+            L 68 58 
+            L 68 78 
+            L 88 78 
+            L 88 100 
+            L 68 100 
+            L 128 178 
+            L 92 178 
+            L 42 108 
+            Z" 
+            fill="#ff4655" />
+
+          <!-- The Negative Gap between Left & Right blades naturally creates 'A'! -->
+
+          <!-- RIGHT WING: Official Valorant Right Blade morphed into 'T'
+               - Vertical outer right edge (198 to 142)
+               - Inner 45° angle (142, 142)
+               - Slit separating the top horizontal roof of 'T' from the suspended body! -->
+          <polygon points="135,50 198,50 198,78 135,78" fill="#ff4655" />
+          <polygon points="142,86 198,86 198,142 142,142" fill="#ff4655" />
+
+          <!-- Mint-Cyan Accent Notch on Right Wing -->
+          <rect x="194" y="50" width="4" height="28" fill="#00f5a0" />
+        </svg>
+
+        <!-- Subtitle inside Stage -->
+        <div class="wordmark wm-red" style="margin-top: 14px;">
+          <span>FAT</span>
+          <span style="color:var(--val-white); font-size: 14px; font-family:'Share Tech Mono';">// PROTOCOL</span>
+        </div>
+      </div>
+
+      <div class="wordmark wm-white" style="font-size: 19px;">
+        <span>FAHIM</span>
+        <span style="color:var(--val-red);">·</span>
+        <span>AHAMMAD</span>
+        <span style="color:var(--val-red);">·</span>
+        <span>TANVIR</span>
+      </div>
+      <div class="tagline">STEALTH // 100% FAITHFUL TO THE OFFICIAL V</div>
+    </div>
+
+    <!-- ========================================================
+         CONCEPT 03: INTERLOCKING CYBER BLADES (TRI-COLOR)
+         Three interlocking dynamic blades:
+         Blade 1 (Left, Dark): 'F' with 45° speed-cuts
+         Blade 2 (Center, White): 'A' spear cutting through the middle
+         Blade 3 (Right, Crimson): 'T' wing floating on the right
+         ======================================================== -->
+    <div class="concept-card">
+      <div class="card-title">CONCEPT 03 // CYBER INTERLOCK</div>
+      <div class="card-desc">TRI-COLOR COMPONENT VECTOR FORMING THE VALORANT V</div>
+
+      <!-- Crimson Stage -->
+      <div class="emblem-stage bg-red">
+        <div class="hairline hl-dark"></div>
+        <div class="hud-mark" style="top:20px; left:25px; color:rgba(15,25,35,0.6);">SYS // FAT_03</div>
+        <div class="hud-mark" style="bottom:20px; right:25px; color:rgba(15,25,35,0.6);">KINETIC_V // SWE_23</div>
+
+        <!-- SVG EMBLEM 3 -->
+        <svg class="fat-svg" viewBox="0 0 240 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <!-- BLADE 1: F (Dark Heavy Spine) -->
+          <path d="M 40 32 L 88 32 L 88 56 L 64 56 L 64 76 L 84 76 L 84 98 L 64 98 L 120 178 L 86 178 L 40 115 Z" fill="#0f1923" />
+
+          <!-- BLADE 2: A (White Kinetic Spear slicing the center) -->
+          <polygon points="106,30 132,30 114,136 88,136" fill="#ffffff" />
+          <polygon points="94,96 122,96 117,110 89,110" fill="#ffffff" />
+
+          <!-- BLADE 3: T (Right Floating Wing Blade in Deep Navy with Cyan Edge) -->
+          <polygon points="142,42 200,42 200,70 142,70" fill="#0f1923" />
+          <polygon points="156,70 186,70 138,150 112,150" fill="#0f1923" />
+          <rect x="195" y="42" width="5" height="28" fill="#00f5a0" />
+        </svg>
+
+        <!-- Subtitle inside Stage -->
+        <div class="wordmark wm-white" style="margin-top: 14px;">
+          <span style="color:var(--val-dark);">F</span>
+          <span style="color:var(--val-white);">A</span>
+          <span style="color:var(--val-dark);">T</span>
+          <span style="color:var(--val-cyan); font-size:14px; font-family:'Share Tech Mono';">// 03</span>
+        </div>
+      </div>
+
+      <div class="wordmark wm-white" style="font-size: 19px;">
+        <span>FAHIM</span>
+        <span style="color:var(--val-red);">·</span>
+        <span>AHAMMAD</span>
+        <span style="color:var(--val-red);">·</span>
+        <span>TANVIR</span>
+      </div>
+      <div class="tagline">MODERN // TRI-BLADE COMPOSITION</div>
+    </div>
+
+  </div>
+
+</body>
+</html>

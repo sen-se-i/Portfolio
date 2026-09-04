@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FAHIM AHAMMAD TANVIR // PROJECT A</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@700;800&display=swap" rel="stylesheet" />
+  <style>
+    @font-face {
+      font-family: 'Valorant';
+      src: url('valorant_font/Valorant Font.ttf') format('truetype');
+      font-weight: normal;
+      font-style: normal;
+    }
+
+    *, *::before, *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      user-select: none;
+    }
+
+    :root {
+      --val-red: #ff4655;
+      --val-dark: #0f1923;
+      --val-black: #080c10;
+      --val-white: #ffffff;
+      --val-cyan: #00f5d4;
+    }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      background: var(--val-dark);
+      overflow: hidden;
+      font-family: 'Valorant', sans-serif;
+      position: relative;
+    }
+
+    /* Scanlines */
+    .scanlines {
+      position: fixed;
+      inset: 0;
+      background: repeating-linear-gradient(
+        to bottom,
+        transparent 0px,
+        transparent 3px,
+        rgba(0, 0, 0, 0.2) 3px,
+        rgba(0, 0, 0, 0.2) 4px
+      );
+      pointer-events: none;
+      z-index: 950;
+    }
+
+    /* 1-Click Audio Unlock & Initialize Gate */
+    #start-splash {
+      position: fixed;
+      inset: 0;
+      background: var(--val-black);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      cursor: pointer;
+      transition: opacity 0.3s ease;
+    }
+    #start-splash.hide {
+      opacity: 0;
+      pointer-events: none;
+    }
+    .splash-box {
+      border: 1px solid rgba(255, 70, 85, 0.4);
+      padding: 28px 56px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 14px;
+      background: rgba(255, 70, 85, 0.04);
+      position: relative;
+    }
+    .splash-box::before {
+      content: '';
+      position: absolute;
+      top: -3px; left: -3px;
+      width: 12px; height: 12px;
+      border-top: 3px solid var(--val-red);
+      border-left: 3px solid var(--val-red);
+    }
+    .splash-box::after {
+      content: '';
+      position: absolute;
+      bottom: -3px; right: -3px;
+      width: 12px; height: 12px;
+      border-bottom: 3px solid var(--val-red);
+      border-right: 3px solid var(--val-red);
+    }
+    .splash-title {
+      font-size: 34px;
+      letter-spacing: 0.25em;
+      color: var(--val-white);
+    }
+    .splash-sub {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.45em;
+      color: var(--val-red);
+      animation: pulse 1.2s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 0.35; }
+      50% { opacity: 1; }
+    }
+
+    /* Global Dynamic Viewport Stage */
+    #stage-container {
+      position: fixed;
+      inset: 0;
+      overflow: hidden;
+      background: var(--val-dark);
+      z-index: 50;
+    }
+
+    /* Fixed HUD Elements */
+    .hud-label {
+      position: fixed;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.35em;
+      color: rgba(255, 255, 255, 0.35);
+      z-index: 900;
+      pointer-events: none;
+    }
+    .hud-tl { top: 26px; left: 36px; }
+    .hud-tr { top: 26px; right: 36px; }
+    .hud-bl { bottom: 26px; left: 36px; }
+    .hud-br { bottom: 26px; right: 36px; }
+
+    .hud-dash {
+      position: fixed;
+      width: 24px;
+      height: 3px;
+      background: var(--val-red);
+      z-index: 900;
+      pointer-events: none;
+    }
+    .hud-dash-tl { top: 46px; left: 36px; }
+    .hud-dash-tr { top: 46px; right: 36px; }
+
+    /* Diamonds & Accents */
+    .diamonds {
+      position: absolute;
+      display: flex;
+      gap: 6px;
+      z-index: 60;
+    }
+    .dm {
+      width: 8px;
+      height: 8px;
+      background: var(--val-red);
+      transform: rotate(45deg);
+    }
+
+    /* ============================================================
+       ACT 1: INITIAL GLITCH & STROBE SLICES (Frames 1 - 24)
+       ============================================================ */
+    #act-1 {
+      position: absolute;
+      inset: 0;
+      display: none;
+      background: var(--val-dark);
+    }
+    .cyan-stripe {
+      position: absolute;
+      height: 48px;
+      background: var(--val-cyan);
+      left: 0; right: 0;
+      top: 48%;
+      transform: translateY(-50%);
+    }
+    .cyan-rect {
+      position: absolute;
+      width: 140px;
+      height: 140px;
+      background: var(--val-cyan);
+      top: 25%;
+      right: 28%;
+    }
+    .red-block-slice {
+      position: absolute;
+      background: var(--val-red);
+    }
+
+    /* ============================================================
+       ACT 2: MASSIVE INVERTED RED CUT — "FAHIM" (Frames 25 - 98)
+       Exact Frame 50, 70: Red background with massive dark cutouts
+       ============================================================ */
+    #act-2 {
+      position: absolute;
+      inset: 0;
+      display: none;
+      background: var(--val-red);
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+    .macro-fahim {
+      font-family: 'Valorant', sans-serif;
+      font-size: clamp(340px, 46vw, 680px);
+      line-height: 0.8;
+      color: var(--val-dark);
+      letter-spacing: -0.04em;
+      white-space: nowrap;
+      position: absolute;
+      left: -8%;
+      transform: rotate(-3deg);
+      user-select: none;
+    }
+
+    /* ============================================================
+       ACT 3: DARK TRANSITION & GEOMETRIC CUT (Frames 99 - 132)
+       Exact Frame 120: Dark background with crimson angular slice
+       ============================================================ */
+    #act-3 {
+      position: absolute;
+      inset: 0;
+      display: none;
+      background: var(--val-dark);
+      overflow: hidden;
+    }
+    .act-3-slice-top {
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 180px;
+      background: var(--val-red);
+      clip-path: polygon(0 0, 100% 0, 100% 70%, 0 100%);
+    }
+    .act-3-slice-leg {
+      position: absolute;
+      right: 6%;
+      top: 0; bottom: 0;
+      width: 320px;
+      background: var(--val-red);
+      clip-path: polygon(60% 0, 100% 0, 40% 100%, 0% 100%);
+    }
+    .act-3-word-part {
+      position: absolute;
+      font-family: 'Valorant', sans-serif;
+      font-size: clamp(260px, 35vw, 520px);
+      color: var(--val-red);
+      left: 10%;
+      bottom: -8%;
+    }
+
+    /* ============================================================
+       ACT 4: DUAL OPPOSING KINETIC BANDS — "AHAMMAD" (Frames 133 - 238)
+       Exact Frame 180, 200: Upper and lower bands scrolling opposite
+       ============================================================ */
+    #act-4 {
+      position: absolute;
+      inset: 0;
+      display: none;
+      flex-direction: column;
+      justify-content: center;
+      background: var(--val-dark);
+      gap: 16px;
+      overflow: hidden;
+    }
+    .kinetic-band-row {
+      width: 100%;
+      overflow: hidden;
+      white-space: nowrap;
+      display: flex;
+    }
+    .kinetic-track {
+      display: flex;
+      font-size: clamp(140px, 18vw, 250px);
+      line-height: 0.9;
+      color: var(--val-red);
+      letter-spacing: 0.14em;
+    }
+    .track-move-left {
+      animation: trackLeft 3.5s linear infinite;
+    }
+    .track-move-right {
+      animation: trackRight 3.5s linear infinite;
+    }
+    @keyframes trackLeft {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+    @keyframes trackRight {
+      0% { transform: translateX(-50%); }
+      100% { transform: translateX(0); }
+    }
+
+    /* ============================================================
+       ACT 5: CONVERGENCE & CYAN GLITCH LOCK — "TANVIR" (Frames 239 - 290)
+       Exact Frame 260, 285, 290: Bands collapse into central line + cyan glitch slits
+       ============================================================ */
+    #act-5 {
+      position: absolute;
+      inset: 0;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: var(--val-dark);
+      overflow: hidden;
+    }
+    .converged-word {
+      font-family: 'Valorant', sans-serif;
+      font-size: clamp(80px, 10vw, 150px);
+      letter-spacing: 0.22em;
+      color: var(--val-red);
+      position: relative;
+      transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .cyan-glitch-slit {
+      position: absolute;
+      left: -20px;
+      width: 80px;
+      height: 14px;
+      background: var(--val-cyan);
+      bottom: 25%;
+      opacity: 0;
+      z-index: 70;
+    }
+    .cyan-glitch-slit.show {
+      opacity: 1;
+    }
+
+    /* ============================================================
+       ACT 6: FINAL RED FLASH & PURE WHITE 3-PART LOCK (Frames 291 - 337)
+       Exact Frame 300, 325, 336: Red flash -> pure dark navy lock -> Full Name in 100% Pure White
+       ============================================================ */
+    #act-6 {
+      position: absolute;
+      inset: 0;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: var(--val-dark);
+      z-index: 100;
+      transition: background 0.15s;
+    }
+
+    /* Final Valorant V Icon */
+    .v-logo-assembly {
+      width: 136px;
+      height: 102px;
+      position: relative;
+    }
+    .v-blade {
+      position: absolute;
+      background: var(--val-red);
+      will-change: transform, opacity;
+      opacity: 0;
+      transition: all 0.32s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .v-blade-l {
+      left: 10px;
+      top: 10px;
+      width: 48px;
+      height: 90px;
+      clip-path: polygon(0 0, 44% 0, 100% 100%, 56% 100%);
+      transform: translate(-45px, -45px);
+    }
+    .v-blade-r {
+      right: 10px;
+      top: 10px;
+      width: 60px;
+      height: 60px;
+      clip-path: polygon(55% 0, 100% 0, 45% 100%, 0% 100%);
+      transform: translate(45px, -45px);
+    }
+    .v-blade.assembled {
+      opacity: 1;
+      transform: translate(0, 0);
+    }
+
+    /* 3-Part Name Reveal Container */
+    #name-stack {
+      margin-top: 32px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .name-segment {
+      font-family: 'Valorant', sans-serif;
+      font-size: clamp(34px, 4.8vw, 64px);
+      letter-spacing: 0.28em;
+      color: var(--val-white);
+      text-transform: uppercase;
+      opacity: 0;
+      transform: translateY(14px) scale(0.96);
+      transition: all 0.32s cubic-bezier(0.16, 1, 0.3, 1);
+      text-shadow: 0 0 30px rgba(255, 255, 255, 0.35);
+    }
+    .name-segment.show {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+
+    .title-sub {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 13px;
+      letter-spacing: 0.55em;
+      color: rgba(255, 255, 255, 0.65);
+      margin-top: 10px;
+      opacity: 0;
+      transition: opacity 0.45s ease 0.3s;
+    }
+    .title-sub.show {
+      opacity: 1;
+    }
+
+    /* Navigation */
+    .nav-bar {
+      position: fixed;
+      bottom: 24px;
+      right: 36px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      z-index: 1000;
+      opacity: 0;
+      transition: opacity 0.4s;
+    }
+    .nav-bar.show {
+      opacity: 1;
+    }
+    .btn {
+      background: rgba(15, 25, 35, 0.85);
+      border: 1px solid rgba(255, 255, 255, 0.35);
+      color: var(--val-white);
+      font-family: 'Rajdhani', sans-serif;
+      font-weight: 700;
+      font-size: 12px;
+      letter-spacing: 0.3em;
+      padding: 9px 18px;
+      cursor: pointer;
+      text-transform: uppercase;
+      transition: all 0.2s;
+    }
+    .btn:hover {
+      background: var(--val-red);
+      border-color: var(--val-red);
+      color: #fff;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Audio Element -->
+  <audio id="reveal-audio" preload="auto">
+    <source src="reveal_audio.webm" type="audio/webm" />
+    <source src="cypher_audio.webm" type="audio/webm" />
+  </audio>
+
+  <div class="scanlines"></div>
+
+  <!-- 1-Click Audio Unlock Gate -->
+  <div id="start-splash">
+    <div class="splash-box">
+      <div class="splash-title">PROJECT A</div>
+      <div class="splash-sub">CLICK TO INITIALIZE 337-FRAME CINEMATIC</div>
+    </div>
+  </div>
+
+  <!-- HUD Marks -->
+  <div class="hud-label hud-tl">// VLRNT.SYS // CINEMATIC_ACT_06</div>
+  <div class="hud-label hud-tr">FRAMES // 001_337 // 60FPS</div>
+  <div class="hud-label hud-bl">PROTOCOL // FAHIM_AHAMMAD_TANVIR</div>
+  <div class="hud-label hud-br">CORE // SUST_CSE</div>
+  <div class="hud-dash hud-dash-tl"></div>
+  <div class="hud-dash hud-dash-tr"></div>
+
+  <!-- STAGE CONTAINER -->
+  <div id="stage-container">
+
+    <!-- ACT 1: Glitch & Strobe Slices (Frames 1-24) -->
+    <div id="act-1">
+      <div class="cyan-stripe"></div>
+      <div class="cyan-rect"></div>
+      <div class="red-block-slice" style="top: 0; left: 0; width: 22%; bottom: 0;"></div>
+      <div class="red-block-slice" style="bottom: 0; right: 14%; width: 240px; height: 320px;"></div>
+    </div>
+
+    <!-- ACT 2: Massive Inverted Red Cut — "FAHIM" (Frames 25-98) -->
+    <div id="act-2">
+      <div class="macro-fahim">FAHIM</div>
+      <div class="diamonds" style="top: 28%; right: 34%;">
+        <div class="dm" style="background: var(--val-dark);"></div>
+        <div class="dm" style="background: var(--val-dark);"></div>
+      </div>
+    </div>
+
+    <!-- ACT 3: Dark Transition & Geometric Cut (Frames 99-132) -->
+    <div id="act-3">
+      <div class="act-3-slice-top"></div>
+      <div class="act-3-slice-leg"></div>
+      <div class="act-3-word-part">AHAMMAD</div>
+    </div>
+
+    <!-- ACT 4: Dual Opposing Kinetic Bands — "AHAMMAD" (Frames 133-238) -->
+    <div id="act-4">
+      <div class="kinetic-band-row">
+        <div class="kinetic-track track-move-left">
+          AHAMMAD &nbsp; AHAMMAD &nbsp; AHAMMAD &nbsp; AHAMMAD &nbsp; AHAMMAD &nbsp;
+        </div>
+      </div>
+      <div class="kinetic-band-row">
+        <div class="kinetic-track track-move-right">
+          AHAMMAD &nbsp; AHAMMAD &nbsp; AHAMMAD &nbsp; AHAMMAD &nbsp; AHAMMAD &nbsp;
+        </div>
+      </div>
+    </div>
+
+    <!-- ACT 5: Convergence & Cyan Glitch Lock — "TANVIR" (Frames 239-290) -->
+    <div id="act-5">
+      <div class="converged-word" id="converged-tanvir">
+        TANVIR
+        <div class="cyan-glitch-slit" id="act5-cyan-slit"></div>
+      </div>
+    </div>
+
+    <!-- ACT 6: Final Red Flash & Pure White 3-Part Lock (Frames 291-337) -->
+    <div id="act-6">
+      <div class="v-logo-assembly">
+        <div class="v-blade v-blade-l" id="blade-l"></div>
+        <div class="v-blade v-blade-r" id="blade-r"></div>
+      </div>
+
+      <!-- 100% PURE WHITE FULL NAME STACK -->
+      <div id="name-stack">
+        <div class="name-segment" id="name-full">FAHIM AHAMMAD TANVIR</div>
+        <div class="title-sub" id="title-sub">SOFTWARE ENGINEER // SUST // FULL-STACK</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Bottom Nav -->
+  <div class="nav-bar" id="nav-bar">
+    <button class="btn" id="replay-btn">REPLAY</button>
+    <button class="btn" id="enter-btn">ENTER PORTFOLIO &rsaquo;</button>
+  </div>
+
+  <script>
+    const audio = document.getElementById('reveal-audio');
+    const splash = document.getElementById('start-splash');
+    
+    // Acts
+    const act1 = document.getElementById('act-1');
+    const act2 = document.getElementById('act-2');
+    const act3 = document.getElementById('act-3');
+    const act4 = document.getElementById('act-4');
+    const act5 = document.getElementById('act-5');
+    const act6 = document.getElementById('act-6');
+
+    const act5Slit = document.getElementById('act5-cyan-slit');
+    const bladeL = document.getElementById('blade-l');
+    const bladeR = document.getElementById('blade-r');
+    const nameFull = document.getElementById('name-full');
+    const titleSub = document.getElementById('title-sub');
+    const navBar = document.getElementById('nav-bar');
+    const enterBtn = document.getElementById('enter-btn');
+    const replayBtn = document.getElementById('replay-btn');
+
+    const wait = ms => new Promise(res => setTimeout(res, ms));
+
+    // 1-Click Audio Unlock
+    splash.addEventListener('click', () => {
+      splash.classList.add('hide');
+      audio.currentTime = 0;
+      audio.play().catch(e => console.log('Audio playback:', e));
+      runExact337FrameSequence();
+    });
+
+    async function runExact337FrameSequence() {
+      // Reset all acts
+      [act1, act2, act3, act4, act5, act6].forEach(a => a.style.display = 'none');
+      bladeL.classList.remove('assembled');
+      bladeR.classList.remove('assembled');
+      act5Slit.classList.remove('show');
+      nameFull.classList.remove('show');
+      titleSub.classList.remove('show');
+      navBar.classList.remove('show');
+      act6.style.background = 'var(--val-dark)';
+
+      /* ============================================================
+         ACT 1: GLITCH & CYAN STROBE (Frames 1 - 24 ~ 400ms)
+         ============================================================ */
+      act1.style.display = 'block';
+      await wait(380);
+      act1.style.display = 'none';
+
+      /* ============================================================
+         ACT 2: INVERTED RED MACRO CUT — "FAHIM" (Frames 25 - 98 ~ 1100ms)
+         ============================================================ */
+      act2.style.display = 'flex';
+      await wait(1100);
+      act2.style.display = 'none';
+
+      /* ============================================================
+         ACT 3: DARK GEOMETRIC TRANSITION (Frames 99 - 132 ~ 500ms)
+         ============================================================ */
+      act3.style.display = 'block';
+      await wait(520);
+      act3.style.display = 'none';
+
+      /* ============================================================
+         ACT 4: DUAL OPPOSING KINETIC BANDS — "AHAMMAD" (Frames 133 - 238 ~ 1400ms)
+         ============================================================ */
+      act4.style.display = 'flex';
+      await wait(1400);
+      act4.style.display = 'none';
+
+      /* ============================================================
+         ACT 5: CONVERGENCE & CYAN SLIT GLITCH — "TANVIR" (Frames 239 - 290 ~ 800ms)
+         ============================================================ */
+      act5.style.display = 'flex';
+      await wait(300);
+      // Cyan glitch slit flash (Frame 285, 290)
+      act5Slit.classList.add('show');
+      await wait(90);
+      act5Slit.classList.remove('show');
+      await wait(400);
+      act5.style.display = 'none';
+
+      /* ============================================================
+         ACT 6: FINAL RED STROBE & 100% PURE WHITE FULL NAME LOCK (Frames 291 - 337)
+         ============================================================ */
+      act6.style.display = 'flex';
+      
+      // Flash Red (Frame 300, 325)
+      act6.style.background = 'var(--val-red)';
+      bladeL.style.background = 'var(--val-dark)';
+      bladeR.style.background = 'var(--val-dark)';
+      bladeL.classList.add('assembled');
+      bladeR.classList.add('assembled');
+      await wait(120);
+
+      // Hard cut to Pure Dark Navy Lock (Frame 336, 337)
+      act6.style.background = 'var(--val-dark)';
+      bladeL.style.background = 'var(--val-red)';
+      bladeR.style.background = 'var(--val-red)';
+      await wait(240);
+
+      // 100% Pure White Full Name Reveal
+      nameFull.classList.add('show');
+      titleSub.classList.add('show');
+      await wait(600);
+
+      navBar.classList.add('show');
+    }
+
+    // Portfolio Navigation
+    function enterPortfolio() {
+      document.body.style.transition = 'opacity 0.4s ease';
+      document.body.style.opacity = '0';
+      setTimeout(() => {
+        window.location.href = 'index.html';
+      }, 400);
+    }
+
+    enterBtn.addEventListener('click', enterPortfolio);
+    replayBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      runExact337FrameSequence();
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (navBar.classList.contains('show')) enterPortfolio();
+    });
+  </script>
+</body>
+</html>

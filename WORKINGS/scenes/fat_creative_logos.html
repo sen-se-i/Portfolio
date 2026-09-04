@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FAT LOGO SHOWCASE // BEYOND THE V // VALORANT AESTHETICS</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@700;800&display=swap" rel="stylesheet" />
+  <style>
+    @font-face {
+      font-family: 'Valorant';
+      src: url('../valorant_font/Valorant Font.ttf') format('truetype');
+    }
+
+    *, *::before, *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      user-select: none;
+    }
+
+    :root {
+      --val-red: #ff4655;
+      --val-dark: #0f1923;
+      --val-black: #080c10;
+      --val-white: #ffffff;
+      --val-cyan: #00f5a0;
+      --val-gold: #ece8e1;
+    }
+
+    body {
+      width: 100vw;
+      min-height: 100vh;
+      background: var(--val-black);
+      color: var(--val-white);
+      font-family: 'Rajdhani', sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 50px 24px 120px;
+      overflow-x: hidden;
+    }
+
+    .scanlines {
+      position: fixed;
+      inset: 0;
+      background: repeating-linear-gradient(
+        to bottom,
+        transparent 0px, transparent 3px,
+        rgba(0,0,0,0.22) 3px, rgba(0,0,0,0.22) 4px
+      );
+      pointer-events: none;
+      z-index: 900;
+    }
+
+    .header-box {
+      text-align: center;
+      margin-bottom: 48px;
+    }
+    .header-box h1 {
+      font-family: 'Valorant', sans-serif;
+      font-size: 38px;
+      letter-spacing: 0.26em;
+      color: var(--val-red);
+      margin-bottom: 8px;
+    }
+    .header-box p {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 13px;
+      letter-spacing: 0.4em;
+      color: rgba(255,255,255,0.7);
+    }
+
+    /* Grid */
+    .showcase-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(440px, 1fr));
+      gap: 36px;
+      width: 100%;
+      max-width: 1540px;
+      z-index: 10;
+    }
+
+    .card {
+      background: rgba(15, 25, 35, 0.75);
+      border: 1px solid rgba(255, 70, 85, 0.35);
+      padding: 34px 28px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+      transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .card:hover {
+      border-color: var(--val-red);
+      box-shadow: 0 0 35px rgba(255, 70, 85, 0.28);
+      transform: translateY(-5px);
+    }
+
+    .card::before {
+      content: ''; position: absolute; top: -3px; left: -3px;
+      width: 14px; height: 14px;
+      border-top: 3px solid var(--val-red); border-left: 3px solid var(--val-red);
+    }
+    .card::after {
+      content: ''; position: absolute; bottom: -3px; right: -3px;
+      width: 14px; height: 14px;
+      border-bottom: 3px solid var(--val-red); border-right: 3px solid var(--val-red);
+    }
+
+    .card-title {
+      font-family: 'Valorant', sans-serif;
+      font-size: 20px;
+      letter-spacing: 0.2em;
+      color: var(--val-white);
+      margin-bottom: 6px;
+    }
+    .card-desc {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.22em;
+      color: var(--val-red);
+      margin-bottom: 24px;
+      text-align: center;
+    }
+
+    .stage {
+      width: 100%;
+      height: 320px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+      margin-bottom: 24px;
+      border: 1px solid rgba(255,255,255,0.06);
+    }
+    .bg-red { background: var(--val-red); }
+    .bg-dark { background: var(--val-dark); }
+
+    .hairline {
+      position: absolute;
+      width: 160%;
+      height: 1px;
+      transform: rotate(45deg);
+      pointer-events: none;
+    }
+    .hl-dark { background: rgba(15, 25, 35, 0.35); }
+    .hl-red { background: rgba(255, 70, 85, 0.25); }
+
+    .hud-mark {
+      position: absolute;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 9px;
+      letter-spacing: 0.3em;
+    }
+
+    .fat-svg {
+      width: 260px;
+      height: 210px;
+      filter: drop-shadow(0 14px 28px rgba(0,0,0,0.38));
+      transition: transform 0.3s ease;
+    }
+    .card:hover .fat-svg {
+      transform: scale(1.05);
+    }
+
+    .wordmark {
+      font-family: 'Valorant', sans-serif;
+      font-size: 24px;
+      letter-spacing: 0.25em;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .wm-dark { color: var(--val-dark); }
+    .wm-red { color: var(--val-red); }
+    .wm-white { color: var(--val-white); }
+
+    .tagline {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.38em;
+      margin-top: 14px;
+      opacity: 0.75;
+    }
+  </style>
+</head>
+<body>
+  <div class="scanlines"></div>
+
+  <div class="header-box">
+    <h1>"FAT" LOGO IDENTITY // BEYOND THE V</h1>
+    <p>FAHIM AHAMMAD TANVIR // 4 RADICAL VALORANT-STYLED CONCEPTS</p>
+  </div>
+
+  <div class="showcase-grid">
+
+    <!-- ========================================================
+         CONCEPT A: THE RADIANT DELTA / CREST (SHARP APEX)
+         - Not a 'V', but an imposing Delta (Upward Spear) like a Radiant Rank Crest!
+         - Outer shape is a razor-sharp apex triangle (A).
+         - The left flank is carved into 'F' with 45° chamfer wings.
+         - The top horizontal crown and center spine forms 'T'.
+         ======================================================== -->
+    <div class="card">
+      <div class="card-title">CONCEPT A // THE RADIANT DELTA</div>
+      <div class="card-desc">UPWARD TACTICAL CREST & APEX SPEAR // AGENT RANK EMBLEM</div>
+
+      <div class="stage bg-red">
+        <div class="hairline hl-dark"></div>
+        <div class="hud-mark" style="top:18px; left:22px; color:rgba(15,25,35,0.6);">RADIANITE // APEX_01</div>
+        <div class="hud-mark" style="bottom:18px; right:22px; color:rgba(15,25,35,0.6);">SECTOR // SWE_23</div>
+
+        <!-- SVG EMBLEM A -->
+        <svg class="fat-svg" viewBox="0 0 260 220" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <!-- Outer Apex Crown forming T (Roof) -->
+          <polygon points="40,35 220,35 220,62 148,62 148,185 112,185 112,62 40,62" fill="#0f1923" />
+
+          <!-- Left Flank forming F (Horizontal Wings) -->
+          <polygon points="40,82 100,82 100,108 40,108" fill="#0f1923" />
+          
+          <!-- Angled Chevron Legs forming A -->
+          <!-- Left Slanted Outer Leg -->
+          <polygon points="35,120 70,70 102,125 78,165" fill="#0f1923" />
+          <!-- Right Slanted Stabilizer Blade -->
+          <polygon points="160,70 225,165 190,165 138,88" fill="#0f1923" />
+
+          <!-- Signature Mint-Cyan Accent Notch -->
+          <rect x="214" y="35" width="6" height="27" fill="#00f5a0" />
+        </svg>
+
+        <div class="wordmark wm-dark" style="margin-top: 10px;">
+          <span>FAT</span>
+          <span style="font-size: 15px; letter-spacing: 0.15em;">APEX</span>
+        </div>
+      </div>
+
+      <div class="wordmark wm-white" style="font-size: 18px;">
+        <span>FAHIM</span>
+        <span style="color:var(--val-red);">·</span>
+        <span>AHAMMAD</span>
+        <span style="color:var(--val-red);">·</span>
+        <span>TANVIR</span>
+      </div>
+      <div class="tagline">STYLE // RADIANT APEX RANK INSIGNIA</div>
+    </div>
+
+    <!-- ========================================================
+         CONCEPT B: THE ISOMETRIC TACTICAL CUBE (RADIANITE CRATE)
+         - Isometric 3D polygon seen in Valorant Spike & Radianite Crates.
+         - Top plane = 'T'
+         - Left plane = 'F'
+         - Right plane = 'A'
+         - Extremely futuristic, 3D tactical look.
+         ======================================================== -->
+    <div class="card">
+      <div class="card-title">CONCEPT B // ISOMETRIC RADIANITE CUBE</div>
+      <div class="card-desc">3D TACTICAL CRATE // THREE-DIMENSIONAL F-A-T ASSEMBLY</div>
+
+      <div class="stage bg-dark">
+        <div class="hairline hl-red"></div>
+        <div class="hud-mark" style="top:18px; left:22px; color:rgba(255,70,85,0.6);">RAD_CORE // ISO_02</div>
+        <div class="hud-mark" style="bottom:18px; right:22px; color:rgba(255,70,85,0.6);">CRATE_DEF // PROTOCOL</div>
+
+        <!-- SVG EMBLEM B -->
+        <svg class="fat-svg" viewBox="0 0 260 220" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <!-- TOP PLANE: T (Crimson Roof in isometric perspective) -->
+          <polygon points="130,25 215,74 180,94 148,76 148,115 112,115 112,76 80,94 45,74" fill="#ff4655" />
+
+          <!-- LEFT PLANE: F (Dark Crimson with 2 notched isometric arms) -->
+          <!-- Outer perimeter -->
+          <polygon points="45,82 112,120 112,205 78,185 78,160 100,148 78,135 78,110 45,90" fill="#e03b49" />
+
+          <!-- RIGHT PLANE: A (Deep Navy / Charcoal with internal Chevron Triangle) -->
+          <polygon points="215,82 215,168 180,188 148,168 148,120" fill="#ffffff" />
+          <!-- Inner negative isometric triangle for A -->
+          <polygon points="175,142 195,154 165,170" fill="#080c10" />
+
+          <!-- Mint-Cyan Radianite Core Glow -->
+          <polygon points="120,118 140,118 130,132" fill="#00f5a0" />
+        </svg>
+
+        <div class="wordmark wm-red" style="margin-top: 10px;">
+          <span>FAT</span>
+          <span style="color:var(--val-white); font-size:14px; font-family:'Share Tech Mono';">// RADIANITE</span>
+        </div>
+      </div>
+
+      <div class="wordmark wm-white" style="font-size: 18px;">
+        <span>FAHIM</span>
+        <span style="color:var(--val-red);">·</span>
+        <span>AHAMMAD</span>
+        <span style="color:var(--val-red);">·</span>
+        <span>TANVIR</span>
+      </div>
+      <div class="tagline">STYLE // ISOMETRIC 3D RADIANITE MATRIX</div>
+    </div>
+
+    <!-- ========================================================
+         CONCEPT C: THE DUAL CROSS-BLADES / KUNAI
+         - Looks like Jett's Cloudburst / Omen's blades crossed together.
+         - Not a V, but an aggressive 'X' / Combat Cross-Slash.
+         - The heavy falling blade forms F & A.
+         - The crossing perpendicular blade forms T!
+         ======================================================== -->
+    <div class="card">
+      <div class="card-title">CONCEPT C // TACTICAL CROSS-SLASH</div>
+      <div class="card-desc">DUAL INTERSECTING COMBAT BLADES // AGGRESSIVE 'X' KINETICS</div>
+
+      <div class="stage bg-red">
+        <div class="hairline hl-dark"></div>
+        <div class="hud-mark" style="top:18px; left:22px; color:rgba(15,25,35,0.6);">TACTICAL_SLASH // 03</div>
+        <div class="hud-mark" style="bottom:18px; right:22px; color:rgba(15,25,35,0.6);">KUNAI_VECTOR // HAVEN</div>
+
+        <!-- SVG EMBLEM C -->
+        <svg class="fat-svg" viewBox="0 0 260 220" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <!-- BLADE 1: The Heavy Diagonal Spine (Top-Left to Bottom-Right) -->
+          <polygon points="45,35 95,35 195,185 145,185" fill="#0f1923" />
+          <!-- Tactical F-fins attached to Blade 1 -->
+          <polygon points="95,35 145,35 125,65 75,65" fill="#0f1923" />
+          <polygon points="105,80 140,80 120,105 85,105" fill="#0f1923" />
+
+          <!-- BLADE 2: The Crossing 'T' Blade (Top-Right to Bottom-Left) -->
+          <polygon points="215,45 165,45 65,175 115,175" fill="#ffffff" />
+          <!-- T Hammerhead Cap on Blade 2 -->
+          <polygon points="180,25 235,55 210,75 155,45" fill="#0f1923" />
+
+          <!-- A Cross-Bridge between the two crossing blades -->
+          <polygon points="105,120 155,120 145,138 95,138" fill="#0f1923" />
+
+          <!-- Mint-Cyan Slash Edge -->
+          <polygon points="215,45 225,50 175,185 165,180" fill="#00f5a0" />
+        </svg>
+
+        <div class="wordmark wm-dark" style="margin-top: 10px;">
+          <span>FAT</span>
+          <span style="font-size: 15px; letter-spacing: 0.15em;">COMBAT</span>
+        </div>
+      </div>
+
+      <div class="wordmark wm-white" style="font-size: 18px;">
+        <span>FAHIM</span>
+        <span style="color:var(--val-red);">·</span>
+        <span>AHAMMAD</span>
+        <span style="color:var(--val-red);">·</span>
+        <span>TANVIR</span>
+      </div>
+      <div class="tagline">STYLE // DUAL INTERSECTING COMBAT BLADES</div>
+    </div>
+
+    <!-- ========================================================
+         CONCEPT D: THE HORIZONTAL DECONSTRUCTED GLYPH
+         - Styled like the official VALORANT typography wordmark itself.
+         - F, A, and T are fused together horizontally with speed-slits and 45° cuts.
+         - Looks like an official Riot Games studio or tournament title brand!
+         ======================================================== -->
+    <div class="card">
+      <div class="card-title">CONCEPT D // HORIZONTAL KINETIC MONOGRAM</div>
+      <div class="card-desc">TYPOGRAPHIC DECONSTRUCTION // RIOT ESPORTS MONOGRAM</div>
+
+      <div class="stage bg-dark">
+        <div class="hairline hl-red"></div>
+        <div class="hud-mark" style="top:18px; left:22px; color:rgba(255,70,85,0.6);">MONOGRAM // FAT_04</div>
+        <div class="hud-mark" style="bottom:18px; right:22px; color:rgba(255,70,85,0.6);">TOURNAMENT // PROTOCOL</div>
+
+        <!-- SVG EMBLEM D -->
+        <svg class="fat-svg" viewBox="0 0 260 220" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <!-- 'F' Left Pillar + 45° Chamfered Arms -->
+          <path d="M 30 60 L 80 60 L 68 85 L 52 85 L 52 105 L 72 105 L 60 130 L 52 130 L 52 165 L 30 165 Z" fill="#ff4655" />
+
+          <!-- 'A' Center Monolithic Inverted Chevron with Negative Triangle Cut -->
+          <polygon points="120,60 145,60 170,165 146,165 133,115 110,165 86,165" fill="#ffffff" />
+          <polygon points="115,100 128,100 122,80" fill="#080c10" />
+
+          <!-- 'T' Right Heavy Roof + Suspended Spear -->
+          <polygon points="175,60 230,60 220,85 208,85 208,165 186,165 186,85 175,85" fill="#ff4655" />
+
+          <!-- Continuous Cyber Base Runner Bar -->
+          <polygon points="30,175 230,175 220,185 40,185" fill="rgba(255,255,255,0.3)" />
+
+          <!-- Mint-Cyan Technical Accents -->
+          <rect x="222" y="60" width="8" height="25" fill="#00f5a0" />
+          <rect x="30" y="60" width="4" height="25" fill="#00f5a0" />
+        </svg>
+
+        <div class="wordmark wm-red" style="margin-top: 10px;">
+          <span style="color:var(--val-red);">F</span>
+          <span style="color:var(--val-white);">A</span>
+          <span style="color:var(--val-red);">T</span>
+          <span style="color:var(--val-cyan); font-size:14px; font-family:'Share Tech Mono';">// ESPORTS</span>
+        </div>
+      </div>
+
+      <div class="wordmark wm-white" style="font-size: 18px;">
+        <span>FAHIM</span>
+        <span style="color:var(--val-red);">·</span>
+        <span>AHAMMAD</span>
+        <span style="color:var(--val-red);">·</span>
+        <span>TANVIR</span>
+      </div>
+      <div class="tagline">STYLE // RIOT ESPORTS MONOGRAM GLYPH</div>
+    </div>
+
+  </div>
+
+</body>
+</html>

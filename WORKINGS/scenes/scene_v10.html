@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SCENE V10 // NViR — "I" BUILD</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@700;800&display=swap" rel="stylesheet" />
+  <style>
+    @font-face {
+      font-family: 'Valorant';
+      src: url('../valorant_font/Valorant Font.ttf') format('truetype');
+    }
+    *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; user-select:none; }
+    :root {
+      --red: #ff4655;
+      --dark: #0f1923;
+      --black: #080c10;
+      --white: #ffffff;
+    }
+    html, body { width:100%; height:100%; background:var(--black); overflow:hidden; }
+
+    /* Scanlines */
+    .scanlines {
+      position: fixed; inset: 0;
+      background: repeating-linear-gradient(
+        to bottom,
+        transparent 0px, transparent 3px,
+        rgba(0,0,0,0.18) 3px, rgba(0,0,0,0.18) 4px
+      );
+      pointer-events: none; z-index: 900;
+    }
+
+    /* Splash */
+    #splash {
+      position: fixed; inset: 0;
+      background: var(--black);
+      display: flex; align-items: center; justify-content: center;
+      z-index: 1000; cursor: pointer;
+      transition: opacity 0.3s;
+    }
+    #splash.hide { opacity:0; pointer-events:none; }
+    .splash-box {
+      border: 1px solid rgba(255,70,85,0.4);
+      padding: 28px 56px;
+      display: flex; flex-direction: column; align-items: center; gap: 14px;
+      background: rgba(255,70,85,0.04); position: relative;
+    }
+    .splash-box::before {
+      content:''; position:absolute; top:-3px; left:-3px;
+      width:12px; height:12px;
+      border-top:3px solid var(--red); border-left:3px solid var(--red);
+    }
+    .splash-box::after {
+      content:''; position:absolute; bottom:-3px; right:-3px;
+      width:12px; height:12px;
+      border-bottom:3px solid var(--red); border-right:3px solid var(--red);
+    }
+    .splash-title { font-family:'Valorant',sans-serif; font-size:28px; letter-spacing:0.2em; color:var(--white); }
+    .splash-sub { font-family:'Share Tech Mono',monospace; font-size:11px; letter-spacing:0.4em; color:var(--red); animation:pulse 1.2s infinite; }
+    @keyframes pulse { 0%,100%{opacity:0.3} 50%{opacity:1} }
+
+    /* Stage — CRIMSON RED background (like frames 69-98) */
+    #stage {
+      position: fixed; inset: 0;
+      background: var(--red);
+      overflow: hidden; z-index: 50;
+    }
+
+    /* ===================================================
+       THE NViR "I" BUILD — Exact frames 69 to 98 logic:
+       
+       Frame 69-84: Two SEPARATE dark boxes on red bg:
+         - Top block: y=170px, h=114px (the "dot"/cap of I)
+         - Bottom block: y=435px, h=99px (the foot of I)
+         Both at x ≈ 550-674px (46% to 53% of 1280w)
+       
+       Frame 85: Transition — connecting bar slides down
+       
+       Frame 90-98: Full unified I stem visible:
+         - Single tall dark column: y=170, h=364px
+       
+       Duration: 30 frames ÷ 24fps = 1.25 seconds
+       =================================================== */
+    #scene {
+      position: absolute; inset: 0;
+      display: none;
+      background: var(--red);
+      overflow: hidden;
+    }
+
+    /*
+     V SHAPE — LEFT SIDE
+     Data: x=7-550 (19%~43%), y=170-534 (32%~100%)
+     In Valorant font: V is two diagonal arms going down to a point
+     This big dark shape on the left IS the V, slides in from the left
+    */
+    .v-shape {
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 44%;         /* 550/1280 = 43% + small buffer */
+      background: var(--dark);
+      /*
+        Valorant V: 
+        - Left outer vertical edge (left spine of V)
+        - Top-left diagonal going down-right to bottom center point
+        - Top-right diagonal going down-left to bottom center point
+        - Right outer edge
+        The dark portion fills the full V silhouette
+      */
+      clip-path: polygon(
+        0%   0%,    /* top-left */
+        18%  0%,    /* left arm top-right edge */
+        55%  100%,  /* V bottom point (right side) */
+        42%  100%,  /* V bottom point (left side) */
+        82%  0%,    /* right arm top-left edge */
+        100% 0%,    /* top-right */
+        100% 100%,  /* bottom-right outer edge (keeps it rectangular outside V) */
+        0%   100%   /* bottom-left outer edge */
+      );
+      will-change: transform;
+      animation: vSlideIn 1.0s cubic-bezier(0.12, 0.98, 0.24, 1) forwards;
+    }
+    @keyframes vSlideIn {
+      0%   { transform: translateX(-100%); }
+      100% { transform: translateX(0); }
+    }
+
+    /*
+     I STEM — CENTER
+     Data: x=570-700 (44.5%-54.7%), y=170-534
+     Build: Frame 69-83: TWO separate boxes (top cap + bottom foot)
+            Frame 84+: connecting stem drops → unified I
+    */
+    /* TOP BLOCK: x=570-700, y=170-284 → top:32%, height:21.3% */
+    .i-top-block {
+      position: absolute;
+      left: 44.5%;
+      top: 31.8%;           /* 170/534 */
+      width: 10.2%;         /* 130/1280 */
+      height: 21.3%;        /* 114/534 */
+      background: var(--dark);
+      opacity: 0;
+      animation: topBlockAppear 0.2s ease-out 0.05s forwards;
+    }
+    @keyframes topBlockAppear {
+      0%   { opacity:0; transform:translateY(-6px); }
+      100% { opacity:1; transform:translateY(0); }
+    }
+
+    /* BOTTOM BLOCK: x=570-700, y=435-534 → top:81.5%, height:18.5% */
+    .i-bottom-block {
+      position: absolute;
+      left: 44.5%;
+      top: 81.5%;           /* 435/534 */
+      width: 10.2%;
+      height: 18.5%;        /* 99/534 */
+      background: var(--dark);
+      opacity: 0;
+      animation: botBlockAppear 0.2s ease-out 0.1s forwards;
+    }
+    @keyframes botBlockAppear {
+      0%   { opacity:0; transform:translateY(6px); }
+      100% { opacity:1; transform:translateY(0); }
+    }
+
+    /* CONNECTING STEM — drops from just below top block to just above bottom block */
+    /* Gap: y=284 to y=435 → 53.2% to 81.5%, so height = 28.3% */
+    .i-stem-connector {
+      position: absolute;
+      left: 44.5%;
+      top: 53.2%;           /* 284/534, just below top block */
+      width: 10.2%;
+      height: 0%;
+      background: var(--dark);
+      transform-origin: top center;
+      animation: stemDrop 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.3s forwards;
+    }
+    @keyframes stemDrop {
+      0%   { height: 0%; }
+      100% { height: 28.3%; }
+    }
+
+    /*
+     R SHAPE — RIGHT SIDE
+     Data: x=976-1280 (76%-100%), y=158-534
+     Plus a small top block at x=981-1086, y=0-124 (the diagonal slash / R top)
+     Big dark curved shape, slides in from the RIGHT
+    */
+    /* R main body — big dark block on far right */
+    .r-main-body {
+      position: absolute;
+      right: 0;
+      top: 29.6%;           /* 158/534 */
+      bottom: 0;
+      width: 24%;           /* 294/1280 = 23% + buffer */
+      background: var(--dark);
+      /* R shape: left edge has a curved cutout (the bowl of R) */
+      clip-path: polygon(
+        0%   0%,
+        100% 0%,
+        100% 100%,
+        0%   100%,
+        0%   60%,
+        30%  45%,   /* curve peak */
+        0%   30%
+      );
+      will-change: transform;
+      animation: rSlideIn 0.9s cubic-bezier(0.08, 0.92, 0.18, 1) forwards;
+    }
+
+    /* R top diagonal block: x=981-1086 (76.6%-84.8%), y=0-124 */
+    .r-top-slash {
+      position: absolute;
+      left: 76.6%;
+      top: 0;
+      width: 8.2%;           /* 105/1280 */
+      height: 23.2%;         /* 124/534 */
+      background: var(--dark);
+      /* Diagonal slash going down-right (the top of R or V diagonal) */
+      clip-path: polygon(
+        0%   0%,
+        100% 0%,
+        100% 60%,
+        0%   100%
+      );
+      will-change: transform;
+      animation: rSlideIn 1.0s cubic-bezier(0.12, 0.98, 0.24, 1) forwards;
+    }
+
+    @keyframes rSlideIn {
+      0%   { transform: translateX(100%); }
+      100% { transform: translateX(0); }
+    }
+
+    /* ================================================================
+       EXACT BACKGROUND ELEMENTS (measured from frames 69-98)
+       ================================================================ */
+
+    /* Left double chevrons — top-left area (frame 69: x≈167, y≈280) */
+    .bg-double-chevrons {
+      position: absolute;
+      top: 268px; left: 155px;
+      display: flex; gap: 6px;
+      z-index: 75;
+      animation: bgChevAnim 1.25s cubic-bezier(0.15,0.8,0.2,1) forwards;
+    }
+    @keyframes bgChevAnim {
+      0%   { transform: translateX(-20px); opacity:0.5; }
+      100% { transform: translateX(0); opacity:1; }
+    }
+    .bg-chev {
+      width: 12px; height: 18px;
+      background: var(--dark);
+      clip-path: polygon(0 0, 50% 0, 100% 100%, 50% 100%);
+    }
+
+    /* Arrow pip near center (frame 69: x≈599, y≈230) → drifts left over time */
+    .bg-arrow-pip {
+      position: absolute;
+      top: 224px; left: 599px;
+      width: 16px; height: 11px;
+      background: var(--dark);
+      clip-path: polygon(0% 15%, 65% 15%, 100% 50%, 65% 85%, 0% 85%);
+      z-index: 75;
+      animation: arrowPipDrift 1.25s linear forwards;
+    }
+    @keyframes arrowPipDrift {
+      0%   { transform: translateX(0); }
+      100% { transform: translateX(-30px); }
+    }
+
+    /* Top horizontal bar (double line, around y=160-180, x=470-550) */
+    .bg-horiz-bar-top {
+      position: absolute;
+      top: 158px; left: 468px;
+      width: 80px; height: 4px;
+      background: var(--dark);
+      z-index: 75;
+      animation: barDrift 1.25s linear forwards;
+    }
+    .bg-horiz-bar-top-2 {
+      position: absolute;
+      top: 166px; left: 468px;
+      width: 80px; height: 2px;
+      background: var(--dark);
+      opacity: 0.5;
+      z-index: 75;
+      animation: barDrift 1.25s linear forwards;
+    }
+    @keyframes barDrift {
+      0%   { transform: translateX(0); }
+      100% { transform: translateX(-15px); }
+    }
+
+    /* Bottom horizontal bar (around y=450, x=470-550) */
+    .bg-horiz-bar-bot {
+      position: absolute;
+      bottom: 80px; left: 468px;
+      width: 80px; height: 4px;
+      background: var(--dark);
+      z-index: 75;
+      animation: barDrift 1.25s linear forwards;
+    }
+
+    /* Diagonal construction hairline */
+    .hairline {
+      position: absolute;
+      width: 140vw; height: 1px;
+      background: rgba(15,25,35,0.35);
+      top: 10%; right: -10%;
+      transform: rotate(45deg);
+      transform-origin: top right;
+      pointer-events: none; z-index: 40;
+    }
+
+    /* HUD text labels (like in frames 78,92,98) */
+    .hud-text {
+      position: absolute;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 8px; letter-spacing: 0.32em;
+      color: rgba(15,25,35,0.65); z-index: 80;
+    }
+
+    /* Replay */
+    .nav-bar {
+      position: fixed; bottom: 24px; right: 36px;
+      display: flex; gap: 14px; align-items: center;
+      z-index: 1000; opacity:0; transition: opacity 0.3s;
+    }
+    .nav-bar.show { opacity:1; }
+    .btn {
+      background: rgba(15,25,35,0.85);
+      border: 1px solid rgba(255,255,255,0.35);
+      color: var(--white);
+      font-family: 'Rajdhani', sans-serif; font-weight: 700;
+      font-size: 12px; letter-spacing: 0.3em;
+      padding: 9px 18px; cursor: pointer; text-transform: uppercase;
+      transition: all 0.2s;
+    }
+    .btn:hover { background: var(--dark); border-color: var(--white); }
+  </style>
+</head>
+<body>
+  <div class="scanlines"></div>
+
+  <audio id="audio" preload="auto">
+    <source src="../reveal_audio.webm" type="audio/webm" />
+  </audio>
+
+  <div id="splash">
+    <div class="splash-box">
+      <div class="splash-title">SCENE V10 // NViR BUILD</div>
+      <div class="splash-sub">CLICK TO PLAY — FRAMES 69 TO 98 (1.25s)</div>
+    </div>
+  </div>
+
+  <div id="stage">
+    <div id="scene">
+      <div class="hairline"></div>
+
+      <!-- V from left, I center build, R from right -->
+      <div class="v-shape" id="v-shape"></div>
+      <div class="r-main-body" id="r-body"></div>
+      <div class="r-top-slash" id="r-slash"></div>
+
+      <!-- I STEM BUILD (center) -->
+      <div class="i-top-block" id="i-top"></div>
+      <div class="i-bottom-block" id="i-bot"></div>
+      <div class="i-stem-connector" id="i-stem"></div>
+
+      <!-- BACKGROUND MICRO ELEMENTS (exact from frames 69-98) -->
+      <div class="bg-double-chevrons">
+        <div class="bg-chev"></div>
+        <div class="bg-chev"></div>
+      </div>
+      <div class="bg-arrow-pip"></div>
+      <div class="bg-horiz-bar-top"></div>
+      <div class="bg-horiz-bar-top-2"></div>
+      <div class="bg-horiz-bar-bot"></div>
+
+      <!-- HUD labels (from frames 78-98) -->
+      <div class="hud-text" style="top:44px; left:88px;">// VLRNT // NVIR_CONSTRUCT</div>
+      <div class="hud-text" style="top:64px; left:88px;">04 05</div>
+      <div class="hud-text" style="top:190px; left:88px;">VP   EX</div>
+      <div class="hud-text" style="top:225px; left:430px;">BIND   MRCS</div>
+      <div class="hud-text" style="top:240px; left:430px;">SPLT   JPN</div>
+      <div class="hud-text" style="top:375px; left:430px;">HAVEN   STTH</div>
+    </div>
+  </div>
+
+  <div class="nav-bar" id="nav">
+    <button class="btn" id="replay">↺ REPLAY NViR BUILD</button>
+  </div>
+
+  <script>
+    const splash = document.getElementById('splash');
+    const audio  = document.getElementById('audio');
+    const scene  = document.getElementById('scene');
+    const nav    = document.getElementById('nav');
+    const replayBtn = document.getElementById('replay');
+
+    const animEls = ['v-shape', 'r-body', 'r-slash', 'i-top', 'i-bot', 'i-stem'];
+
+    const wait = ms => new Promise(r => setTimeout(r, ms));
+
+    splash.addEventListener('click', () => {
+      splash.classList.add('hide');
+      audio.currentTime = 1.15; // ~frame 69 timestamp
+      audio.play().catch(() => {});
+      play();
+    });
+
+    async function play() {
+      scene.style.display = 'none';
+      nav.classList.remove('show');
+
+      // Reset all animations
+      animEls.forEach(id => {
+        const el = document.getElementById(id);
+        if (!el) return;
+        el.style.animation = 'none';
+        el.offsetHeight;
+        el.style.animation = '';
+      });
+
+      scene.style.display = 'block';
+      // 30 frames ÷ 24fps ≈ 1.25s + small buffer
+      await wait(1500);
+      nav.classList.add('show');
+    }
+
+    replayBtn.addEventListener('click', e => { e.stopPropagation(); play(); });
+  </script>
+</body>
+</html>

@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SCENE V12 // FRAMES 239 - 254 // "T" & "V" CONVERGENCE SNAP</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@700;800&display=swap" rel="stylesheet" />
+  <style>
+    @font-face {
+      font-family: 'Valorant';
+      src: url('../valorant_font/Valorant Font.ttf') format('truetype');
+    }
+
+    *, *::before, *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      user-select: none;
+    }
+
+    :root {
+      --val-red: #ff4655;
+      --val-dark: #0f1923;
+      --val-black: #080c10;
+      --val-white: #ffffff;
+    }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      background: var(--val-black);
+      overflow: hidden;
+      font-family: 'Rajdhani', sans-serif;
+    }
+
+    /* Subtle Scanlines */
+    .scanlines {
+      position: fixed;
+      inset: 0;
+      background: repeating-linear-gradient(
+        to bottom,
+        transparent 0px, transparent 3px,
+        rgba(0,0,0,0.18) 3px, rgba(0,0,0,0.18) 4px
+      );
+      pointer-events: none;
+      z-index: 900;
+    }
+
+    /* Splash Screen */
+    #splash {
+      position: fixed;
+      inset: 0;
+      background: var(--val-black);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      cursor: pointer;
+      transition: opacity 0.3s ease;
+    }
+    #splash.hide {
+      opacity: 0;
+      pointer-events: none;
+    }
+    .splash-box {
+      border: 1px solid rgba(255,70,85,0.4);
+      padding: 28px 56px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 14px;
+      background: rgba(255,70,85,0.04);
+      position: relative;
+    }
+    .splash-box::before {
+      content: ''; position: absolute; top: -3px; left: -3px;
+      width: 12px; height: 12px;
+      border-top: 3px solid var(--val-red); border-left: 3px solid var(--val-red);
+    }
+    .splash-box::after {
+      content: ''; position: absolute; bottom: -3px; right: -3px;
+      width: 12px; height: 12px;
+      border-bottom: 3px solid var(--val-red); border-right: 3px solid var(--val-red);
+    }
+    .splash-title {
+      font-family: 'Valorant', sans-serif;
+      font-size: 26px;
+      letter-spacing: 0.22em;
+      color: var(--val-white);
+      text-align: center;
+    }
+    .splash-sub {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.4em;
+      color: var(--val-red);
+      animation: pulse 1.2s infinite;
+    }
+    @keyframes pulse { 0%,100%{opacity:0.35} 50%{opacity:1} }
+
+    /* ========================================================
+       MASTER STAGE: FRAMES 239 - 254 (CRIMSON RED SHOCK)
+       ======================================================== */
+    #stage {
+      position: fixed;
+      inset: 0;
+      background: var(--val-red);
+      overflow: hidden;
+      display: none;
+      z-index: 50;
+    }
+
+    /* 45-degree Thin Construction Hairline across Center Slit */
+    .hairline-axis {
+      position: absolute;
+      width: 180vw;
+      height: 1px;
+      background: rgba(15, 25, 35, 0.38);
+      top: 5%;
+      left: -20%;
+      transform: rotate(45deg);
+      transform-origin: top left;
+      pointer-events: none;
+      z-index: 60;
+    }
+
+    /* 
+       TOP TRACK: Clipped at y = 37% (approx 197px of 534px)
+       Holds massive "T" and "V" sliding LEFTWARD
+    */
+    .track-top-container {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 38%;
+      overflow: hidden;
+      z-index: 70;
+    }
+
+    .track-top-content {
+      position: absolute;
+      bottom: -6vh;
+      left: 0;
+      display: flex;
+      gap: 8vw;
+      font-family: 'Valorant', sans-serif;
+      font-size: 52vh;
+      line-height: 1;
+      color: var(--val-dark);
+      will-change: transform;
+      animation: topTrackSlideLeft 1.4s cubic-bezier(0.12, 0.94, 0.22, 1) forwards;
+    }
+    @keyframes topTrackSlideLeft {
+      0%   { transform: translateX(45vw); }
+      100% { transform: translateX(-14vw); }
+    }
+
+    /* 
+       BOTTOM TRACK: Starts at y = 69% (approx 370px of 534px) down to bottom
+       Holds massive "T" and "V" sliding RIGHTWARD (Opposing motion)
+    */
+    .track-bot-container {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 34%;
+      overflow: hidden;
+      z-index: 70;
+    }
+
+    .track-bot-content {
+      position: absolute;
+      top: -2vh;
+      left: 0;
+      display: flex;
+      gap: 8vw;
+      font-family: 'Valorant', sans-serif;
+      font-size: 52vh;
+      line-height: 1;
+      color: var(--val-dark);
+      will-change: transform;
+      animation: botTrackSlideRight 1.4s cubic-bezier(0.12, 0.94, 0.22, 1) forwards;
+    }
+    @keyframes botTrackSlideRight {
+      0%   { transform: translateX(-8vw); }
+      100% { transform: translateX(46vw); }
+    }
+
+    /* ========================================================
+       MICRO-ELEMENTS & TECHNICAL HUD (Frames 239 - 254)
+       ======================================================== */
+
+    /* Center horizontal dash bar at x≈500-530px, y≈245px */
+    .micro-center-dash {
+      position: absolute;
+      top: 45%;
+      left: 49%;
+      width: 32px;
+      height: 4px;
+      background: var(--val-dark);
+      z-index: 80;
+    }
+
+    /* Right vertical dots column (x≈84%, y≈12% to y≈85%) */
+    .micro-dot {
+      position: absolute;
+      width: 5px;
+      height: 5px;
+      background: var(--val-dark);
+      z-index: 80;
+    }
+
+    /* Technical HUD labels */
+    .hud-label {
+      position: absolute;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 9px;
+      letter-spacing: 0.32em;
+      color: rgba(15, 25, 35, 0.72);
+      z-index: 85;
+    }
+
+    /* Bottom Nav Bar */
+    .nav-bar {
+      position: fixed;
+      bottom: 24px;
+      right: 36px;
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      z-index: 1000;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    .nav-bar.show { opacity: 1; }
+    .btn {
+      background: rgba(15,25,35,0.85);
+      border: 1px solid rgba(255,255,255,0.35);
+      color: var(--val-white);
+      font-family: 'Rajdhani', sans-serif;
+      font-weight: 700;
+      font-size: 12px;
+      letter-spacing: 0.25em;
+      padding: 9px 18px;
+      cursor: pointer;
+      text-transform: uppercase;
+      transition: all 0.2s;
+    }
+    .btn:hover {
+      background: var(--val-dark);
+      border-color: var(--val-white);
+      color: #fff;
+    }
+  </style>
+</head>
+<body>
+  <div class="scanlines"></div>
+
+  <!-- Background Audio from Original Trimmed Video -->
+  <video id="reveal-media" style="display:none;" preload="auto">
+    <source src="../Valorant logo reveal animation _Project A_ - Trim.mp4" type="video/mp4" />
+    <source src="../reveal_audio.webm" type="audio/webm" />
+  </video>
+
+  <!-- Splash Screen -->
+  <div id="splash">
+    <div class="splash-box">
+      <div class="splash-title">SCENE V12 // "T" & "V" CONVERGENCE SNAP</div>
+      <div class="splash-sub">CLICK TO PLAY FRAMES 239 - 254 (0.67s)</div>
+    </div>
+  </div>
+
+  <!-- Master Stage -->
+  <div id="stage">
+    <div class="hairline-axis"></div>
+
+    <!-- TOP TRACK: "T", "V", "R" SLIDING LEFT -->
+    <div class="track-top-container">
+      <div class="track-top-content" id="top-content">
+        <span>T</span>
+        <span>V</span>
+        <span>R</span>
+      </div>
+    </div>
+
+    <!-- BOTTOM TRACK: "T", "V", "R" SLIDING RIGHT (OPPOSING) -->
+    <div class="track-bot-container">
+      <div class="track-bot-content" id="bot-content">
+        <span>T</span>
+        <span>V</span>
+        <span>R</span>
+      </div>
+    </div>
+
+    <!-- CENTER SLIT MICRO-DETAILS -->
+    <div class="micro-center-dash"></div>
+
+    <!-- Vertical Dot Guides (from frames 239-254) -->
+    <div class="micro-dot" style="top: 20%; left: 84%;"></div>
+    <div class="micro-dot" style="top: 36%; left: 84%;"></div>
+    <div class="micro-dot" style="top: 68%; left: 84%;"></div>
+    <div class="micro-dot" style="top: 84%; left: 84%;"></div>
+
+    <!-- Technical HUD Text (from frames 239-254) -->
+    <div class="hud-label" style="top: 24%; left: 86%;">07 // AYALC</div>
+    <div class="hud-label" style="top: 36%; left: 86%;">01</div>
+    <div class="hud-label" style="top: 48%; left: 47%;">HAVEN</div>
+    <div class="hud-label" style="top: 88%; left: 35%;">SPLT // JPN</div>
+    <div class="hud-label" style="top: 88%; left: 85%;">VLRNT // PROTOCOL</div>
+  </div>
+
+  <!-- Replay Button -->
+  <div class="nav-bar" id="nav-bar">
+    <button class="btn" id="replay-btn">↺ REPLAY "T V R" SNAP</button>
+  </div>
+
+  <script>
+    const splash = document.getElementById('splash');
+    const media = document.getElementById('reveal-media');
+    const stage = document.getElementById('stage');
+    const navBar = document.getElementById('nav-bar');
+    const replayBtn = document.getElementById('replay-btn');
+
+    const topContent = document.getElementById('top-content');
+    const botContent = document.getElementById('bot-content');
+
+    const wait = ms => new Promise(res => setTimeout(res, ms));
+
+    function startAudio() {
+      try {
+        media.currentTime = 9.85;
+        const p = media.play();
+        if (p && p.catch) p.catch(() => {});
+      } catch (e) {}
+    }
+
+    splash.addEventListener('click', () => {
+      splash.classList.add('hide');
+      playSnapScene();
+    });
+
+    async function playSnapScene() {
+      navBar.classList.remove('show');
+      stage.style.display = 'none';
+
+      // Reset animations
+      topContent.style.animation = 'none';
+      botContent.style.animation = 'none';
+      topContent.offsetHeight;
+      botContent.offsetHeight;
+      topContent.style.animation = '';
+      botContent.style.animation = '';
+
+      startAudio();
+      stage.style.display = 'block';
+
+      // Extended duration: 1.4s
+      await wait(1450);
+
+      navBar.classList.add('show');
+    }
+
+    replayBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      playSnapScene();
+    });
+  </script>
+</body>
+</html>

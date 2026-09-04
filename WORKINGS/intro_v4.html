@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PROJECT A // FAHIM AHAMMAD TANVIR</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@700;800&display=swap" rel="stylesheet" />
+  <style>
+    @font-face {
+      font-family: 'Valorant';
+      src: url('valorant_font/Valorant Font.ttf') format('truetype');
+      font-weight: normal;
+      font-style: normal;
+    }
+
+    *, *::before, *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      user-select: none;
+    }
+
+    :root {
+      --val-red: #ff4655;
+      --val-dark: #0f1923;
+      --val-black: #080c10;
+      --val-white: #ffffff;
+      --val-cyan: #00f5d4;
+    }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      background: var(--val-dark);
+      overflow: hidden;
+      font-family: 'Valorant', sans-serif;
+      position: relative;
+    }
+
+    /* Subtle CRT Scanlines */
+    .scanlines {
+      position: fixed;
+      inset: 0;
+      background: repeating-linear-gradient(
+        to bottom,
+        transparent 0px,
+        transparent 3px,
+        rgba(0, 0, 0, 0.22) 3px,
+        rgba(0, 0, 0, 0.22) 4px
+      );
+      pointer-events: none;
+      z-index: 950;
+    }
+
+    /* 1-Click Audio Unlock & Initialize Gate */
+    #start-splash {
+      position: fixed;
+      inset: 0;
+      background: var(--val-black);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      cursor: pointer;
+      transition: opacity 0.3s ease;
+    }
+    #start-splash.hide {
+      opacity: 0;
+      pointer-events: none;
+    }
+    .splash-box {
+      border: 1px solid rgba(255, 70, 85, 0.4);
+      padding: 28px 56px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 14px;
+      background: rgba(255, 70, 85, 0.04);
+      position: relative;
+    }
+    .splash-box::before {
+      content: '';
+      position: absolute;
+      top: -3px; left: -3px;
+      width: 12px; height: 12px;
+      border-top: 3px solid var(--val-red);
+      border-left: 3px solid var(--val-red);
+    }
+    .splash-box::after {
+      content: '';
+      position: absolute;
+      bottom: -3px; right: -3px;
+      width: 12px; height: 12px;
+      border-bottom: 3px solid var(--val-red);
+      border-right: 3px solid var(--val-red);
+    }
+    .splash-title {
+      font-size: 34px;
+      letter-spacing: 0.25em;
+      color: var(--val-white);
+    }
+    .splash-sub {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.45em;
+      color: var(--val-red);
+      animation: pulse 1.2s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 0.35; }
+      50% { opacity: 1; }
+    }
+
+    /* Background Viewport Container */
+    #stage-container {
+      position: fixed;
+      inset: 0;
+      overflow: hidden;
+      background: var(--val-dark);
+      z-index: 50;
+    }
+
+    /* Fixed HUD Marks */
+    .hud-label {
+      position: fixed;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.35em;
+      color: rgba(255, 255, 255, 0.4);
+      z-index: 900;
+      pointer-events: none;
+    }
+    .hud-tl { top: 24px; left: 32px; }
+    .hud-tr { top: 24px; right: 32px; }
+    .hud-bl { bottom: 24px; left: 32px; }
+    .hud-br { bottom: 24px; right: 32px; }
+
+    /* Red Accent Accompanying HUD Details (like the actual trailer) */
+    .hud-dash {
+      position: fixed;
+      width: 24px;
+      height: 3px;
+      background: var(--val-red);
+      z-index: 900;
+      pointer-events: none;
+    }
+    .hud-dash-tl { top: 44px; left: 32px; }
+    .hud-dash-tr { top: 44px; right: 32px; }
+
+    /* ============================================================
+       MACRO LETTER SCENES (Directly Revealing Parts of VALORANT)
+       ============================================================ */
+    .macro-scene {
+      position: absolute;
+      inset: 0;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      will-change: transform, opacity;
+    }
+
+    /* Typography Styling for Macro Views */
+    .macro-text {
+      position: absolute;
+      font-family: 'Valorant', sans-serif;
+      line-height: 0.8;
+      color: var(--val-red);
+      white-space: nowrap;
+      user-select: none;
+      will-change: transform;
+    }
+
+    /* Scene 1: Macro 'V' & 'A' Diagonals (7s) */
+    /* Extreme close-up of V and A apex slashes taking over entire screen */
+    #scene-v-a {
+      background: var(--val-dark);
+    }
+    #scene-v-a .macro-text {
+      font-size: clamp(380px, 55vw, 750px);
+      left: -15%;
+      top: -10%;
+      transform: rotate(-12deg) scale(1.1);
+    }
+    .accent-diamond-cluster {
+      position: absolute;
+      display: flex;
+      gap: 6px;
+      z-index: 60;
+    }
+    .accent-diamond {
+      width: 8px;
+      height: 8px;
+      background: var(--val-red);
+      transform: rotate(45deg);
+    }
+
+    /* Scene 2: Macro 'L' & 'O' Block Cut (8.5s) */
+    /* Focuses on the right angle of L and curve-cut of O */
+    #scene-l-o {
+      background: var(--val-dark);
+    }
+    #scene-l-o .macro-text {
+      font-size: clamp(380px, 55vw, 750px);
+      right: -20%;
+      top: 5%;
+      transform: rotate(6deg) scale(1.15);
+      color: #e83645;
+    }
+
+    /* Scene 3: Macro 'R' Chevron & Diagonal Leg (9.5s) */
+    /* Frame 09s exact: Diagonal leg of R cuts through with inverted contrast */
+    #scene-r {
+      background: var(--val-red);
+    }
+    #scene-r .macro-text {
+      font-size: clamp(400px, 60vw, 820px);
+      left: -5%;
+      top: -15%;
+      color: var(--val-dark);
+      transform: rotate(-4deg);
+    }
+
+    /* Scene 4: Macro 'A' & 'N' Apex (11s) */
+    /* Frame 11s exact: Double kinetic bands of VALORANT scrolling in parallel */
+    #scene-bands {
+      background: var(--val-dark);
+      flex-direction: column;
+      justify-content: center;
+      gap: 20px;
+    }
+    .band-row {
+      width: 100%;
+      overflow: hidden;
+      white-space: nowrap;
+      display: flex;
+    }
+    .band-track {
+      display: flex;
+      font-size: clamp(140px, 18vw, 240px);
+      line-height: 0.9;
+      color: var(--val-red);
+      letter-spacing: 0.12em;
+    }
+    .band-left {
+      animation: trackLeft 4s linear infinite;
+    }
+    .band-right {
+      animation: trackRight 4s linear infinite;
+    }
+    @keyframes trackLeft {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+    @keyframes trackRight {
+      0% { transform: translateX(-50%); }
+      100% { transform: translateX(0); }
+    }
+
+    /* Scene 5: Macro 'N' & 'T' Terminal Slash (13s) */
+    #scene-n-t {
+      background: var(--val-dark);
+    }
+    #scene-n-t .macro-text {
+      font-size: clamp(380px, 55vw, 780px);
+      right: -10%;
+      bottom: -15%;
+      transform: rotate(-8deg);
+      color: var(--val-red);
+    }
+
+    /* ============================================================
+       SCENE 6: FINAL CLEAN VALORANT REVEAL & LOCK (15s)
+       ============================================================ */
+    #scene-final-lock {
+      position: absolute;
+      inset: 0;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: var(--val-dark);
+      z-index: 100;
+    }
+
+    /* Valorant V Blades */
+    .v-logo-box {
+      width: 136px;
+      height: 102px;
+      position: relative;
+    }
+    .v-blade {
+      position: absolute;
+      background: var(--val-red);
+      will-change: transform, opacity;
+      opacity: 0;
+      transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .v-blade-l {
+      left: 10px;
+      top: 10px;
+      width: 48px;
+      height: 90px;
+      clip-path: polygon(0 0, 44% 0, 100% 100%, 56% 100%);
+      transform: translate(-45px, -45px);
+    }
+    .v-blade-r {
+      right: 10px;
+      top: 10px;
+      width: 60px;
+      height: 60px;
+      clip-path: polygon(55% 0, 100% 0, 45% 100%, 0% 100%);
+      transform: translate(45px, -45px);
+    }
+    .v-blade.assembled {
+      opacity: 1;
+      transform: translate(0, 0);
+    }
+
+    .v-cyan-slit {
+      position: absolute;
+      right: 14px;
+      top: 10px;
+      width: 22px;
+      height: 60px;
+      background: var(--val-cyan);
+      clip-path: polygon(55% 0, 100% 0, 45% 100%, 0% 100%);
+      opacity: 0;
+      transition: opacity 0.1s;
+    }
+
+    /* Full VALORANT Wordmark */
+    .val-full-wordmark {
+      font-size: 42px;
+      letter-spacing: 0.22em;
+      color: var(--val-red);
+      margin-top: 16px;
+      opacity: 0;
+      transform: scale(0.94);
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .val-full-wordmark.show {
+      opacity: 1;
+      transform: scale(1);
+    }
+
+    /* ============================================================
+       SCENE 7: 100% PURE WHITE FULL NAME REVEAL
+       ============================================================ */
+    #full-name-reveal {
+      margin-top: 36px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+    }
+
+    .name-full-text {
+      font-family: 'Valorant', sans-serif;
+      font-size: clamp(32px, 4.4vw, 60px);
+      letter-spacing: 0.25em;
+      color: var(--val-white);
+      text-transform: uppercase;
+      opacity: 0;
+      transform: translateY(14px) scale(0.96);
+      transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+      text-shadow: 0 0 30px rgba(255, 255, 255, 0.35);
+    }
+    .name-full-text.show {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+
+    .title-sub {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 13px;
+      letter-spacing: 0.55em;
+      color: rgba(255, 255, 255, 0.65);
+      opacity: 0;
+      transition: opacity 0.45s ease 0.3s;
+    }
+    .title-sub.show {
+      opacity: 1;
+    }
+
+    /* Bottom Nav */
+    .nav-bar {
+      position: fixed;
+      bottom: 24px;
+      right: 36px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      z-index: 1000;
+      opacity: 0;
+      transition: opacity 0.4s;
+    }
+    .nav-bar.show {
+      opacity: 1;
+    }
+    .btn {
+      background: rgba(15, 25, 35, 0.85);
+      border: 1px solid rgba(255, 255, 255, 0.35);
+      color: var(--val-white);
+      font-family: 'Rajdhani', sans-serif;
+      font-weight: 700;
+      font-size: 12px;
+      letter-spacing: 0.3em;
+      padding: 9px 18px;
+      cursor: pointer;
+      text-transform: uppercase;
+      transition: all 0.2s;
+    }
+    .btn:hover {
+      background: var(--val-red);
+      border-color: var(--val-red);
+      color: #fff;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Audio Element -->
+  <audio id="reveal-audio" preload="auto">
+    <source src="reveal_audio.webm" type="audio/webm" />
+    <source src="cypher_audio.webm" type="audio/webm" />
+  </audio>
+
+  <div class="scanlines"></div>
+
+  <!-- 1-Click Audio Unlock Gate -->
+  <div id="start-splash">
+    <div class="splash-box">
+      <div class="splash-title">VALORANT</div>
+      <div class="splash-sub">CLICK ANYWHERE TO INITIALIZE</div>
+    </div>
+  </div>
+
+  <!-- Technical HUD Labels -->
+  <div class="hud-label hud-tl">// VLRNT.SYS // MACRO_TYPOGRAPHY</div>
+  <div class="hud-label hud-tr">PROTOCOL_04 // 60FPS_SYNC</div>
+  <div class="hud-label hud-bl">TARGET // PROJECT_A</div>
+  <div class="hud-label hud-br">REVEAL // FAHIM_AHAMMAD_TANVIR</div>
+  <div class="hud-dash hud-dash-tl"></div>
+  <div class="hud-dash hud-dash-tr"></div>
+
+  <!-- STAGE CONTAINER -->
+  <div id="stage-container">
+
+    <!-- CUT 1: Macro 'V' and 'A' Diagonals (7s) -->
+    <div class="macro-scene" id="scene-v-a">
+      <div class="macro-text">VALORANT</div>
+      <div class="accent-diamond-cluster" style="top: 25%; left: 35%;">
+        <div class="accent-diamond"></div>
+        <div class="accent-diamond"></div>
+      </div>
+    </div>
+
+    <!-- CUT 2: Macro 'L' and 'O' Cut (8.5s) -->
+    <div class="macro-scene" id="scene-l-o">
+      <div class="macro-text">VALORANT</div>
+      <div class="accent-diamond-cluster" style="bottom: 30%; right: 40%;">
+        <div class="accent-diamond"></div>
+        <div class="accent-diamond"></div>
+      </div>
+    </div>
+
+    <!-- CUT 3: Macro 'R' with Inverted Red Contrast (9.5s) -->
+    <div class="macro-scene" id="scene-r">
+      <div class="macro-text">VALORANT</div>
+      <div class="accent-diamond-cluster" style="top: 30%; right: 25%;">
+        <div class="accent-diamond" style="background: var(--val-dark);"></div>
+        <div class="accent-diamond" style="background: var(--val-dark);"></div>
+      </div>
+    </div>
+
+    <!-- CUT 4: Parallel Kinetic Bands (11s) -->
+    <div class="macro-scene" id="scene-bands">
+      <div class="band-row">
+        <div class="band-track band-left">
+          VALORANT &nbsp; VALORANT &nbsp; VALORANT &nbsp; VALORANT &nbsp; VALORANT &nbsp;
+        </div>
+      </div>
+      <div class="band-row">
+        <div class="band-track band-right">
+          VALORANT &nbsp; VALORANT &nbsp; VALORANT &nbsp; VALORANT &nbsp; VALORANT &nbsp;
+        </div>
+      </div>
+    </div>
+
+    <!-- CUT 5: Macro 'N' and 'T' Terminal Slash (13s) -->
+    <div class="macro-scene" id="scene-n-t">
+      <div class="macro-text">VALORANT</div>
+    </div>
+
+    <!-- CUT 6: Clean Center Valorant V Lock + Wordmark (15s) -->
+    <div id="scene-final-lock">
+      <div class="v-logo-box">
+        <div class="v-blade v-blade-l" id="blade-l"></div>
+        <div class="v-blade v-blade-r" id="blade-r"></div>
+        <div class="v-cyan-slit" id="cyan-slit"></div>
+      </div>
+
+      <div class="val-full-wordmark" id="val-wordmark">VALORANT</div>
+
+      <!-- Full Name in 100% PURE WHITE & VALORANT FONT -->
+      <div id="full-name-reveal">
+        <div class="name-full-text" id="name-full">FAHIM AHAMMAD TANVIR</div>
+        <div class="title-sub" id="title-sub">SOFTWARE ENGINEER // SUST // FULL-STACK</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Bottom Nav -->
+  <div class="nav-bar" id="nav-bar">
+    <button class="btn" id="replay-btn">REPLAY</button>
+    <button class="btn" id="enter-btn">ENTER PORTFOLIO &rsaquo;</button>
+  </div>
+
+  <script>
+    const audio = document.getElementById('reveal-audio');
+    const splash = document.getElementById('start-splash');
+    const sceneVA = document.getElementById('scene-v-a');
+    const sceneLO = document.getElementById('scene-l-o');
+    const sceneR = document.getElementById('scene-r');
+    const sceneBands = document.getElementById('scene-bands');
+    const sceneNT = document.getElementById('scene-n-t');
+    const sceneFinal = document.getElementById('scene-final-lock');
+    const bladeL = document.getElementById('blade-l');
+    const bladeR = document.getElementById('blade-r');
+    const cyanSlit = document.getElementById('cyan-slit');
+    const valWordmark = document.getElementById('val-wordmark');
+    const nameFull = document.getElementById('name-full');
+    const titleSub = document.getElementById('title-sub');
+    const navBar = document.getElementById('nav-bar');
+    const enterBtn = document.getElementById('enter-btn');
+    const replayBtn = document.getElementById('replay-btn');
+
+    const wait = ms => new Promise(res => setTimeout(res, ms));
+
+    // 1-Click Audio Unlock
+    splash.addEventListener('click', () => {
+      splash.classList.add('hide');
+      audio.currentTime = 0;
+      audio.play().catch(e => console.log('Audio playback:', e));
+      runMacroKineticSequence();
+    });
+
+    async function runMacroKineticSequence() {
+      // Reset all scenes
+      const allScenes = [sceneVA, sceneLO, sceneR, sceneBands, sceneNT, sceneFinal];
+      allScenes.forEach(s => s.style.display = 'none');
+      bladeL.classList.remove('assembled');
+      bladeR.classList.remove('assembled');
+      cyanSlit.style.opacity = '0';
+      valWordmark.classList.remove('show');
+      nameFull.classList.remove('show');
+      titleSub.classList.remove('show');
+      navBar.classList.remove('show');
+
+      /* ============================================================
+         RHYTHMIC KINETIC CUTS (REVEALING PARTS OF "VALORANT")
+         ============================================================ */
+
+      // CUT 1: Macro V & A Apex (Dark bg, Red letters)
+      sceneVA.style.display = 'flex';
+      await wait(600);
+      sceneVA.style.display = 'none';
+
+      // CUT 2: Macro L & O Angular Cuts
+      sceneLO.style.display = 'flex';
+      await wait(550);
+      sceneLO.style.display = 'none';
+
+      // CUT 3: Macro R Leg & Body (Hard Cut to Inverted Crimson Background)
+      sceneR.style.display = 'flex';
+      await wait(500);
+      sceneR.style.display = 'none';
+
+      // CUT 4: Parallel Kinetic Bands (A & N Apex Macro View)
+      sceneBands.style.display = 'flex';
+      await wait(1200);
+      sceneBands.style.display = 'none';
+
+      // CUT 5: Macro N & T Terminal Slash Cut
+      sceneNT.style.display = 'flex';
+      await wait(500);
+      sceneNT.style.display = 'none';
+
+      /* ============================================================
+         FINAL CUT: VALORANT V BLADES CONVERGE & LOCK AT CENTER
+         ============================================================ */
+      sceneFinal.style.display = 'flex';
+      await wait(40);
+
+      // Blades converge from opposite diagonals
+      bladeL.classList.add('assembled');
+      bladeR.classList.add('assembled');
+      await wait(220);
+
+      // Cyan slit strobe flash
+      cyanSlit.style.opacity = '1';
+      await wait(90);
+      cyanSlit.style.opacity = '0';
+
+      // Full VALORANT Wordmark lock
+      valWordmark.classList.add('show');
+      await wait(450);
+
+      /* ============================================================
+         FULL NAME REVEAL: 100% PURE WHITE & VALORANT FONT
+         ============================================================ */
+      nameFull.classList.add('show');
+      titleSub.classList.add('show');
+      await wait(600);
+
+      navBar.classList.add('show');
+    }
+
+    // Navigation
+    function enterPortfolio() {
+      document.body.style.transition = 'opacity 0.4s ease';
+      document.body.style.opacity = '0';
+      setTimeout(() => {
+        window.location.href = 'index.html';
+      }, 400);
+    }
+
+    enterBtn.addEventListener('click', enterPortfolio);
+    replayBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      runMacroKineticSequence();
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (navBar.classList.contains('show')) enterPortfolio();
+    });
+  </script>
+</body>
+</html>

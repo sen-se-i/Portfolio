@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SCENE V15 // FRAMES 265 - 282 // "FAHIM" 4-LANE OPPOSING INVERTED HIGHWAY</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@700;800&display=swap" rel="stylesheet" />
+  <style>
+    @font-face {
+      font-family: 'Valorant';
+      src: url('../valorant_font/Valorant Font.ttf') format('truetype');
+    }
+
+    *, *::before, *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      user-select: none;
+    }
+
+    :root {
+      --val-red: #ff4655;
+      --val-dark: #0f1923;
+      --val-black: #080c10;
+      --val-white: #ffffff;
+    }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      background: var(--val-black);
+      overflow: hidden;
+      font-family: 'Rajdhani', sans-serif;
+    }
+
+    /* Scanlines */
+    .scanlines {
+      position: fixed;
+      inset: 0;
+      background: repeating-linear-gradient(
+        to bottom,
+        transparent 0px, transparent 3px,
+        rgba(0,0,0,0.18) 3px, rgba(0,0,0,0.18) 4px
+      );
+      pointer-events: none;
+      z-index: 900;
+    }
+
+    /* Splash Screen */
+    #splash {
+      position: fixed;
+      inset: 0;
+      background: var(--val-black);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      cursor: pointer;
+      transition: opacity 0.3s ease;
+    }
+    #splash.hide {
+      opacity: 0;
+      pointer-events: none;
+    }
+    .splash-box {
+      border: 1px solid rgba(255,70,85,0.4);
+      padding: 28px 56px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 14px;
+      background: rgba(255,70,85,0.04);
+      position: relative;
+    }
+    .splash-box::before {
+      content: ''; position: absolute; top: -3px; left: -3px;
+      width: 12px; height: 12px;
+      border-top: 3px solid var(--val-red); border-left: 3px solid var(--val-red);
+    }
+    .splash-box::after {
+      content: ''; position: absolute; bottom: -3px; right: -3px;
+      width: 12px; height: 12px;
+      border-bottom: 3px solid var(--val-red); border-right: 3px solid var(--val-red);
+    }
+    .splash-title {
+      font-family: 'Valorant', sans-serif;
+      font-size: 26px;
+      letter-spacing: 0.22em;
+      color: var(--val-white);
+      text-align: center;
+    }
+    .splash-sub {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.4em;
+      color: var(--val-red);
+      animation: pulse 1.2s infinite;
+    }
+    @keyframes pulse { 0%,100%{opacity:0.35} 50%{opacity:1} }
+
+    /* ========================================================
+       STAGE: FRAMES 265 - 282 (VIBRANT CRIMSON RED + DARK NAVY)
+       ======================================================== */
+    #stage {
+      position: fixed;
+      inset: 0;
+      background: var(--val-red);
+      overflow: hidden;
+      display: none;
+      z-index: 50;
+    }
+
+    /* 45-degree Thin Diagonal Hairline across Stage */
+    .hairline-axis {
+      position: absolute;
+      width: 180vw;
+      height: 1.5px;
+      background: rgba(15, 25, 35, 0.42);
+      top: -10%;
+      left: 10%;
+      transform: rotate(45deg);
+      transform-origin: top left;
+      pointer-events: none;
+      z-index: 60;
+    }
+
+    /* Left Edge Dark Chevron Pip (x=38px, y=245px) */
+    .left-chevron-pip {
+      position: absolute;
+      top: 48%;
+      left: 38px;
+      width: 16px;
+      height: 12px;
+      background: var(--val-dark);
+      clip-path: polygon(0% 15%, 65% 15%, 100% 50%, 65% 85%, 0% 85%);
+      z-index: 80;
+    }
+
+    /* Center Stationary Dash Stems (I-bars at x≈360px & x≈660px) */
+    .center-stem-left {
+      position: absolute;
+      top: 45%;
+      left: 28%;
+      width: 16px;
+      height: 48px;
+      background: var(--val-dark);
+      z-index: 80;
+    }
+    .center-stem-right {
+      position: absolute;
+      top: 49%;
+      left: 51%;
+      width: 16px;
+      height: 48px;
+      background: var(--val-dark);
+      z-index: 80;
+    }
+
+    /* ========================================================
+       PHASE 1: THE GEOMETRIC MORPHING SHAPES (Frames 265 - 270)
+       1. Two initial central anchor bars (Frame 265)
+       2. Massive rounded pill capsules:
+          - Upper-Right Lane 2 pill expanding & opening a hole (Frame 266-268)
+          - Lower-Left Lane 3 pill expanding (Frame 266-268)
+       3. Diagonal wedge blades fracturing from center (Frame 268-270)
+       ======================================================== */
+
+    /* Initial Center Bars (Frame 265) */
+    .anchor-bar {
+      position: absolute;
+      height: 52px;
+      background: var(--val-dark);
+      z-index: 75;
+      animation: anchorMorph 0.35s cubic-bezier(0.12, 0.9, 0.2, 1) forwards;
+    }
+    .anchor-left {
+      top: 46%;
+      left: 18%;
+      width: 130px;
+    }
+    .anchor-right {
+      top: 52%;
+      left: 54%;
+      width: 130px;
+    }
+    @keyframes anchorMorph {
+      0%   { opacity: 1; transform: scale(1); }
+      70%  { opacity: 1; transform: scaleX(0.7) scaleY(1.1); }
+      100% { opacity: 0; transform: scaleX(0.2); }
+    }
+
+    /* Giant Morphing Rounded Pill Capsule - Upper Right (Frames 266-269) */
+    .morph-capsule-right {
+      position: absolute;
+      top: 24%;
+      left: 65%;
+      width: 320px;
+      height: 96px;
+      background: var(--val-dark);
+      border-radius: 48px;
+      z-index: 76;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      will-change: transform, opacity;
+      animation: capsuleRightMorph 0.42s cubic-bezier(0.12, 0.95, 0.2, 1) 0.05s forwards;
+    }
+    /* The cutout hole in the pill that forms 'O' */
+    .morph-capsule-right::after {
+      content: '';
+      width: 80px;
+      height: 56px;
+      background: var(--val-red);
+      border-radius: 28px;
+      animation: innerHoleGrow 0.42s cubic-bezier(0.12, 0.95, 0.2, 1) 0.05s forwards;
+    }
+    @keyframes capsuleRightMorph {
+      0%   { transform: translateX(18vw) scaleX(1.4); opacity: 0; }
+      20%  { opacity: 1; }
+      75%  { transform: translateX(2vw) scaleX(0.85); opacity: 1; }
+      100% { transform: translateX(-8vw) scaleX(0.6); opacity: 0; }
+    }
+    @keyframes innerHoleGrow {
+      0%   { transform: scale(0.3); opacity: 0; }
+      30%  { opacity: 1; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    /* Giant Morphing Rounded Pill Capsule - Lower Left (Frames 266-269) */
+    .morph-capsule-left {
+      position: absolute;
+      top: 58%;
+      left: -20px;
+      width: 220px;
+      height: 96px;
+      background: var(--val-dark);
+      border-radius: 0 48px 48px 0;
+      z-index: 76;
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      padding-left: 20px;
+      will-change: transform, opacity;
+      animation: capsuleLeftMorph 0.42s cubic-bezier(0.12, 0.95, 0.2, 1) 0.05s forwards;
+    }
+    .morph-capsule-left::after {
+      content: '';
+      width: 50px;
+      height: 56px;
+      background: var(--val-red);
+      border-radius: 28px 0 0 28px;
+      margin-left: -25px;
+    }
+    @keyframes capsuleLeftMorph {
+      0%   { transform: translateX(-15vw); opacity: 0; }
+      20%  { opacity: 1; }
+      75%  { transform: translateX(3vw); opacity: 1; }
+      100% { transform: translateX(10vw) scaleX(0.6); opacity: 0; }
+    }
+
+    /* Morphing Diagonal Blade Wedges (Frames 268-270) */
+    .morph-blade-1 {
+      position: absolute;
+      top: 54%;
+      left: 21%;
+      width: 44px;
+      height: 72px;
+      background: var(--val-dark);
+      clip-path: polygon(0% 0%, 50% 0%, 100% 100%, 50% 100%);
+      z-index: 76;
+      animation: bladeSlide 0.38s cubic-bezier(0.15, 0.9, 0.2, 1) 0.1s forwards;
+    }
+    .morph-blade-2 {
+      position: absolute;
+      top: 30%;
+      left: 58%;
+      width: 44px;
+      height: 72px;
+      background: var(--val-dark);
+      clip-path: polygon(50% 0%, 100% 0%, 50% 100%, 0% 100%);
+      z-index: 76;
+      animation: bladeSlide 0.38s cubic-bezier(0.15, 0.9, 0.2, 1) 0.1s forwards;
+    }
+    @keyframes bladeSlide {
+      0%   { opacity: 0; transform: scale(0.5); }
+      30%  { opacity: 1; transform: scale(1); }
+      100% { opacity: 0; transform: scale(1.1); }
+    }
+
+    /* ========================================================
+       PHASE 2: 4-LANE KINETIC HIGHWAY (Frames 269 - 282)
+       ======================================================== */
+
+    /* ----------------------------------------------------
+       LANE 1: Top Edge Ceiling (Upright FAHIM, Slides RIGHT)
+       ---------------------------------------------------- */
+    .lane-1-container {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 14%;
+      overflow: hidden;
+      z-index: 70;
+    }
+    .lane-1-content {
+      position: absolute;
+      top: -4vh;
+      left: 0;
+      display: flex;
+      gap: 5vw;
+      font-family: 'Valorant', sans-serif;
+      font-size: 18vh;
+      line-height: 1;
+      color: var(--val-dark);
+      white-space: nowrap;
+      will-change: transform;
+      animation: lane1SlideRight 1.25s cubic-bezier(0.12, 0.94, 0.22, 1) 0.15s forwards;
+    }
+    @keyframes lane1SlideRight {
+      0%   { transform: translateX(-15vw); opacity: 0; }
+      15%  { opacity: 1; }
+      100% { transform: translateX(8vw); opacity: 1; }
+    }
+
+    /* ----------------------------------------------------
+       LANE 2: Upper-Middle (180° INVERTED FAHIM, Slides LEFT)
+       The signature upside-down letters from frame 270-282
+       ---------------------------------------------------- */
+    .lane-2-container {
+      position: absolute;
+      top: 13%;
+      left: 0;
+      right: 0;
+      height: 33%;
+      overflow: hidden;
+      z-index: 70;
+    }
+    .lane-2-content {
+      position: absolute;
+      bottom: -4vh;
+      left: 0;
+      display: flex;
+      gap: 6vw;
+      font-family: 'Valorant', sans-serif;
+      font-size: 38vh;
+      line-height: 1;
+      color: var(--val-dark);
+      transform: rotate(180deg); /* 180° Inverted / Upside Down! */
+      transform-origin: center center;
+      white-space: nowrap;
+      will-change: transform;
+      animation: lane2SlideLeft 1.25s cubic-bezier(0.12, 0.94, 0.22, 1) 0.15s forwards;
+    }
+    @keyframes lane2SlideLeft {
+      0%   { transform: rotate(180deg) translateX(-45vw); opacity: 0; }
+      25%  { opacity: 0.2; }
+      35%  { opacity: 1; }
+      100% { transform: rotate(180deg) translateX(12vw); opacity: 1; }
+    }
+
+    /* ----------------------------------------------------
+       LANE 3: Lower-Middle (UPRIGHT FAHIM, Slides RIGHT)
+       The signature normal upright letters from frame 270-282
+       ---------------------------------------------------- */
+    .lane-3-container {
+      position: absolute;
+      top: 54%;
+      left: 0;
+      right: 0;
+      height: 33%;
+      overflow: hidden;
+      z-index: 70;
+    }
+    .lane-3-content {
+      position: absolute;
+      top: -3vh;
+      left: 0;
+      display: flex;
+      gap: 6vw;
+      font-family: 'Valorant', sans-serif;
+      font-size: 38vh;
+      line-height: 1;
+      color: var(--val-dark);
+      white-space: nowrap;
+      will-change: transform;
+      animation: lane3SlideRight 1.25s cubic-bezier(0.12, 0.94, 0.22, 1) 0.15s forwards;
+    }
+    @keyframes lane3SlideRight {
+      0%   { transform: translateX(-28vw); opacity: 0; }
+      25%  { opacity: 0.2; }
+      35%  { opacity: 1; }
+      100% { transform: translateX(10vw); opacity: 1; }
+    }
+
+    /* ----------------------------------------------------
+       LANE 4: Bottom Edge Floor (180° INVERTED FAHIM, Slides LEFT)
+       ---------------------------------------------------- */
+    .lane-4-container {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 14%;
+      overflow: hidden;
+      z-index: 70;
+    }
+    .lane-4-content {
+      position: absolute;
+      bottom: -4vh;
+      left: 0;
+      display: flex;
+      gap: 5vw;
+      font-family: 'Valorant', sans-serif;
+      font-size: 18vh;
+      line-height: 1;
+      color: var(--val-dark);
+      transform: rotate(180deg);
+      white-space: nowrap;
+      will-change: transform;
+      animation: lane4SlideLeft 1.25s cubic-bezier(0.12, 0.94, 0.22, 1) 0.15s forwards;
+    }
+    @keyframes lane4SlideLeft {
+      0%   { transform: rotate(180deg) translateX(-40vw); opacity: 0; }
+      15%  { opacity: 1; }
+      100% { transform: rotate(180deg) translateX(12vw); opacity: 1; }
+    }
+
+    /* ========================================================
+       MICRO-ELEMENTS & HUD (Exact match to Frames 265 - 282)
+       ======================================================== */
+    .hud-label {
+      position: absolute;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 9px;
+      letter-spacing: 0.3em;
+      color: rgba(15, 25, 35, 0.75);
+      z-index: 85;
+    }
+
+    .micro-dash {
+      position: absolute;
+      height: 3px;
+      background: var(--val-dark);
+      z-index: 85;
+    }
+
+    .micro-dot {
+      position: absolute;
+      width: 4px;
+      height: 4px;
+      background: var(--val-dark);
+      z-index: 85;
+    }
+
+    /* Replay Button */
+    .nav-bar {
+      position: fixed;
+      bottom: 24px;
+      right: 36px;
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      z-index: 1000;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    .nav-bar.show { opacity: 1; }
+    .btn {
+      background: rgba(15,25,35,0.85);
+      border: 1px solid rgba(255,255,255,0.35);
+      color: var(--val-white);
+      font-family: 'Rajdhani', sans-serif;
+      font-weight: 700;
+      font-size: 12px;
+      letter-spacing: 0.25em;
+      padding: 9px 18px;
+      cursor: pointer;
+      text-transform: uppercase;
+      transition: all 0.2s;
+    }
+    .btn:hover {
+      background: var(--val-dark);
+      border-color: var(--val-white);
+      color: var(--val-red);
+    }
+  </style>
+</head>
+<body>
+  <div class="scanlines"></div>
+
+  <!-- Background Audio -->
+  <video id="reveal-media" style="display:none;" preload="auto">
+    <source src="../Valorant logo reveal animation _Project A_ - Trim.mp4" type="video/mp4" />
+    <source src="../reveal_audio.webm" type="audio/webm" />
+  </video>
+
+  <!-- Splash Screen -->
+  <div id="splash">
+    <div class="splash-box">
+      <div class="splash-title">SCENE V15 // "FAHIM" INVERTED HIGHWAY</div>
+      <div class="splash-sub">CLICK TO PLAY FRAMES 265 - 282 4-LANE BUILD</div>
+    </div>
+  </div>
+
+  <!-- Master Stage -->
+  <div id="stage">
+    <div class="hairline-axis"></div>
+
+    <!-- Center Static Elements from Frames 265-282 -->
+    <div class="left-chevron-pip"></div>
+    <div class="center-stem-left"></div>
+    <div class="center-stem-right"></div>
+
+    <!-- PHASE 1: GEOMETRIC SHAPES MORPHING INTO WORDS (Frames 265 - 270) -->
+    <div class="anchor-bar anchor-left" id="anchor-left"></div>
+    <div class="anchor-bar anchor-right" id="anchor-right"></div>
+    <div class="morph-capsule-right" id="capsule-right"></div>
+    <div class="morph-capsule-left" id="capsule-left"></div>
+    <div class="morph-blade-1" id="blade-1"></div>
+    <div class="morph-blade-2" id="blade-2"></div>
+
+    <!-- PHASE 2: 4-LANE KINETIC HIGHWAY WITH "FAHIM" -->
+
+    <!-- LANE 1 (Top Edge Ceiling): Upright FAHIM, Slides RIGHT -->
+    <div class="lane-1-container">
+      <div class="lane-1-content" id="lane-1">
+        <span>FAHIM</span>
+        <span>FAHIM</span>
+        <span>FAHIM</span>
+      </div>
+    </div>
+
+    <!-- LANE 2 (Upper-Middle Primary): 180° INVERTED FAHIM, Slides LEFT -->
+    <div class="lane-2-container">
+      <div class="lane-2-content" id="lane-2">
+        <span>FAHIM</span>
+        <span>FAHIM</span>
+        <span>FAHIM</span>
+      </div>
+    </div>
+
+    <!-- LANE 3 (Lower-Middle Primary): UPRIGHT FAHIM, Slides RIGHT -->
+    <div class="lane-3-container">
+      <div class="lane-3-content" id="lane-3">
+        <span>FAHIM</span>
+        <span>FAHIM</span>
+        <span>FAHIM</span>
+      </div>
+    </div>
+
+    <!-- LANE 4 (Bottom Edge Floor): 180° INVERTED FAHIM, Slides LEFT -->
+    <div class="lane-4-container">
+      <div class="lane-4-content" id="lane-4">
+        <span>FAHIM</span>
+        <span>FAHIM</span>
+        <span>FAHIM</span>
+      </div>
+    </div>
+
+    <!-- Technical HUD Details (from Frames 265-282) -->
+    <div class="micro-dash" style="top: 24%; left: 5%; width: 56px;"></div>
+    <div class="micro-dash" style="top: 24%; right: 9%; width: 56px;"></div>
+    <div class="micro-dash" style="top: 70%; right: 9%; width: 64px;"></div>
+    
+    <div class="micro-dot" style="top: 36%; left: 16%;"></div>
+    <div class="micro-dot" style="top: 36%; left: 32%;"></div>
+    <div class="micro-dot" style="top: 66%; right: 16%;"></div>
+    <div class="micro-dot" style="top: 74%; right: 16%;"></div>
+
+    <div class="hud-label" style="top: 36%; left: 27%;">VLRNT // SWE_23</div>
+    <div class="hud-label" style="top: 90%; left: 28%;">PRTCL // FAHIM</div>
+    <div class="hud-label" style="top: 10%; right: 10%;">BIND // HAVEN</div>
+    <div class="hud-label" style="top: 90%; right: 10%;">SUST // SWE</div>
+  </div>
+
+  <!-- Replay Button -->
+  <div class="nav-bar" id="nav-bar">
+    <button class="btn" id="replay-btn">↺ REPLAY "FAHIM" HIGHWAY</button>
+  </div>
+
+  <script>
+    const splash = document.getElementById('splash');
+    const media = document.getElementById('reveal-media');
+    const stage = document.getElementById('stage');
+    const navBar = document.getElementById('nav-bar');
+    const replayBtn = document.getElementById('replay-btn');
+
+    const anchorLeft = document.getElementById('anchor-left');
+    const anchorRight = document.getElementById('anchor-right');
+    const lane1 = document.getElementById('lane-1');
+    const lane2 = document.getElementById('lane-2');
+    const lane3 = document.getElementById('lane-3');
+    const lane4 = document.getElementById('lane-4');
+
+    const wait = ms => new Promise(res => setTimeout(res, ms));
+
+    function startAudio() {
+      try {
+        // Frames 265 corresponds to sound buildup around ~10.0s
+        media.currentTime = 10.0;
+        const p = media.play();
+        if (p && p.catch) p.catch(() => {});
+      } catch (e) {}
+    }
+
+    splash.addEventListener('click', () => {
+      splash.classList.add('hide');
+      playFahimHighway();
+    });
+
+    async function playFahimHighway() {
+      navBar.classList.remove('show');
+      stage.style.display = 'none';
+
+      // Reset all animations inside stage
+      stage.querySelectorAll('*').forEach(el => {
+        el.style.animation = 'none';
+        el.offsetHeight;
+        el.style.animation = '';
+      });
+
+      startAudio();
+      stage.style.display = 'block';
+
+      // 1.35s cinematic duration
+      await wait(1400);
+
+      navBar.classList.add('show');
+    }
+
+    replayBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      playFahimHighway();
+    });
+  </script>
+</body>
+</html>

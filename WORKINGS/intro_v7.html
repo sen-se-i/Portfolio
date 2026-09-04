@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FAHIM AHAMMAD TANVIR // PROJECT A PROGRESSIVE REVEAL</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@700;800&display=swap" rel="stylesheet" />
+  <style>
+    @font-face {
+      font-family: 'Valorant';
+      src: url('valorant_font/Valorant Font.ttf') format('truetype');
+      font-weight: normal;
+      font-style: normal;
+    }
+
+    *, *::before, *::after {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      user-select: none;
+    }
+
+    :root {
+      --val-red: #ff4655;
+      --val-dark: #0f1923;
+      --val-black: #080c10;
+      --val-white: #ffffff;
+      --val-cyan: #00f5d4;
+    }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      background: var(--val-dark);
+      overflow: hidden;
+      font-family: 'Valorant', sans-serif;
+      position: relative;
+    }
+
+    /* Subtle Cinematic Scanlines */
+    .scanlines {
+      position: fixed;
+      inset: 0;
+      background: repeating-linear-gradient(
+        to bottom,
+        transparent 0px,
+        transparent 3px,
+        rgba(0, 0, 0, 0.18) 3px,
+        rgba(0, 0, 0, 0.18) 4px
+      );
+      pointer-events: none;
+      z-index: 950;
+    }
+
+    /* 1-Click Audio Unlock Gate */
+    #start-splash {
+      position: fixed;
+      inset: 0;
+      background: var(--val-black);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      cursor: pointer;
+      transition: opacity 0.3s ease;
+    }
+    #start-splash.hide {
+      opacity: 0;
+      pointer-events: none;
+    }
+    .splash-box {
+      border: 1px solid rgba(255, 70, 85, 0.4);
+      padding: 28px 56px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 14px;
+      background: rgba(255, 70, 85, 0.04);
+      position: relative;
+    }
+    .splash-box::before {
+      content: '';
+      position: absolute;
+      top: -3px; left: -3px;
+      width: 12px; height: 12px;
+      border-top: 3px solid var(--val-red);
+      border-left: 3px solid var(--val-red);
+    }
+    .splash-box::after {
+      content: '';
+      position: absolute;
+      bottom: -3px; right: -3px;
+      width: 12px; height: 12px;
+      border-bottom: 3px solid var(--val-red);
+      border-right: 3px solid var(--val-red);
+    }
+    .splash-title {
+      font-size: 34px;
+      letter-spacing: 0.25em;
+      color: var(--val-white);
+    }
+    .splash-sub {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.45em;
+      color: var(--val-red);
+      animation: pulse 1.2s infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 0.35; }
+      50% { opacity: 1; }
+    }
+
+    /* Stage Container */
+    #stage-container {
+      position: fixed;
+      inset: 0;
+      overflow: hidden;
+      background: var(--val-dark);
+      z-index: 50;
+    }
+
+    /* Corner HUD Technical Marks (Clean, no floating fake ticks) */
+    .hud-label {
+      position: fixed;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 0.35em;
+      color: rgba(255, 255, 255, 0.35);
+      z-index: 900;
+      pointer-events: none;
+    }
+    .hud-tl { top: 26px; left: 36px; }
+    .hud-tr { top: 26px; right: 36px; }
+    .hud-bl { bottom: 26px; left: 36px; }
+    .hud-br { bottom: 26px; right: 36px; }
+
+    /* ============================================================
+       SCENE 1: TACTICAL STROBE (Frames 1-34)
+       ============================================================ */
+    #scene-1 {
+      position: absolute;
+      inset: 0;
+      display: none;
+      background: var(--val-dark);
+    }
+    .cyan-stripe {
+      position: absolute;
+      height: 48px;
+      background: var(--val-cyan);
+      left: 0; right: 0;
+      top: 48%;
+      transform: translateY(-50%);
+    }
+    .scene-1-blade {
+      position: absolute;
+      top: 0; left: 0; bottom: 0;
+      width: 45%;
+      background: var(--val-red);
+      clip-path: polygon(0 0, 100% 0, 50% 100%, 0 100%);
+    }
+
+    /* ============================================================
+       SCENE 2: INVERTED RED — "F" & "A" MACRO BUILD (Frames 35-98)
+       NO full word, only extreme macro geometric cutout of F and A
+       ============================================================ */
+    #scene-2 {
+      position: absolute;
+      inset: 0;
+      display: none;
+      background: var(--val-red);
+      overflow: hidden;
+    }
+    .scene-2-pan-track {
+      position: absolute;
+      inset: -15%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      will-change: transform;
+      animation: panLetterFA 1.15s cubic-bezier(0.12, 0.8, 0.25, 1) forwards;
+    }
+    @keyframes panLetterFA {
+      0% {
+        transform: translate(90px, -20px) scale(1.1) rotate(-3deg);
+      }
+      100% {
+        transform: translate(-100px, 20px) scale(0.98) rotate(-1.5deg);
+      }
+    }
+    .macro-fa-text {
+      font-family: 'Valorant', sans-serif;
+      font-size: clamp(380px, 50vw, 750px);
+      line-height: 0.8;
+      color: var(--val-dark);
+      letter-spacing: -0.06em;
+      white-space: nowrap;
+    }
+
+    /* ============================================================
+       SCENE 3: DARK TRANSITION & MIRRORED "M" "M" BUILD (Frames 99-147)
+       Dark background with mirrored chevron arms of double M
+       ============================================================ */
+    #scene-3 {
+      position: absolute;
+      inset: 0;
+      display: none;
+      background: var(--val-dark);
+      overflow: hidden;
+    }
+    .mirrored-mm-container {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: clamp(40px, 8vw, 120px);
+    }
+    .mm-letter {
+      font-family: 'Valorant', sans-serif;
+      font-size: clamp(240px, 32vw, 480px);
+      color: var(--val-red);
+      line-height: 0.8;
+    }
+    .mm-left {
+      animation: mmDriftLeft 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+    .mm-right {
+      transform: scaleX(-1);
+      animation: mmDriftRight 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+    @keyframes mmDriftLeft {
+      0% { transform: translateX(80px) scale(1.15); opacity: 0; }
+      100% { transform: translateX(0) scale(1); opacity: 1; }
+    }
+    @keyframes mmDriftRight {
+      0% { transform: scaleX(-1) translateX(80px) scale(1.15); opacity: 0; }
+      100% { transform: scaleX(-1) translateX(0) scale(1); opacity: 1; }
+    }
+
+    /* ============================================================
+       SCENE 4: "V", "I" BODY/DOT & "R" TRANSITION (Frames 148-176)
+       Sharp cutting flash showing V blade, I body, and diagonal leg of R
+       ============================================================ */
+    #scene-4 {
+      position: absolute;
+      inset: 0;
+      display: none;
+      background: var(--val-dark);
+      overflow: hidden;
+      align-items: center;
+      justify-content: center;
+    }
+    .vir-wrapper {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 36px;
+    }
+    .fragment-v {
+      font-size: clamp(220px, 28vw, 420px);
+      color: var(--val-red);
+      clip-path: polygon(0 0, 50% 0, 100% 100%, 50% 100%);
+    }
+    .fragment-i {
+      font-size: clamp(220px, 28vw, 420px);
+      color: var(--val-red);
+      position: relative;
+    }
+    .fragment-r-leg {
+      font-size: clamp(220px, 28vw, 420px);
+      color: var(--val-red);
+      clip-path: polygon(40% 40%, 100% 40%, 100% 100%, 0% 100%);
+    }
+
+    /* ============================================================
+       SCENE 5: OPPOSING MIRROR-ISH BANDS — "AHAMM..." & "...ANVIR" (Frames 177-238)
+       Split bands running opposite, NO full word revealed
+       ============================================================ */
+    #scene-5 {
+      position: absolute;
+      inset: 0;
+      display: none;
+      flex-direction: column;
+      justify-content: center;
+      background: var(--val-dark);
+      gap: 16px;
+      overflow: hidden;
+    }
+    .opposing-row {
+      width: 100%;
+      overflow: hidden;
+      white-space: nowrap;
+      display: flex;
+    }
+    .opposing-track {
+      display: flex;
+      font-size: clamp(140px, 18vw, 240px);
+      line-height: 0.9;
+      color: var(--val-red);
+      letter-spacing: 0.16em;
+    }
+    /* Top row moves RIGHT: "AHAMM" */
+    .track-top-ahamm {
+      animation: moveTrackRight 3.2s linear infinite;
+    }
+    /* Bottom row moves LEFT: "ANVIR" */
+    .track-bot-anvir {
+      animation: moveTrackLeft 3.2s linear infinite;
+    }
+    @keyframes moveTrackRight {
+      0% { transform: translateX(-50%); }
+      100% { transform: translateX(0); }
+    }
+    @keyframes moveTrackLeft {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+
+    /* ============================================================
+       SCENE 6: CONVERGENCE SNAP & CYAN LASER GLITCH (Frames 239-296)
+       Bands collapse to center horizon, and cyan slit scans across
+       ============================================================ */
+    #scene-6 {
+      position: absolute;
+      inset: 0;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: var(--val-dark);
+      overflow: hidden;
+    }
+    .converge-frame {
+      position: relative;
+      animation: centerSqueeze 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+    @keyframes centerSqueeze {
+      0% { transform: scaleY(2.2) scaleX(0.85); opacity: 0.4; }
+      100% { transform: scaleY(1) scaleX(1); opacity: 1; }
+    }
+    .converge-split-text {
+      font-family: 'Valorant', sans-serif;
+      font-size: clamp(70px, 9vw, 130px);
+      color: var(--val-red);
+      letter-spacing: 0.3em;
+    }
+    .cyan-laser-slit {
+      position: absolute;
+      height: 14px;
+      background: var(--val-cyan);
+      bottom: 22%;
+      left: -15%;
+      width: 80px;
+      opacity: 0;
+      z-index: 70;
+      box-shadow: 0 0 16px var(--val-cyan);
+    }
+    .cyan-laser-slit.active {
+      opacity: 1;
+      animation: sweepCyanLaser 0.38s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+    }
+    @keyframes sweepCyanLaser {
+      0% { left: -15%; width: 40px; }
+      50% { left: 45%; width: 140px; }
+      100% { left: 105%; width: 50px; }
+    }
+
+    /* ============================================================
+       SCENE 7: THE GRAND CLIMAX — 100% PURE WHITE FULL REVEAL (Frames 297-337)
+       FIRST AND ONLY TIME FULL NAME IS SHOWN!
+       ============================================================ */
+    #scene-7 {
+      position: absolute;
+      inset: 0;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: var(--val-dark);
+      z-index: 100;
+      transition: background 0.12s ease;
+    }
+
+    /* Valorant V Blades assembly */
+    .v-logo-assembly {
+      width: 136px;
+      height: 102px;
+      position: relative;
+    }
+    .v-blade {
+      position: absolute;
+      background: var(--val-red);
+      will-change: transform, opacity;
+      opacity: 0;
+      transition: all 0.32s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .v-blade-l {
+      left: 10px; top: 10px;
+      width: 48px; height: 90px;
+      clip-path: polygon(0 0, 44% 0, 100% 100%, 56% 100%);
+      transform: translate(-45px, -45px);
+    }
+    .v-blade-r {
+      right: 10px; top: 10px;
+      width: 60px; height: 60px;
+      clip-path: polygon(55% 0, 100% 0, 45% 100%, 0% 100%);
+      transform: translate(45px, -45px);
+    }
+    .v-blade.assembled {
+      opacity: 1;
+      transform: translate(0, 0);
+    }
+
+    /* THE FULL NAME: 100% PURE WHITE */
+    #name-stack {
+      margin-top: 32px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .name-segment {
+      font-family: 'Valorant', sans-serif;
+      font-size: clamp(34px, 4.8vw, 64px);
+      letter-spacing: 0.28em;
+      color: var(--val-white);
+      text-transform: uppercase;
+      opacity: 0;
+      transform: translateY(14px) scale(0.96);
+      transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+      text-shadow: 0 0 35px rgba(255, 255, 255, 0.35);
+    }
+    .name-segment.show {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+
+    .title-sub {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 13px;
+      letter-spacing: 0.55em;
+      color: rgba(255, 255, 255, 0.65);
+      margin-top: 10px;
+      opacity: 0;
+      transition: opacity 0.45s ease 0.3s;
+    }
+    .title-sub.show {
+      opacity: 1;
+    }
+
+    /* Bottom Nav */
+    .nav-bar {
+      position: fixed;
+      bottom: 24px;
+      right: 36px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      z-index: 1000;
+      opacity: 0;
+      transition: opacity 0.4s;
+    }
+    .nav-bar.show {
+      opacity: 1;
+    }
+    .btn {
+      background: rgba(15, 25, 35, 0.85);
+      border: 1px solid rgba(255, 255, 255, 0.35);
+      color: var(--val-white);
+      font-family: 'Rajdhani', sans-serif;
+      font-weight: 700;
+      font-size: 12px;
+      letter-spacing: 0.3em;
+      padding: 9px 18px;
+      cursor: pointer;
+      text-transform: uppercase;
+      transition: all 0.2s;
+    }
+    .btn:hover {
+      background: var(--val-red);
+      border-color: var(--val-red);
+      color: #fff;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Audio Element -->
+  <audio id="reveal-audio" preload="auto">
+    <source src="reveal_audio.webm" type="audio/webm" />
+    <source src="cypher_audio.webm" type="audio/webm" />
+  </audio>
+
+  <div class="scanlines"></div>
+
+  <!-- 1-Click Unlock Gate -->
+  <div id="start-splash">
+    <div class="splash-box">
+      <div class="splash-title">PROJECT A</div>
+      <div class="splash-sub">CLICK TO LAUNCH PROGRESSIVE REVEAL</div>
+    </div>
+  </div>
+
+  <!-- Clean Corner Technical HUD Labels -->
+  <div class="hud-label hud-tl">// VLRNT.SYS // DECONSTRUCTED_BUILD</div>
+  <div class="hud-label hud-tr">60FPS // PROGRESSIVE_TYPOGRAPHY</div>
+  <div class="hud-label hud-bl">PROTOCOL // FAHIM_AHAMMAD_TANVIR</div>
+  <div class="hud-label hud-br">STAGE // SUST_CSE</div>
+
+  <!-- STAGE CONTAINER -->
+  <div id="stage-container">
+
+    <!-- SCENE 1: Tactical Strobe (Frames 1-34) -->
+    <div id="scene-1">
+      <div class="cyan-stripe"></div>
+      <div class="scene-1-blade"></div>
+    </div>
+
+    <!-- SCENE 2: Inverted Red — "F" & "A" Macro Build (Frames 35-98) -->
+    <div id="scene-2">
+      <div class="scene-2-pan-track">
+        <div class="macro-fa-text">F &nbsp; A</div>
+      </div>
+    </div>
+
+    <!-- SCENE 3: Dark Transition & Mirrored "M" "M" Build (Frames 99-147) -->
+    <div id="scene-3">
+      <div class="mirrored-mm-container">
+        <div class="mm-letter mm-left">M</div>
+        <div class="mm-letter mm-right">M</div>
+      </div>
+    </div>
+
+    <!-- SCENE 4: "V", "I" Body & "R" Transition (Frames 148-176) -->
+    <div id="scene-4">
+      <div class="vir-wrapper">
+        <div class="fragment-v">V</div>
+        <div class="fragment-i">I</div>
+        <div class="fragment-r-leg">R</div>
+      </div>
+    </div>
+
+    <!-- SCENE 5: Opposing Mirror-ish Bands — "AHAMM..." & "...ANVIR" (Frames 177-238) -->
+    <div id="scene-5">
+      <div class="opposing-row">
+        <div class="opposing-track track-top-ahamm">
+          AHAMM &nbsp; AHAMM &nbsp; AHAMM &nbsp; AHAMM &nbsp; AHAMM &nbsp;
+        </div>
+      </div>
+      <div class="opposing-row">
+        <div class="opposing-track track-bot-anvir">
+          ANVIR &nbsp; ANVIR &nbsp; ANVIR &nbsp; ANVIR &nbsp; ANVIR &nbsp;
+        </div>
+      </div>
+    </div>
+
+    <!-- SCENE 6: Convergence Snap & Cyan Laser Glitch (Frames 239-296) -->
+    <div id="scene-6">
+      <div class="converge-frame">
+        <div class="converge-split-text">AHAM // VIR</div>
+        <div class="cyan-laser-slit" id="laser-slit"></div>
+      </div>
+    </div>
+
+    <!-- SCENE 7: The Grand Climax — 100% Pure White Full Reveal (Frames 297-337) -->
+    <div id="scene-7">
+      <div class="v-logo-assembly">
+        <div class="v-blade v-blade-l" id="blade-l"></div>
+        <div class="v-blade v-blade-r" id="blade-r"></div>
+      </div>
+
+      <div id="name-stack">
+        <div class="name-segment" id="name-full">FAHIM AHAMMAD TANVIR</div>
+        <div class="title-sub" id="title-sub">SOFTWARE ENGINEER // SUST // FULL-STACK</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Bottom Nav -->
+  <div class="nav-bar" id="nav-bar">
+    <button class="btn" id="replay-btn">REPLAY</button>
+    <button class="btn" id="enter-btn">ENTER PORTFOLIO &rsaquo;</button>
+  </div>
+
+  <script>
+    const audio = document.getElementById('reveal-audio');
+    const splash = document.getElementById('start-splash');
+
+    const sc1 = document.getElementById('scene-1');
+    const sc2 = document.getElementById('scene-2');
+    const sc3 = document.getElementById('scene-3');
+    const sc4 = document.getElementById('scene-4');
+    const sc5 = document.getElementById('scene-5');
+    const sc6 = document.getElementById('scene-6');
+    const sc7 = document.getElementById('scene-7');
+
+    const laserSlit = document.getElementById('laser-slit');
+    const bladeL = document.getElementById('blade-l');
+    const bladeR = document.getElementById('blade-r');
+    const nameFull = document.getElementById('name-full');
+    const titleSub = document.getElementById('title-sub');
+    const navBar = document.getElementById('nav-bar');
+    const enterBtn = document.getElementById('enter-btn');
+    const replayBtn = document.getElementById('replay-btn');
+
+    const wait = ms => new Promise(res => setTimeout(res, ms));
+
+    splash.addEventListener('click', () => {
+      splash.classList.add('hide');
+      audio.currentTime = 0;
+      audio.play().catch(e => console.log('Audio error:', e));
+      runProgressiveSequence();
+    });
+
+    async function runProgressiveSequence() {
+      // Reset all scenes
+      [sc1, sc2, sc3, sc4, sc5, sc6, sc7].forEach(s => s.style.display = 'none');
+      bladeL.classList.remove('assembled');
+      bladeR.classList.remove('assembled');
+      laserSlit.classList.remove('active');
+      nameFull.classList.remove('show');
+      titleSub.classList.remove('show');
+      navBar.classList.remove('show');
+      sc7.style.background = 'var(--val-dark)';
+
+      /* SCENE 1: Tactical Strobe (Frames 1-34 ~ 380ms) */
+      sc1.style.display = 'block';
+      await wait(380);
+      sc1.style.display = 'none';
+
+      /* SCENE 2: Inverted Red — "F" & "A" Build (Frames 35-98 ~ 1100ms) */
+      sc2.style.display = 'block';
+      await wait(1100);
+      sc2.style.display = 'none';
+
+      /* SCENE 3: Dark Transition & Mirrored "M" "M" Build (Frames 99-147 ~ 800ms) */
+      sc3.style.display = 'block';
+      await wait(800);
+      sc3.style.display = 'none';
+
+      /* SCENE 4: "V", "I" Body & "R" Transition (Frames 148-176 ~ 500ms) */
+      sc4.style.display = 'flex';
+      await wait(500);
+      sc4.style.display = 'none';
+
+      /* SCENE 5: Opposing Mirror-ish Bands — "AHAMM..." & "...ANVIR" (Frames 177-238 ~ 1000ms) */
+      sc5.style.display = 'flex';
+      await wait(1000);
+      sc5.style.display = 'none';
+
+      /* SCENE 6: Convergence Snap & Cyan Laser Glitch (Frames 239-296 ~ 750ms) */
+      sc6.style.display = 'flex';
+      await wait(240);
+      laserSlit.classList.add('active');
+      await wait(450);
+      sc6.style.display = 'none';
+
+      /* SCENE 7: The Grand Climax — 100% Pure White Full Reveal (Frames 297-337) */
+      sc7.style.display = 'flex';
+
+      // Red Flash Shock (Frames 300 & 325)
+      sc7.style.background = 'var(--val-red)';
+      bladeL.style.background = 'var(--val-dark)';
+      bladeR.style.background = 'var(--val-dark)';
+      bladeL.classList.add('assembled');
+      bladeR.classList.add('assembled');
+      await wait(110);
+
+      // Deep Navy Final Lock (Frames 336-337)
+      sc7.style.background = 'var(--val-dark)';
+      bladeL.style.background = 'var(--val-red)';
+      bladeR.style.background = 'var(--val-red)';
+      await wait(240);
+
+      // FULL NAME IN 100% PURE WHITE (First time in the entire intro!)
+      nameFull.classList.add('show');
+      titleSub.classList.add('show');
+      await wait(600);
+
+      navBar.classList.add('show');
+    }
+
+    function enterPortfolio() {
+      document.body.style.transition = 'opacity 0.4s ease';
+      document.body.style.opacity = '0';
+      setTimeout(() => {
+        window.location.href = 'index.html';
+      }, 400);
+    }
+
+    enterBtn.addEventListener('click', enterPortfolio);
+    replayBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      runProgressiveSequence();
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (navBar.classList.contains('show')) enterPortfolio();
+    });
+  </script>
+</body>
+</html>
