@@ -1,0 +1,29 @@
+# robots.txt for Fahim Ahammad Tanvir Portfolio
+# https://sen-se-i.github.io/
+#
+# This file tells search engine crawlers which pages they can access.
+# Rule: Allow ALL crawlers full access — we want maximum indexing.
+
+# --- Allow all robots ---
+User-agent: *
+Allow: /
+
+# --- Do NOT block CSS / JS / Images (Google needs them to render the page) ---
+Allow: /style.css
+Allow: /v23_intro.css
+Allow: /script.js
+Allow: /*.jpg
+Allow: /*.png
+Allow: /*.svg
+Allow: /*.ico
+Allow: /*.webm
+Allow: /*.mp4
+Allow: /*.mp3
+
+# --- Explicitly block non-public or internal folders ---
+Disallow: /.git/
+Disallow: /WORKINGS/
+Disallow: /.agents/
+
+# --- Sitemap Location (critical for Google & Bing discovery) ---
+Sitemap: https://sen-se-i.github.io/sitemap.xml

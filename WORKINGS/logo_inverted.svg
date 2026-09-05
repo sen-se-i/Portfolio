@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+  <!-- Rounded Dark Tactical Badge (#0f1923) with subtle red outline -->
+  <rect x="6" y="6" width="116" height="116" rx="26" fill="#0f1923" stroke="#ff4655" stroke-width="1.5" stroke-opacity="0.35" />
+  
+  <!-- Centered Valorant F Group (Inverted: Crimson Red blades) -->
+  <g transform="translate(14, 18) scale(0.95)">
+    <!-- Blade 1: Left Slanted Spine in Crimson Red -->
+    <polygon points="15,5 48,5 24,95 5,95" fill="#ff4655" />
+    
+    <!-- Blade 2: Top Roof Bar in Crimson Red -->
+    <polygon points="56,5 106,5 94,28 56,28" fill="#ff4655" />
+    
+    <!-- Signature Mint-Cyan Accent Notch -->
+    <polygon points="106,5 110,5 98,28 94,28" fill="#00f5a0" />
+    
+    <!-- Blade 3: Mid Tactical Slab in Crimson Red -->
+    <polygon points="50,42 92,42 82,60 50,60" fill="#ff4655" />
+  </g>
+</svg>
