@@ -1,58 +1,71 @@
 # Fahim Ahammad Tanvir
 
-**Email**: [fahim.ahammad666@gmail.com](mailto:fahim.ahammad666@gmail.com)  
+**Email**: [fahimahammadtanvir@gmail.com](mailto:fahimahammadtanvir@gmail.com)  
 **GitHub**: [github.com/sen-se-i](https://github.com/sen-se-i)  
 **Location**: Sylhet / Dhaka, Bangladesh  
 
 ---
 
 ## Professional Summary
-Enthusiastic, detail-oriented Software Engineering undergraduate at Shahjalal University of Science and Technology (SUST). Passionate about full-stack web and mobile development, competitive programming, and modern UI/UX engineering. Proven ability to build robust full-stack systems, dynamic interactive web experiences, and scalable software solutions.
+Software Engineering undergraduate at Shahjalal University of Science and Technology (SUST). Passionate about Backend Architecture, AI & Machine Learning, and Competitive Programming. Experienced in building robust systems, high-performance backends, and responsive software solutions.
 
 ---
 
 ## Education
 **Bachelor of Science in Software Engineering**  
 *Shahjalal University of Science and Technology (SUST)*  
-2020 – Present (Ongoing)  
-- Focus: Algorithms, Data Structures, System Design, Object-Oriented Software Engineering, Database Systems.
+2023 – Present (Ongoing)  
+- Focus: Backend Engineering, Algorithms, Data Structures, System Design, Object-Oriented Software Engineering, Database Systems.
 
 **Higher Secondary School Certificate (HSC)**  
 *Dhaka College*  
-2018 – 2020  
+2020 – 2022  
 - Group: Science  
 - GPA: **5.00 / 5.00**
 
 ---
 
 ## Technical Skills
-- **Programming Languages**: Python, Java, C++, JavaScript (ES6+), C#, SQL, Dart
-- **Web & Frameworks**: HTML5, CSS3, 
-- **Databases**: PostgreSQL,  MongoDB, 
-- **Tools & Platforms**: Git, GitHub, Docker, , VS Code, IntelliJ IDEA, Vercel
-
+- **Programming Languages**: Python, Java, C++, Dart
+- **Web Technologies**: HTML5, CSS3, JavaScript, Responsive Design
+- **Frameworks**: Spring Boot
+- **Databases**: PostgreSQL
+- **Tools & Platforms**: Git, GitHub, Docker, VS Code, IntelliJ IDEA, Vercel
 
 ---
 
-## Featured Projects
+## GitHub Repositories & Projects
+Listed below are the repositories directly from [github.com/sen-se-i](https://github.com/sen-se-i):
 
-### 1. Association of Chandpur, SUST (ACSUST) Web Portal
-*Live Web Platform* | [Live Demo](https://association-of-chandpur-sust.vercel.app/)  
-- Developed the official community platform for Chandpur students at Shahjalal University of Science and Technology.
-- Designed dynamic river aesthetic, smooth wave animations, student hub, and cultural heritage showcase.
-- Deployed on Vercel with responsive mobile-first architecture and optimized web performance.
+1. **SUST_Attendance_System**  
+   - Multi-platform attendance system for SUST with mobile client support.  
+   - *Tech*: Dart, Java, Kotlin, Swift, C++, CMake, HTML/CSS.  
+   - *Repo*: [github.com/sen-se-i/SUST_Attendance_System](https://github.com/sen-se-i/SUST_Attendance_System)
 
-### 3. Batch Management System
-*Web & Mobile Application*  
-[Live Demo](swe-23.vercel.app)  
-- Comprehensive academic management solution for student batches, class schedules, and academic record tracking.
-- Implemented multi-platform support with clean role-based data access.
+2. **AssociationOfChadpurSUST (ACSUST)**  
+   - Community portal for Chandpur students at SUST with dynamic UI and database integration.  
+   - *Tech*: HTML, JavaScript, PLpgSQL / PostgreSQL.  
+   - *Live*: [association-of-chandpur-sust.vercel.app](https://association-of-chandpur-sust.vercel.app/)  
+   - *Repo*: [github.com/sen-se-i/AssociationOfChadpurSUST](https://github.com/sen-se-i/AssociationOfChadpurSUST)
 
+3. **Library_System**  
+   - Academic library management system.  
+   - *Repo*: [github.com/sen-se-i/Library_System](https://github.com/sen-se-i/Library_System)
 
-### 5. Online Quiz Platform
-*Web Application*  
-- Built an online examination and quiz portal with dynamic question bank management and automated scoring.
-- Implemented real-time feedback and progress tracking using Django and PostgreSQL.
+4. **JavaGameProject2-1**  
+   - Semester 2-1 academic game project in Java.  
+   - *Tech*: Java.  
+   - *Repo*: [github.com/sen-se-i/JavaGameProject2-1](https://github.com/sen-se-i/JavaGameProject2-1)
+
+5. **gameProject1-2**  
+   - Semester 1-2 game development project in C++.  
+   - *Tech*: C++.  
+   - *Repo*: [github.com/sen-se-i/gameProject1-2](https://github.com/sen-se-i/gameProject1-2)
+
+6. **LoopIn**  
+   - Interactive web application.  
+   - *Tech*: HTML, JavaScript.  
+   - *Repo*: [github.com/sen-se-i/LoopIn](https://github.com/sen-se-i/LoopIn)
 
 ---
 
@@ -62,8 +75,8 @@ Enthusiastic, detail-oriented Software Engineering undergraduate at Shahjalal Un
 
 ---
 
-## Hobbies & Interests
+## Focus & Interests
+- Backend Engineering & System Architecture
+- Artificial Intelligence (AI) & Machine Learning
 - Competitive Programming & Problem Solving
-- Full-Stack & System Architecture
-- Machine Learning & AI Exploration
-- Open-Source Contribution & Community Building
+- Open-Source Development

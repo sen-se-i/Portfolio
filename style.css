@@ -1007,19 +1007,27 @@ section { position: relative; z-index: 1; padding: 6rem 0; }
    ============================================================ */
 .section-contact { background: var(--bg-secondary); }
 
-.contact-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 3rem;
-  align-items: start;
+.contact-hud-wrapper {
+  max-width: 680px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.contact-hud-card {
+  padding: 2.5rem;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
 }
 
 .contact-quote {
-  font-size: 0.875rem;
-  line-height: 2;
+  font-size: 0.9rem;
+  line-height: 1.9;
   color: var(--gold);
-  margin-bottom: 2.5rem;
+  margin-bottom: 2rem;
   letter-spacing: 0.04em;
+  border-left: 2px solid var(--gold);
+  padding-left: 1rem;
 }
 
 .contact-links { display: flex; flex-direction: column; gap: 1.25rem; }
@@ -1027,16 +1035,18 @@ section { position: relative; z-index: 1; padding: 6rem 0; }
 .contact-link {
   display: flex;
   align-items: center;
-  gap: 1rem;
-  padding: 1rem 1.25rem;
+  gap: 1.2rem;
+  padding: 1.15rem 1.4rem;
   border: 1px solid var(--border);
-  background: var(--bg-card);
-  transition: all 0.3s;
+  background: rgba(22, 29, 39, 0.8);
+  transition: all 0.3s ease;
+  text-decoration: none;
 }
 .contact-link:hover {
   border-color: var(--gold);
-  background: var(--gold-glow);
+  background: rgba(200, 169, 85, 0.1);
   transform: translateX(6px);
+  box-shadow: 0 0 15px var(--gold-glow);
 }
 
 .cl-icon {
@@ -1050,50 +1060,14 @@ section { position: relative; z-index: 1; padding: 6rem 0; }
   font-size: 0.65rem;
   letter-spacing: 0.2em;
   color: var(--text-secondary);
-  margin-bottom: 2px;
+  margin-bottom: 4px;
 }
 .cl-val {
-  font-size: 0.9rem;
+  font-size: 0.95rem;
   color: var(--text-primary);
+  font-family: var(--font-mono);
+  word-break: break-all;
 }
-
-/* Contact Form */
-.form-title {
-  font-size: 0.8rem;
-  letter-spacing: 0.2em;
-  color: var(--red);
-  margin-bottom: 1.5rem;
-}
-
-.form-group { margin-bottom: 1.25rem; }
-
-.form-label {
-  display: block;
-  font-size: 0.72rem;
-  letter-spacing: 0.2em;
-  color: var(--text-secondary);
-  margin-bottom: 0.5rem;
-}
-
-.form-input {
-  width: 100%;
-  background: rgba(42,37,56,0.4);
-  border: 1px solid var(--border);
-  padding: 0.75rem 1rem;
-  color: var(--text-primary);
-  font-family: var(--font-body);
-  font-size: 0.9rem;
-  outline: none;
-  transition: border-color 0.25s, box-shadow 0.25s;
-  resize: none;
-}
-.form-input:focus {
-  border-color: var(--gold);
-  box-shadow: 0 0 15px var(--gold-glow);
-}
-.form-input::placeholder { color: rgba(138,122,98,0.5); }
-
-.form-textarea { min-height: 110px; }
 
 /* ============================================================
    FOOTER
